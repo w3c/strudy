@@ -32,7 +32,7 @@
   "bin": "./strudy.js",
   "dependencies": {
     "commander": "8.2.0",
-    "node-fetch": "^2.6.5",
+    "node-fetch": "^3.0.0",
     "node-pandoc": "0.3.0",
     "reffy": "^4.0.5",
     "semver": "^7.3.5"
