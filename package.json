@@ -1,0 +1,40 @@
+{
+  "name": "strudy",
+  "version": "1.0.0",
+  "description": "Web spec analysis tool that can process crawl reports created by Reffy.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/w3c/strudy.git"
+  },
+  "files": [
+    "index.js",
+    "strudy.js",
+    "src/"
+  ],
+  "bugs": {
+    "url": "https://github.com/w3c/strudy/issues"
+  },
+  "author": {
+    "name": "tidoust",
+    "email": "fd@w3.org"
+  },
+  "contributors": [
+    {
+      "name": "dontcallmedom",
+      "email": "dom@w3.org"
+    }
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "main": "index.js",
+  "bin": "./strudy.js",
+  "dependencies": {
+    "commander": "8.2.0",
+    "node-fetch": "^2.6.5",
+    "node-pandoc": "0.3.0",
+    "reffy": "^4.0.5",
+    "semver": "^7.3.5"
+  }
+}
