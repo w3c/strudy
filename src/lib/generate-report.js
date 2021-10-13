@@ -142,8 +142,8 @@ function generateReportPerSpec(study) {
   const w = msg => wres += (msg || '') + '\n';
   const results = study.results;
 
-  w('% ' + (study.title || 'Reffy crawl results'));
-  w('% Reffy');
+  w('% ' + (study.title || 'Web specs analysis'));
+  w('% Strudy');
   w('% ' + (new Date(study.date)).toLocaleDateString('en-US', dateOptions));
   w();
 
@@ -323,8 +323,8 @@ function generateReportPerIssue(study) {
   let count = 0;
   let results = study.results;
 
-  w('% ' + (study.title || 'Reffy crawl results'));
-  w('% Reffy');
+  w('% ' + (study.title || 'Web specs analysis'));
+  w('% Strudy');
   w('% ' + (new Date(study.date)).toLocaleDateString('en-US', dateOptions));
   w();
 
@@ -389,7 +389,7 @@ function generateReportPerIssue(study) {
   w('=> ' + count + ' specification' + ((count > 1) ? 's' : '') + ' found');
   if (count > 0) {
     w();
-    w('WebIDL continues to evolve. Reffy may incorrectly report as invalid' +
+    w('WebIDL continues to evolve. Strudy may incorrectly report as invalid' +
       ' perfectly valid WebIDL content if the specification uses bleeding-edge' +
       ' WebIDL features');
   }
@@ -461,7 +461,7 @@ function generateReportPerIssue(study) {
   w('=> ' + count + ' [Exposed] name' + ((count > 1) ? 's' : '') + ' found');
   if (count > 0) {
     w();
-    w('Please keep in mind that Reffy only knows about IDL terms defined in the' +
+    w('Please keep in mind that Strudy only knows about IDL terms defined in the' +
       ' specifications that were crawled **and** that do not have invalid IDL content.');
   }
   w();
@@ -494,7 +494,7 @@ function generateReportPerIssue(study) {
   if (count > 0) {
     w();
     w('Some of them may be type errors in specs (e.g. "int" does not exist, "Array" cannot be used on its own, etc.)');
-    w('Also, please keep in mind that Reffy only knows about IDL terms defined in the' +
+    w('Also, please keep in mind that Strudy only knows about IDL terms defined in the' +
       ' specifications that were crawled **and** that do not have invalid IDL content.');
   }
   w();
@@ -639,7 +639,7 @@ function generateReportPerIssue(study) {
         ' trigger the creation of a corresponding entry in the references' +
         ' section.');
     w();
-    w('Note Reffy only reports on links to "well-known" specs and ignores' +
+    w('Note Strudy only reports on links to "well-known" specs and ignores' +
         ' links to non-usual specs (e.g. PDF documents, etc.) for now.');
   }
   w();
@@ -739,18 +739,16 @@ function generateDependenciesReport(study) {
   let count = 0;
   const results = study.results;
 
-  w('# Reffy dependencies report');
+  w('# Web specs dependencies report');
   w();
-  w('Reffy is a spec exploration tool.' +
-    ' It takes a list of specifications as input, fetches and parses the latest Editor\'s Draft' +
-    ' of each of these specifications to study the IDL content that it defines, the links that it' +
-    ' contains, and the normative and informative references that it lists.');
+  w('Strudy is an analysis tool for Web spec crawl reports created by Reffy.' +
+    ' It studies extracts created during the crawl.');
   w();
   w('The report below lists incoming links for each specification, in other words the list' +
     ' of specifications that normatively or informatively reference a given specification.');
   w();
-  w('By definition, Reffy only knows about incoming links from specifications that have been' +
-    ' crawled and that could successfully be parsed. Other specifications that Reffy does' +
+  w('By definition, Strudy only knows about incoming links from specifications that have been' +
+    ' crawled and that could successfully be parsed. Other specifications that Strudy does' +
     ' not know anything about may reference specifications listed here.');
   w();
   results.forEach(spec => {
@@ -877,7 +875,7 @@ function generateDiffReport(study, refStudy, options) {
     '" and reference report from "' + 
     (new Date(refStudy.date)).toLocaleDateString('en-US', dateOptions) +
     '"');
-  w('% Reffy');
+  w('% Strudy');
   w('% ' + (new Date(study.date)).toLocaleDateString('en-US', dateOptions));
   w();
 

@@ -417,7 +417,7 @@ async function studyCrawl(crawlResults, options = {}) {
 
   return {
     type: 'study',
-    title: crawlResults.title || 'Reffy crawl',
+    title: crawlResults.title || 'Web specs analysis',
     description: crawlResults.description || '',
     date: crawlResults.date || (new Date()).toJSON(),
     stats: {

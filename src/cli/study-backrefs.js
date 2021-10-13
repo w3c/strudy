@@ -479,7 +479,7 @@ function reportToConsole(results) {
         report += "\n\n";
       }
       if (result.unknownSpecs.length) {
-        report += "Links to things that look like specs but that aren't recognized in reffy data:\n"
+        report += "Links to things that look like specs but that aren't recognized as such in crawl data:\n"
         result.unknownSpecs.forEach(l => {
           report += "* " + l + "\n";
         })

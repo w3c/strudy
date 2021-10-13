@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Reffy report</title>
+  <title>Web specs analysis</title>
   $if(quotes)$
     <style type="text/css">q { quotes: "ÔÇ£" "ÔÇØ" "ÔÇÿ" "ÔÇÖ"; }</style>
   $endif$
@@ -30,8 +30,8 @@
   $for(include-before)$
   $include-before$
   $endfor$
-  <h1>Reffy crawl report (per issue)</h1>
-  <p><a href="https://github.com/w3c/reffy">Reffy</a> is a <i>spec exploration tool</i>. It crawls a list of specifications to study the WebIDL content, the links that they contain, and the references that these specifications contain.</p>
+  <h1>Web specs analysis (per issue)</h1>
+  <p><a href="https://github.com/w3c/strudy">Strudy</a> is an <i>analysis tool for Web spec crawl reports</i> created by <a href="https://github.com/w3c/reffy">Reffy</a>. It studes spec extracts created during the crawl such as Web IDL content, term definitions and references.</p>
   $body$
   $for(include-after)$
   $include-after$
