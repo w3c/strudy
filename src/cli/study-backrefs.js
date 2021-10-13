@@ -28,7 +28,7 @@
  */
 
 const requireFromWorkingDirectory = require('../lib/require-cwd');
-const { expandCrawlResult } = require("reffy/src/lib/util");
+const { expandCrawlResult } = require("reffy");
 const path = require("path");
 
 /**

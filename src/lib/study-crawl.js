@@ -27,7 +27,7 @@
 const fs = require('fs');
 const path = require('path');
 const requireFromWorkingDirectory = require('./require-cwd');
-const { expandCrawlResult, isLatestLevelThatPasses } = require('reffy/src/lib/util');
+const { expandCrawlResult, isLatestLevelThatPasses } = require('reffy');
 const { studyBackrefs } = require('../cli/study-backrefs');
 const checkMissingDefinitions = require('../cli/check-missing-dfns').checkSpecDefinitions;
 
