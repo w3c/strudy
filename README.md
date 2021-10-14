@@ -1,5 +1,7 @@
 # Strudy
 
+<img align="right" width="256" height="256" src="images/strudy-512.png" alt="Strudy, represented as a detective dog carrying a magnifying glass, ready to look for potential spec defects in crawl reports">
+
 Strudy is an **analysis tool for Web spec crawl reports** created by [Reffy](https://github.com/w3c/reffy) that detects potential spec content anomalies such as missing references or invalid constructs.
 
 Potential anomalies that Strudy may report on are:
