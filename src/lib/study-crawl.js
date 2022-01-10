@@ -101,18 +101,18 @@ function filterSpecInfo(spec) {
  */
 function studyCrawlResults(results, options = {}) {
   const knownIdlNames = results
-    .map(r => r.idl && r.idl.idlNames ? Object.keys(r.idl.idlNames) : [], [])
+    .map(r => r.idlparsed?.idlNames ? Object.keys(r.idlparsed.idlNames) : [], [])
     .reduce(array_concat)
     .filter(uniqueFilter);
   const knownGlobalNames = results
-    .map(r => r.idl && r.idl.globals ? Object.keys(r.idl.globals) : [], [])
+    .map(r => r.idlparsed?.globals ? Object.keys(r.idlparsed.globals) : [], [])
     .reduce(array_concat)
     .filter(uniqueFilter);
   const idlNamesIndex = {};
   knownIdlNames.forEach(name =>
     idlNamesIndex[name] = results.filter(spec =>
       isLatestLevelThatPasses(spec, results, s =>
-        s.idl && s.idl.idlNames && s.idl.idlNames[name])));
+        s.idlparsed?.idlNames?.[name])));
 
   // WebIDL-1 only kept for historical reasons to process old crawl results
   const WebIDLSpec = results.find(spec =>
@@ -164,17 +164,17 @@ function studyCrawlResults(results, options = {}) {
         (toInclude.url && toInclude.url === spec.nightly?.url) ||
         (toInclude.html && toInclude.html === spec.html)))
     .map(spec => {
-      spec.idl = spec.idl || {};
+      spec.idlparsed = spec.idlparsed || {};
       spec.css = spec.css || {};
       spec.refs = spec.refs || {};
       spec.links = spec.links || {};
-      const idlDfns = spec.idl.idlNames ?
-        Object.keys(spec.idl.idlNames) : [];
-      const idlExtendedDfns = spec.idl.idlExtendedNames ?
-        Object.keys(spec.idl.idlExtendedNames) : [];
-      const idlDeps = spec.idl.externalDependencies ?
-        spec.idl.externalDependencies : [];
-      const exposed = spec.idl.exposed ? Object.keys(spec.idl.exposed) : [];
+      const idlDfns = spec.idlparsed.idlNames ?
+        Object.keys(spec.idlparsed.idlNames) : [];
+      const idlExtendedDfns = spec.idlparsed.idlExtendedNames ?
+        Object.keys(spec.idlparsed.idlExtendedNames) : [];
+      const idlDeps = spec.idlparsed.externalDependencies ?
+        spec.idlparsed.externalDependencies : [];
+      const exposed = spec.idlparsed.exposed ? Object.keys(spec.idlparsed.exposed) : [];
 
       const xrefs = xrefsReport[spec.url];
       if (xrefs) {
@@ -202,7 +202,7 @@ function studyCrawlResults(results, options = {}) {
         // Whether the spec normatively references the WebIDL spec
         // (all specs that define IDL content should)
         noRefToWebIDL: (spec !== WebIDLSpec) &&
-          (spec.idl.bareMessage || (idlDfns.length > 0) || (idlExtendedDfns.length > 0)) &&
+          (spec.idlparsed.bareMessage || (idlDfns.length > 0) || (idlExtendedDfns.length > 0)) &&
           (!spec.refs.normative || !spec.refs.normative.find(ref =>
             ref.name.match(/^WebIDL/i) ||
             (ref.url === WebIDLSpec.url) ||
@@ -212,12 +212,12 @@ function studyCrawlResults(results, options = {}) {
         // (the crawler cannot do much when IDL content is invalid, it
         // cannot tell what IDL definitions and references the spec
         // contains in particular)
-        hasInvalidIdl: !!(!spec.idl.idlNames && spec.idl.bareMessage),
+        hasInvalidIdl: !!(!spec.idlparsed.idlNames && spec.idlparsed.bareMessage),
 
         // Whether the spec uses IDL constructs that were valid in
         // WebIDL Level 1 but no longer are, typically "[]" instead of
         // "FrozenArray"
-        hasObsoleteIdl: spec.idl.hasObsoleteIdl,
+        hasObsoleteIdl: spec.idlparsed.hasObsoleteIdl,
 
         // List of Exposed names used in the spec that we know nothing
         // about because we cannot find a matching "Global" name in
