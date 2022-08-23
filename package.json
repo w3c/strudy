@@ -34,7 +34,7 @@
     "commander": "9.1.0",
     "node-fetch": "^2.6.5",
     "node-pandoc": "0.3.0",
-    "reffy": "^7.0.1",
+    "reffy": "^9.1.1",
     "semver": "^7.3.5"
   }
 }
