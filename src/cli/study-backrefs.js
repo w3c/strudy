@@ -27,35 +27,11 @@
  * @module backrefs
  */
 
-const requireFromWorkingDirectory = require('../lib/require-cwd');
-const { expandCrawlResult } = require("reffy");
-const { studyBackrefs } = require('../lib/study-backrefs');
+const { loadCrawlResults, studyBackrefs } = require('../lib/study-backrefs');
 const path = require("path");
 
-async function loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath) {
-  let edCrawlResults, trCrawlResults;
-  try {
-    edCrawlResults = requireFromWorkingDirectory(edCrawlResultsPath);
-  } catch(e) {
-    throw "Impossible to read " + edCrawlResultsPath + ": " + e;
-  }
-  try {
-    trCrawlResults = requireFromWorkingDirectory(trCrawlResultsPath);
-  } catch(e) {
-    throw "Impossible to read " + trCrawlResultsPath + ": " + e;
-  }
-
-  edCrawlResults = await expandCrawlResult(edCrawlResults, edCrawlResultsPath.replace(/index\.json$/, ''));
-  trCrawlResults = await expandCrawlResult(trCrawlResults, trCrawlResultsPath.replace(/index\.json$/, ''));
-
-  return {
-    ed: edCrawlResults.results,
-    tr: trCrawlResults.results
-  };
-}
 
 function reportToConsole(results) {
-  console.error(results);
   let report = "";
   Object.keys(results)
     .sort((r1, r2) => results[r1].title.localeCompare(results[r2].title))

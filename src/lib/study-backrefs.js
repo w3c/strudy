@@ -1,3 +1,7 @@
+const requireFromWorkingDirectory = require('../lib/require-cwd');
+const { expandCrawlResult } = require("reffy");
+const fetch = require("node-fetch");
+
 /**
  * The backrefs analyzer only checks links to other specs. This function returns
  * true when a link does target a spec, and false if it targets something else
@@ -7,6 +11,8 @@
  * different types of resources under www.khronos.org0)
  * TODO: Consider matching TC39 specs... once we have dfns and IDs for them!
  */
+
+
 const matchSpecUrl = url =>
   url.match(/spec\.whatwg\.org/) ||
   url.match(/www\.w3\.org\/TR\/[a-z0-9]/) ||
@@ -129,14 +135,8 @@ const shortnameMap = {
   "core-aam-1.1": "core-aam",
   "csp": "CSP",
   "CSP2": "CSP",
-  "css-color-3": "css-color",
-  "css-contain-1": "css-contain",
-  "css-fonts-3": "css-fonts",
-  "css-grid-1": "css-grid",
   "css-selectors": "selectors",
   "css-selectors-3": "selectors",
-  "css-ui-3": "css-ui",
-  "css-writing-modes-3": "css-writing-modes",
   "css2": "CSS21",
   "css3-align": "css-align",
   "css3-animations": "css-animations",
@@ -173,8 +173,6 @@ const shortnameMap = {
   "powerfulfeatures": "secure-contexts",
   "resource-timing": "resource-timing-2",
   "resource-timing-1": "resource-timing",
-  "selectors-3": "selectors",
-  "selectors4": "selectors",
   "ServiceWorker": "service-workers",
   "wai-aria-1.1": "wai-aria-1.2",
   "wasm-core-1": "wasm-core",
@@ -237,18 +235,48 @@ const shortnameOfNonNormativeDocs = [
   "webrtc-nv-use-cases"
 ];
 
+async function loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath) {
+  let edCrawlResults, trCrawlResults;
+  try {
+    edCrawlResults = requireFromWorkingDirectory(edCrawlResultsPath);
+  } catch(e) {
+    throw "Impossible to read " + edCrawlResultsPath + ": " + e;
+  }
+  try {
+    trCrawlResults = requireFromWorkingDirectory(trCrawlResultsPath);
+  } catch(e) {
+    throw "Impossible to read " + trCrawlResultsPath + ": " + e;
+  }
 
-function studyBackrefs(edResults, trResults = []) {
+  edCrawlResults = await expandCrawlResult(edCrawlResults, edCrawlResultsPath.replace(/index\.json$/, ''));
+  trCrawlResults = await expandCrawlResult(trCrawlResults, trCrawlResultsPath.replace(/index\.json$/, ''));
+
+  return {
+    ed: edCrawlResults.results,
+    tr: trCrawlResults.results
+  };
+}
+
+
+async function studyBackrefs(edResults, trResults = []) {
   trResults = trResults || [];
   const report = {};
+
+  // Donwload automatic map of multipages anchors in HTML spec
+  // FIXME: this makes the script network-dependent
+  const htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
 
   function recordAnomaly(spec, anomalyType, link) {
     if (!report[spec.url]) {
       report[spec.url] = {
         title: spec.title,
+	crawled: spec.crawled,
+	shortname: spec.shortname,
+	repo: spec.nightly.repository,
         notExported: [],
         notDfn: [],
         brokenLinks: [],
+	frailLinks: [],
         evolvingLinks: [],
         outdatedSpecs: [],
         unknownSpecs: [],
@@ -373,7 +401,20 @@ function studyBackrefs(edResults, trResults = []) {
             if ((trSourceSpec.ids || []).includes(fullReleaseLink) && link.match(/w3\.org\/TR\//)) {
               recordAnomaly(spec, "evolvingLinks", link + "#" + anchor);
             } else {
-              recordAnomaly(spec, "brokenLinks", link + "#" + anchor);
+	      // Links to single-page version of HTML spec
+	      if (link === "https://html.spec.whatwg.org/"
+		  // is there an equivalent id in the multipage spec?
+		  && ids.find(i => i.match(new RegExp("https://html\.spec\.whatwg\.org/multipage/(.*)\.html#" + anchor)))) {
+		    // Should we keep track of those? ignoring for now
+	      } else if (link === "https://html.spec.whatwg.org/multipage/"
+		  && htmlFragments[anchor]
+			 && ids.includes(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html#${anchor}`)) {
+		// Deal with anchors that are JS-redirected from
+		// the multipage version of HTML
+		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
+	      } else {
+		recordAnomaly(spec, "brokenLinks", link + "#" + anchor);
+	      }
             }
           } else if (!heading && !dfn) {
             recordAnomaly(spec, "notDfn", link + "#" + anchor);
@@ -389,4 +430,4 @@ function studyBackrefs(edResults, trResults = []) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports.studyBackrefs = studyBackrefs;
+module.exports = { studyBackrefs, loadCrawlResults };

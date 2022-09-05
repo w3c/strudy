@@ -31,6 +31,8 @@
   "main": "index.js",
   "bin": "./strudy.js",
   "dependencies": {
+    "@octokit/plugin-throttling": "^4.3.0",
+    "@octokit/rest": "^19.0.4",
     "commander": "9.4.0",
     "node-fetch": "^2.6.5",
     "node-pandoc": "0.3.0",
