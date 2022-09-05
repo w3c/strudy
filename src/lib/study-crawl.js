@@ -31,12 +31,7 @@ const { expandCrawlResult, isLatestLevelThatPasses } = require('reffy');
 const { studyBackrefs } = require('../cli/study-backrefs');
 const checkMissingDefinitions = require('../cli/check-missing-dfns').checkSpecDefinitions;
 
-// Canonicalize methods are defined in an ES6 module so that they can also be
-// used in a browser environment. As such, they can only be loaded async through
-// a call to import(). This cannot be done here, and rather takes place at the
-// beginning of `studyCrawl`.
-let canonicalizeUrl = null;
-let canonicalizesTo = null;
+const {canonicalizeUrl, canonicalizesTo} = require("./lib/canonicalize-url");
 
 const array_concat = (a,b) => a.concat(b);
 const uniqueFilter = (item, idx, arr) => arr.indexOf(item) === idx;
@@ -376,25 +371,7 @@ function studyCrawlResults(results, options = {}) {
   });
 }
 
-
-function getModulesFolder() {
-  const rootFolder = path.resolve(__dirname, '../..');
-  let folder = path.resolve(rootFolder, 'node_modules');
-  if (fs.existsSync(folder)) {
-      return folder;
-  }
-  folder = path.resolve(rootFolder, '..');
-  return folder;
-}
-const modulesFolder = getModulesFolder();
-
 async function studyCrawl(crawlResults, options = {}) {
-  // Import functions from ES6 module and expose them globally
-  // TODO: Find a better way to expose that in Reffy or consider duplicating
-  // the code.
-  ({canonicalizeUrl, canonicalizesTo} = await import('file://' +
-    path.join(modulesFolder, 'reffy', 'src', 'browserlib', 'canonicalize-url.mjs')));
-
   if (typeof crawlResults === 'string') {
     const crawlResultsPath = crawlResults;
     crawlResults = requireFromWorkingDirectory(crawlResults);
