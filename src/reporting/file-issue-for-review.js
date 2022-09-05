@@ -69,7 +69,6 @@ if (require.main === module) {
       console.log(`Compiling report for ${specResult.title}…`);
       const brokenLinks = specResult.brokenLinks || [];
       if (brokenLinks.length) {
-	counter++;
 
 	if (counter > MAX_PR_BY_RUNS) return;
 	const issueMoniker = `${specResult.shortname}-brokenlinks`;
@@ -115,6 +114,7 @@ ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
 	  execSync(`git add ${issueFilename}`);
 	  execSync(`git commit -m "File report on broken links found in ${specResult.title}"`);
 	  needsPush[issueMoniker] = {title: `Broken references in ${specResult.title}`, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
+	  counter++;
 	  console.log("- done");
 	  execSync(`git checkout ${currentBranch}`);
 	} catch (err) {
