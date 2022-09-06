@@ -49,7 +49,7 @@ if (require.main === module) {
       const issueData  = matter(issueReport);
       const {data: metadata, content: body} = issueData;
       if (!(metadata?.Repo && metadata?.Tracked && metadata?.Title && body)) {
-	console.error(`Could not parsed expected data from ${filename}.`, JSON.stringify(issueData, null, 2));
+	console.error(`Could not parse expected data from ${filename}.`, JSON.stringify(issueData, null, 2));
 	continue;
       }
       if (metadata.Tracked !== "N/A") {
@@ -68,7 +68,7 @@ if (require.main === module) {
 	title: metadata.Title,
 	body
       });
-      const issueUrl = ghRes?.data?.url || "42";
+      const issueUrl = ghRes?.data?.url;
       if (issueUrl) {
 	metadata.Tracked = issueUrl;
 	fs.writeFile(filename, issueData.stringify(), 'utf-8');
