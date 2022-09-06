@@ -16,7 +16,7 @@ const GH_TOKEN = (() => {
   }
 })();
 
-const MAX_PR_BY_RUNS = 10;
+const MAX_PR_BY_RUN = 10;
 
 const repoOwner = 'w3c';
 const repoName = 'strudy';
@@ -70,7 +70,7 @@ if (require.main === module) {
       const brokenLinks = specResult.brokenLinks || [];
       if (brokenLinks.length) {
 
-	if (counter > MAX_PR_BY_RUNS) return;
+	if (counter > MAX_PR_BY_RUN) return;
 	const issueMoniker = `${specResult.shortname}-brokenlinks`;
 	// is there already a file with that moniker?
 	const issueFilename = path.join('issues/', issueMoniker + '.md');
