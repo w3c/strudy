@@ -126,7 +126,7 @@ ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
     }));
     if (Object.keys(needsPush).length) {
       console.log(`Pushing new branches ${Object.keys(needsPush).join(' ')}…`);
-      execSync(`git push dontcallmedom ${Object.keys(needsPush).join(' ')}`);
+      execSync(`git push origin ${Object.keys(needsPush).join(' ')}`);
       console.log("- done");
       for (let branch in needsPush) {
 	const {title, specTitle, uri, repo, report} = needsPush[branch];
