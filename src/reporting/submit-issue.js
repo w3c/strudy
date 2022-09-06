@@ -27,6 +27,7 @@ if (require.main === module) {
   const targetIssueReport = process.argv[2];
   let issuesToSubmit = [];
   (async function() {
+    execSync(`git pull origin main`);
     if (targetIssueReport) {
       try {
 	if ((await fs.stat(targetIssueReport)).isFile()) {
@@ -77,6 +78,7 @@ if (require.main === module) {
     }
     if (needsCommit) {
       execSync(`git commit -m "Update issue reports with github issue ref"`);
+      execSync(`git pull origin main`);
       execSync(`git push origin main`);
     }
   })();
