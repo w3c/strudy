@@ -17,6 +17,7 @@ jobs:
     - name: Checkout webref
       uses: actions/checkout@v2
       with:
+        repository: w3c/webref
         path: webref
     - name: Run issue filer script
       working-directory: strudy
