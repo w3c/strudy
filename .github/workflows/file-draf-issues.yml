@@ -1,0 +1,27 @@
+on:
+  workflow_dispatch:
+
+name: Submit draft issue reports from Strudy analysis
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+    - name: Checkout strudy
+      uses: actions/checkout@v2
+      with:
+        path: strudy
+    - name: Checkout webref
+      uses: actions/checkout@v2
+      with:
+        path: webref
+    - name: Run issue filer script
+      working-directory: strudy
+      run: node src/reporting/file-issue-for-review.js ../webref/ed ../webref/tr
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
