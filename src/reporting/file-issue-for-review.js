@@ -84,16 +84,6 @@ if (require.main === module) {
 	} catch (err) {
 	  // Intentionally blank
 	}
-	// if not, is there a pull request that uses that moniker as a branch
-	const {data: pullrequests} = (await octokit.rest.pulls.list({
-	  owner: repoOwner,
-	  repo: repoName,
-	  head: `${repoOwner}:${issueMoniker}`
-	}));
-	if (pullrequests.length > 0) {
-	  console.log(`A pull request from branch ${issueMoniker} already exists, bailing`);
-	  return;
-	}
 	// if not, we create the file, add it in a branch
 	// and submit it as a pull request to the repo
 	const issueReport = `
@@ -124,6 +114,20 @@ ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
 	}
       }
     }));
+    if (Object.keys(needsPush).length) {
+      for (let branch in needsPush) {
+        // is there already a pull request targetting that branch?
+        const {data: pullrequests} = (await octokit.rest.pulls.list({
+        owner: repoOwner,
+        repo: repoName,
+        head: `${repoOwner}:${branch}`
+        }));
+        if (pullrequests.length > 0) {
+          console.log(`A pull request from branch ${branch} already exists, bailing`);
+          delete needsPush[branch];
+        }
+      }
+    }
     if (Object.keys(needsPush).length) {
       console.log(`Pushing new branches ${Object.keys(needsPush).join(' ')}…`);
       execSync(`git push origin ${Object.keys(needsPush).join(' ')}`);
