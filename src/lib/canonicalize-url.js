@@ -11,6 +11,8 @@
 function canonicalizeUrl(url, options) {
     options = options || {};
 
+    // Same code as in Reffy:
+    // https://github.com/w3c/reffy/blob/841db672190cf28658c29de3b8d7b8e28687ef47/src/postprocessing/annotate-links.js#L8-L19
     let canon = url.replace(/^http:/, 'https:')
             .split('#')[0]
             .replace('index.html', '')

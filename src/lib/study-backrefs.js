@@ -11,8 +11,6 @@ const fetch = require("node-fetch");
  * different types of resources under www.khronos.org0)
  * TODO: Consider matching TC39 specs... once we have dfns and IDs for them!
  */
-
-
 const matchSpecUrl = url =>
   url.match(/spec\.whatwg\.org/) ||
   url.match(/www\.w3\.org\/TR\/[a-z0-9]/) ||
@@ -234,7 +232,6 @@ const shortnameOfNonNormativeDocs = [
   "webrtc-interop-reports",
   "webrtc-nv-use-cases"
 ];
-
 async function loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath) {
   let edCrawlResults, trCrawlResults;
   try {
@@ -276,12 +273,14 @@ async function studyBackrefs(edResults, trResults = []) {
         notExported: [],
         notDfn: [],
         brokenLinks: [],
-	frailLinks: [],
+    	  frailLinks: [],
+        notExported: [],
+        notDfn: [],
         evolvingLinks: [],
         outdatedSpecs: [],
         unknownSpecs: [],
         datedUrls: [],
-	crawlError: [],
+      	crawlError: [],
       };
     }
     report[spec.url][anomalyType].push(link);

@@ -30,8 +30,8 @@
 const { loadCrawlResults, studyBackrefs } = require('../lib/study-backrefs');
 const path = require("path");
 
-
 function reportToConsole(results) {
+  console.error(results);
   let report = "";
   Object.keys(results)
     .sort((r1, r2) => results[r1].title.localeCompare(results[r2].title))
