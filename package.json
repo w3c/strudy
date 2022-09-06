@@ -34,6 +34,7 @@
     "@octokit/plugin-throttling": "^4.3.0",
     "@octokit/rest": "^19.0.4",
     "commander": "9.4.0",
+    "gray-matter": "^4.0.3",
     "node-fetch": "^2.6.5",
     "node-pandoc": "0.3.0",
     "reffy": "^10.0.0",

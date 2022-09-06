@@ -38,8 +38,6 @@ Please check that these errors were correctly detected, and that they have not a
 
 If everything is OK, you can merge this pull request which will report the issue below to the repo, and update the underlying report file with a link to the said issue.
 
----
-
 ${issueReport}
 `;
 }
@@ -86,10 +84,10 @@ if (require.main === module) {
 	}
 	// if not, we create the file, add it in a branch
 	// and submit it as a pull request to the repo
-	const issueReport = `
+	const issueReport = `---
 Repo: ${specResult.repo}
 Tracked: N/A
-Issue title: Broken references in ${specResult.title}
+Title: Broken references in ${specResult.title}
 
 ---
 
