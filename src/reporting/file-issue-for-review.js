@@ -1,4 +1,4 @@
-/* Takes a reports of anomaly produced by strudy,
+/* Takes a report of anomalies produced by Strudy,
    creates a draft of an issue per spec and per anomaly type
    and submits as a pull request in this repo if no existing one matches
 */
@@ -32,7 +32,7 @@ const octokit = new Octokit({
 });
 
 function prWrapper(title, uri, repo, issueReport) {
-  return `This pull request was automatically created by strudy upon detecting errors in ${title}.
+  return `This pull request was automatically created by Strudy upon detecting errors in ${title}.
 
 Please check that these errors were correctly detected, and that they have not already been reported in ${repo}.
 
@@ -106,10 +106,10 @@ Issue title: Broken references in ${specResult.title}
 While crawling [${specResult.title}](${specResult.crawled}), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
 ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
 
-<sub>This issue was detected and reported semi-automatically by [strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`;
+<sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`;
 	await fs.writeFile(issueFilename, issueReport, 'utf-8');
 	try {
-	  console.log(`Commiting issue report as ${issueFilename} in branch ${issueMoniker}…`);
+	  console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
 	  execSync(`git checkout -b ${issueMoniker}`);
 	  execSync(`git add ${issueFilename}`);
 	  execSync(`git commit -m "File report on broken links found in ${specResult.title}"`);
