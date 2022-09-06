@@ -20,7 +20,7 @@ jobs:
         path: webref
     - name: Run issue filer script
       working-directory: strudy
-      run: node src/reporting/file-issue-for-review.js ../webref/ed ../webref/tr
+      run: node src/reporting/file-issue-for-review.js ../webref/ed/ ../webref/tr/
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
