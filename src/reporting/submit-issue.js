@@ -62,7 +62,7 @@ if (require.main === module) {
 	continue;
       }
       const [,owner, repo] = m;
-      console.log(`Submitting issue ${metadata.title}…`);
+      console.log(`Submitting issue ${metadata.Title}…`);
       const ghRes = await octokit.rest.issues.create({
 	owner,
 	repo,
@@ -72,6 +72,8 @@ if (require.main === module) {
       const issueUrl = ghRes?.data?.html_url;
       console.log(`- filed ${issueUrl}`);
       if (issueUrl) {
+	execSync(`git pull origin main`);
+	console.log(`Saving updated report to ${filename}`);
 	metadata.Tracked = issueUrl;
 	fs.writeFile(filename, issueData.stringify(), 'utf-8');
 	console.log(issueData.stringify());
@@ -81,7 +83,6 @@ if (require.main === module) {
     }
     if (needsCommit) {
       execSync(`git commit -m "Update issue reports with github issue ref"`);
-      execSync(`git pull origin main`);
       execSync(`git push origin main`);
     }
   })();
