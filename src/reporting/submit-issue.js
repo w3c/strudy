@@ -68,7 +68,7 @@ if (require.main === module) {
 	title: metadata.Title,
 	body
       });
-      const issueUrl = ghRes?.data?.url;
+      const issueUrl = ghRes?.data?.html_url;
       if (issueUrl) {
 	metadata.Tracked = issueUrl;
 	fs.writeFile(filename, issueData.stringify(), 'utf-8');
