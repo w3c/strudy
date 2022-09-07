@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/fxtf-drafts
 Tracked: N/A
-Title: Broken references in Filter Effects Module Level 1
+Title: [filter-effects-1] Broken references in Filter Effects Module Level 1
 
 ---
 
