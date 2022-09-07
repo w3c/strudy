@@ -1,4 +1,4 @@
 module.exports = {
-  studyCrawl: require("./src/cli/study-crawl").studyCrawl,
-  generateReport: require("./src/cli/generate-report").generateReport,
+  studyCrawl: require("./src/lib/study-crawl").studyCrawl,
+  generateReport: require("./src/lib/generate-report").generateReport,
 };

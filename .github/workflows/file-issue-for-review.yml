@@ -14,6 +14,9 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: strudy
+    - name: Install dependencies
+      run: npm ci
+      working-directory: strudy
     - name: Checkout webref
       uses: actions/checkout@v2
       with:
