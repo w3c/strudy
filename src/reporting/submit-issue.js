@@ -75,7 +75,7 @@ if (require.main === module) {
 	execSync(`git pull origin main`);
 	console.log(`Saving updated report to ${filename}`);
 	metadata.Tracked = issueUrl;
-	fs.writeFile(filename, issueData.stringify(), 'utf-8');
+	await fs.writeFile(filename, issueData.stringify(), 'utf-8');
 	console.log(issueData.stringify());
 	execSync(`git add -u ${filename}`);
 	needsCommit = true;
