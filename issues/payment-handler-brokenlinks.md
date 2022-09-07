@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/payment-handler
-Tracked: N/A
+Repo: 'https://github.com/w3c/payment-handler'
+Tracked: 'https://github.com/w3c/payment-handler/issues/402'
 Title: Broken references in Payment Handler API
-
 ---
 
 While crawling [Payment Handler API](https://w3c.github.io/payment-handler/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
