@@ -62,6 +62,7 @@ if (require.main === module) {
 	continue;
       }
       const [,owner, repo] = m;
+      console.log(`Submitting issue ${metadata.title}…`);
       const ghRes = await octokit.rest.issues.create({
 	owner,
 	repo,
@@ -69,9 +70,11 @@ if (require.main === module) {
 	body
       });
       const issueUrl = ghRes?.data?.html_url;
+      console.log(`- filed ${issueUrl}`);
       if (issueUrl) {
 	metadata.Tracked = issueUrl;
 	fs.writeFile(filename, issueData.stringify(), 'utf-8');
+	console.log(issueData.stringify());
 	execSync(`git add -u ${filename}`);
 	needsCommit = true;
       }
