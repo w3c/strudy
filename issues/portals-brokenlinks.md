@@ -6,7 +6,6 @@ Title: Broken references in Portals
 ---
 
 While crawling [Portals](https://wicg.github.io/portals/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
-* [ ] https://html.spec.whatwg.org/multipage/parsing.html#completely-loaded
 * [ ] https://html.spec.whatwg.org/multipage/web-messaging.html#postmessageoptions
 * [ ] https://html.spec.whatwg.org/multipage/web-messaging.html#dom-postmessageoptions-transfer
 
