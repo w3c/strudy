@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/csswg-drafts
 Tracked: N/A
-Title: Broken references in Resize Observer
+Title: [resize-observer] Broken references in Resize Observer
 
 ---
 
