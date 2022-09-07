@@ -6,8 +6,6 @@ Title: Broken references in Web Share Target API
 ---
 
 While crawling [Web Share Target API](https://w3c.github.io/web-share-target/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
-* [ ] https://html.spec.whatwg.org/multipage/form-data-boundary-string#multipart/form-data-boundary-string
-* [ ] https://html.spec.whatwg.org/multipage/form-data-encoding-algorithm#multipart/form-data-encoding-algorithm
 * [ ] https://www.w3.org/TR/appmanifest/#dom-webappmanifest
 * [ ] https://www.w3.org/TR/appmanifest/#dfn-extension-point
 * [ ] https://www.w3.org/TR/appmanifest/#dom-webappmanifest-scope
