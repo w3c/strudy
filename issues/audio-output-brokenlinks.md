@@ -1,6 +1,6 @@
 ---
 Repo: https://github.com/w3c/mediacapture-output
-Tracked: N/A
+Tracked: https://github.com/w3c/mediacapture-output/pull/131
 Title: Broken references in Audio Output Devices API
 
 ---
