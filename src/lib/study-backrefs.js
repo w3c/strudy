@@ -405,7 +405,7 @@ async function studyBackrefs(edResults, trResults = []) {
 		  // is there an equivalent id in the multipage spec?
 		  && ids.find(i => i.match(new RegExp("https://html\.spec\.whatwg\.org/multipage/(.*)\.html#" + anchor)))) {
 		    // Should we keep track of those? ignoring for now
-	      } else if (link === "https://html.spec.whatwg.org/multipage/"
+	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage/")
 		  && htmlFragments[anchor]
 			 && ids.includes(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html#${anchor}`)) {
 		// Deal with anchors that are JS-redirected from
