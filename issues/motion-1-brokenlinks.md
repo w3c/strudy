@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/fxtf-drafts
 Tracked: N/A
-Title: Broken references in Motion Path Module Level 1
+Title: [motion-1] Broken references in Motion Path Module Level 1
 
 ---
 
