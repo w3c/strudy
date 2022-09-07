@@ -7,6 +7,7 @@ const path = require("path");
 const fs = require("fs").promises;
 const { execSync } = require('child_process');
 const Octokit = require("../lib/octokit");
+const matter = require('gray-matter');
 
 const GH_TOKEN = (() => {
   try {
@@ -82,17 +83,17 @@ if (require.main === module) {
 	}
 	// if not, we create the file, add it in a branch
 	// and submit it as a pull request to the repo
-	const issueReport = `---
-Repo: ${specResult.repo}
-Tracked: N/A
-Title: Broken references in ${specResult.title}
-
----
-
+	const issueReportData = matter(`
 While crawling [${specResult.title}](${specResult.crawled}), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
 ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
 
-<sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`;
+<sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`);
+	issueReportData.data = {
+	  Repo: specResult.repo,
+	  Tracked: "N/A",
+	  Title: `Broken references in ${specResult.title}`
+	};
+	const issueReport = issueReportData.stringify();
 	await fs.writeFile(issueFilename, issueReport, 'utf-8');
 	try {
 	  console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
