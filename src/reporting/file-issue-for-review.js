@@ -60,7 +60,6 @@ if (require.main === module) {
     const results = await studyBackrefs(crawl.ed, crawl.tr);
     console.log("- done");
     const currentBranch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
-    let counter = 0;
     const needsPush = {};
     await Promise.all(Object.keys(results).map(async uri => {
       const specResult = results[uri];
@@ -68,7 +67,6 @@ if (require.main === module) {
       const brokenLinks = specResult.brokenLinks || [];
       if (brokenLinks.length) {
 
-	if (counter > MAX_PR_BY_RUN) return;
 	const issueMoniker = `${specResult.shortname}-brokenlinks`;
 	// is there already a file with that moniker?
 	const issueFilename = path.join('issues/', issueMoniker + '.md');
@@ -102,7 +100,6 @@ ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
 	  execSync(`git add ${issueFilename}`);
 	  execSync(`git commit -m "File report on broken links found in ${specResult.title}"`);
 	  needsPush[issueMoniker] = {title: `Broken references in ${specResult.title}`, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
-	  counter++;
 	  console.log("- done");
 	  execSync(`git checkout ${currentBranch}`);
 	} catch (err) {
@@ -113,7 +110,13 @@ ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
       }
     }));
     if (Object.keys(needsPush).length) {
+      let counter = 0;
       for (let branch in needsPush) {
+	if (counter > MAX_PR_BY_RUN) {
+          delete needsPush[branch];
+	  continue;
+	}
+
         // is there already a pull request targetting that branch?
         const {data: pullrequests} = (await octokit.rest.pulls.list({
         owner: repoOwner,
@@ -124,6 +127,7 @@ ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
           console.log(`A pull request from branch ${branch} already exists, bailing`);
           delete needsPush[branch];
         }
+	counter++;
       }
     }
     if (Object.keys(needsPush).length) {
