@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/webauthn
 Tracked: N/A
-Title: Broken references in Web Authentication: An API for accessing Public Key Credentials - Level
+Title: "Broken references in Web Authentication: An API for accessing Public Key Credentials - Level"
 
 ---
 
