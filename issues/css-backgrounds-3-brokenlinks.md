@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/csswg-drafts
 Tracked: N/A
-Title: Broken references in CSS Backgrounds and Borders Module Level 3
+Title: [css-backgrounds] Broken references in CSS Backgrounds and Borders Module Level 3
 
 ---
 
