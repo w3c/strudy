@@ -7,7 +7,6 @@ Title: Broken references in Prerendering Revamped
 
 While crawling [Prerendering Revamped](https://wicg.github.io/nav-speculation/prerendering.html), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
 * [ ] https://html.spec.whatwg.org/multipage/browsing-the-web.html#refused-to-allow-the-document-to-be-unloaded
-* [ ] https://html.spec.whatwg.org/multipage/browsing-the-web.html#she-document
 * [ ] https://w3c.github.io/battery/#dfn-battery-promise
 * [ ] https://w3c.github.io/geolocation-api/#dfn-watch-process
 * [ ] https://w3c.github.io/pointerlock/#dfn-requestpointerlock-pointerlockoptions-options
