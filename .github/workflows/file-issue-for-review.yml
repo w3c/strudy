@@ -22,6 +22,12 @@ jobs:
       with:
         repository: w3c/webref
         path: webref
+    - name: Configure git
+      run: |
+        git config user.name strudy-bot"
+        git config user.email "<>"
+        git remote set-url --push origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+
     - name: Run issue filer script
       working-directory: strudy
       run: node src/reporting/file-issue-for-review.js ../webref/ed/ ../webref/tr/
