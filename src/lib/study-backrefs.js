@@ -403,7 +403,7 @@ async function studyBackrefs(edResults, trResults = []) {
 	      // Links to single-page version of HTML spec
 	      if (link === "https://html.spec.whatwg.org/"
 		  // is there an equivalent id in the multipage spec?
-		  && ids.find(i => i.match(new RegExp("https://html\.spec\.whatwg\.org/multipage/(.*)\.html#" + anchor)))) {
+		  && ids.find(i => i.startsWith("https://html.spec.whatwg.org/multipage/") && i.endsWith("#" + anchor))) {
 		    // Should we keep track of those? ignoring for now
 	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage")
 		  && htmlFragments[anchor]
