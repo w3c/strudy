@@ -6,8 +6,6 @@ Title: Broken references in User Timing Level 3
 ---
 
 While crawling [User Timing Level 3](https://w3c.github.io/user-timing/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
-* [ ] https://html.spec.whatwg.org/multipage/infrastructure.html#structuredserialize
-* [ ] https://html.spec.whatwg.org/multipage/infrastructure.html#structureddeserialize
 * [ ] https://webidl.spec.whatwg.org/#dfn-present
 * [ ] https://www.w3.org/TR/hr-time-2/#dfn-performance
 * [ ] https://www.w3.org/TR/navigation-timing/#performancetiming
