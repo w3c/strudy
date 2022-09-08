@@ -22,11 +22,6 @@ const MAX_PR_BY_RUN = 10;
 const repoOwner = 'w3c';
 const repoName = 'strudy';
 
-if (!GH_TOKEN) {
-  console.error("GH_TOKEN must be set to some personal access token as an env variable or in a config.json file");
-  process.exit(1);
-}
-
 const octokit = new Octokit({
   auth: GH_TOKEN,
   //log: console
@@ -46,6 +41,13 @@ ${issueReport}
 if (require.main === module) {
   let edCrawlResultsPath = process.argv[2];
   let trCrawlResultsPath = process.argv[3];
+  const dryRun = process.argv[4] === "--dry-run";
+
+  if (!dryRun && !GH_TOKEN) {
+    console.error("GH_TOKEN must be set to some personal access token as an env variable or in a config.json file");
+    process.exit(1);
+  }
+
   // Target the index file if needed
   if (!edCrawlResultsPath.endsWith('index.json')) {
     edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
@@ -94,19 +96,25 @@ ${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
 	  Title: `Broken references in ${specResult.title}`
 	};
 	const issueReport = issueReportData.stringify();
-	await fs.writeFile(issueFilename, issueReport, 'utf-8');
-	try {
-	  console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
-	  execSync(`git checkout -b ${issueMoniker}`);
-	  execSync(`git add ${issueFilename}`);
-	  execSync(`git commit -m "File report on broken links found in ${specResult.title}"`);
-	  needsPush[issueMoniker] = {title: `Broken references in ${specResult.title}`, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
-	  console.log("- done");
-	  execSync(`git checkout ${currentBranch}`);
-	} catch (err) {
-	  console.error(`Failed to commit error report for ${specResult.title}`, err);
-	  fs.unlink(issueFilename);
-	  execSync(`git checkout ${currentBranch}`);
+	if (dryRun) {
+	  console.log(`Would add ${issueFilename} with`);
+	  console.log(issueReport);
+	  console.log();
+	} else {
+	  await fs.writeFile(issueFilename, issueReport, 'utf-8');
+	  try {
+	    console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
+	    execSync(`git checkout -b ${issueMoniker}`);
+	    execSync(`git add ${issueFilename}`);
+	    execSync(`git commit -m "File report on broken links found in ${specResult.title}"`);
+	    needsPush[issueMoniker] = {title: `Broken references in ${specResult.title}`, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
+	    console.log("- done");
+	    execSync(`git checkout ${currentBranch}`);
+	  } catch (err) {
+	    console.error(`Failed to commit error report for ${specResult.title}`, err);
+	    fs.unlink(issueFilename);
+	    execSync(`git checkout ${currentBranch}`);
+	  }
 	}
       }
     }));
