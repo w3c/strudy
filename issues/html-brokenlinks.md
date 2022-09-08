@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/whatwg/html
-Tracked: N/A
+Repo: 'https://github.com/whatwg/html'
+Tracked: 'https://github.com/whatwg/html/issues/8272'
 Title: Broken references in HTML Standard
-
 ---
 
 While crawling [HTML Standard](https://html.spec.whatwg.org/multipage/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
