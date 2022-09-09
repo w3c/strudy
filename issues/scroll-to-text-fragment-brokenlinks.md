@@ -6,8 +6,6 @@ Title: Broken references in Text Fragments
 ---
 
 While crawling [Text Fragments](https://wicg.github.io/scroll-to-text-fragment/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
-* [ ] https://html.spec.whatwg.org/commit-snapshots/6ccb1ec8b8e79116880ea7a519d5a96fe8558afc/#initialise-the-document-object
-* [ ] https://html.spec.whatwg.org/commit-snapshots/6ccb1ec8b8e79116880ea7a519d5a96fe8558afc/#traverse-the-history
 * [ ] https://w3c.github.io/webappsec-fetch-metadata/#request-user-activation-flag
 * [ ] https://w3c.github.io/webappsec-permissions-policy/document-policy.html#algo-get-policy-value
 * [ ] https://w3c.github.io/webappsec-permissions-policy/document-policy.html#configuration-point
