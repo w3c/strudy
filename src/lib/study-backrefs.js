@@ -411,6 +411,9 @@ async function studyBackrefs(edResults, trResults = []) {
 		// Deal with anchors that are JS-redirected from
 		// the multipage version of HTML
 		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
+	      } else if (anchor.startsWith(':~:text=')) {
+		// links using text fragments are inherently fragile
+		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
 	      } else {
 		recordAnomaly(spec, "brokenLinks", link + "#" + anchor);
 	      }
