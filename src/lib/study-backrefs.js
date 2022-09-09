@@ -346,6 +346,10 @@ async function studyBackrefs(edResults, trResults = []) {
           recordAnomaly(spec, "outdatedSpecs", link);
           return;
         }
+	if (link.match(/spec\.whatwg\.org/) && link.match(/commit-snapshots/)) {
+	  recordAnomaly(spec, "outdatedSpecs", link);
+          return;
+        }
 
         if (shortnameMap[shortname]) {
           // TODO: Consider reporting that as a "non ideal" link.
@@ -400,6 +404,7 @@ async function studyBackrefs(edResults, trResults = []) {
             if ((trSourceSpec.ids || []).includes(fullReleaseLink) && link.match(/w3\.org\/TR\//)) {
               recordAnomaly(spec, "evolvingLinks", link + "#" + anchor);
             } else {
+	      // Links to WHATWG commit snapshots
 	      // Links to single-page version of HTML spec
 	      if (link === "https://html.spec.whatwg.org/"
 		  // is there an equivalent id in the multipage spec?
