@@ -139,6 +139,7 @@ const outdatedShortnames = {
   "css3-box": "css-box-3",
   "css3-break": "css-break-3",
   "css3-color": "css-color-3",
+  "css3-exclusions": "css-shapes-1",
   "css3-flexbox": "css-flexbox-1",
   "css3-fonts": "css-fonts-3",
   "css3-grid-layout": "css-grid-1",
@@ -163,26 +164,6 @@ const outdatedShortnames = {
   "mixedcontent": "mixed-content",
   "ServiceWorker": "service-workers",
   "powerfulfeatures": "secure-contexts",
-};
-
-const shortnameMap = {
-  "accname-1.1": "accname",
-  "accname-aam-1.1": "accname",
-  "core-aam-1.1": "core-aam",
-  "csp": "CSP",
-  "CSP2": "CSP",
-  "css2": "CSS21",
-  "hr-time-2": "hr-time",
-  "html-aam": "html-aam-1.0",
-  "input-events-1": "input-events",
-  "pointerevents2": "pointerevents",
-  "resource-timing": "resource-timing-2",
-  "resource-timing-1": "resource-timing",
-  "wai-aria-1.1": "wai-aria-1.2",
-  "wasm-core-1": "wasm-core",
-  "webauthn-1": "webauthn",
-  "webdriver": "webdriver2",
-  "webdriver1": "webdriver2"
 };
 
 // TODO: check the link is non-normative (somehow)
@@ -286,8 +267,6 @@ async function studyBackrefs(edResults, trResults = []) {
         brokenLinks: [],
     	frailLinks: [],
 	nonCanonicalRefs: [],
-        notExported: [],
-        notDfn: [],
         evolvingLinks: [],
         outdatedSpecs: [],
         unknownSpecs: [],
@@ -371,9 +350,6 @@ async function studyBackrefs(edResults, trResults = []) {
 	  shortname = outdatedShortnames[shortname];
 	  recordAnomaly(spec, "nonCanonicalRefs", link);
 	}
-        if (shortnameMap[shortname]) {
-          shortname = shortnameMap[shortname];
-        }
 
         // At this point, we managed to associate the link with a shortname,
         // let's check whether the shortname matches a spec in the crawl,
