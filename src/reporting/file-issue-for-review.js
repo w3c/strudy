@@ -27,6 +27,30 @@ const octokit = new Octokit({
   //log: console
 });
 
+function issueWrapper(spec, anomalies, anomalyType) {
+  let anomalyReport = "", title = "";
+  switch(anomalyType) {
+  case "brokenLinks":
+    title = `Broken references in ${spec.title}`;
+    anomalyReport = "the following links to other specifications were detected as pointing to non-existing anchors";
+    break;
+  case "outdatedSpecs":
+    title = `Outdated references in ${spec.title}`;
+    anomalyReport = "the following links were detected as pointing to outdated specifications";
+  case "nonCanonicalRefs":
+    title = `Non-canonical references in ${spec.title}`;
+    anomalyReport = "the following links were detected as pointing to outdated URLs";
+  }
+  return {
+    title,
+    content: `
+While crawling [${spec.title}](${spec.crawled}), ${anomalyReport}:
+${anomalies.map(anomaly => `* [ ] ${anomaly}`).join("\n")}
+
+<sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`
+  };
+}
+
 function prWrapper(title, uri, repo, issueReport) {
   return `This pull request was automatically created by Strudy upon detecting errors in ${title}.
 
@@ -42,8 +66,9 @@ if (require.main === module) {
   let edCrawlResultsPath = process.argv[2];
   let trCrawlResultsPath = process.argv[3];
   const dryRun = process.argv[4] === "--dry-run";
+  const noGit = dryRun || process.argv[4] === "--no-git";
 
-  if (!dryRun && !GH_TOKEN) {
+  if (!noGit && !GH_TOKEN) {
     console.error("GH_TOKEN must be set to some personal access token as an env variable or in a config.json file");
     process.exit(1);
   }
@@ -59,61 +84,67 @@ if (require.main === module) {
     console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`)
     const crawl = await loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath);
     console.log("- done");
-    console.log("Running broken link detection…");
+    console.log("Running back references analysis…");
     const results = await studyBackrefs(crawl.ed, crawl.tr);
     console.log("- done");
-    const currentBranch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
+    const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     const needsPush = {};
     await Promise.all(Object.keys(results).map(async uri => {
-      const specResult = results[uri];
-      console.log(`Compiling report for ${specResult.title}…`);
-      const brokenLinks = specResult.brokenLinks || [];
-      if (brokenLinks.length) {
-
-	const issueMoniker = `${specResult.shortname}-brokenlinks`;
-	// is there already a file with that moniker?
-	const issueFilename = path.join('issues/', issueMoniker + '.md');
-	try {
-	  if (!(await fs.stat(issueFilename)).isFile()) {
-	    console.error(`${issueFilename} already exists but is not a file`);
-	  } else {
-	    console.log(`${issueFilename} already exists, bailing`);
-	  }
-	  return;
-	} catch (err) {
-	  // Intentionally blank
-	}
-	// if not, we create the file, add it in a branch
-	// and submit it as a pull request to the repo
-	const issueReportData = matter(`
-While crawling [${specResult.title}](${specResult.crawled}), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
-${brokenLinks.map(link => `* [ ] ${link}`).join("\n")}
-
-<sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`);
-	issueReportData.data = {
-	  Repo: specResult.repo,
-	  Tracked: "N/A",
-	  Title: `Broken references in ${specResult.title}`
-	};
-	const issueReport = issueReportData.stringify();
-	if (dryRun) {
-	  console.log(`Would add ${issueFilename} with`);
-	  console.log(issueReport);
-	  console.log();
-	} else {
-	  await fs.writeFile(issueFilename, issueReport, 'utf-8');
+      for (let anomalyType of ["brokenLinks", "outdatedSpecs", "nonCanonicalRefs"]) {
+	const specResult = results[uri];
+	console.log(`Compiling ${anomalyType} report for ${specResult.title}…`);
+	const anomalies = specResult[anomalyType] || [];
+	if (anomalies.length && specResult.repo) {
+	  const issueMoniker = `${specResult.shortname}-${anomalyType.toLowerCase()}`;
+	  // is there already a file with that moniker?
+	  const issueFilename = path.join('issues/', issueMoniker + '.md');
 	  try {
-	    console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
-	    execSync(`git checkout -b ${issueMoniker}`);
-	    execSync(`git add ${issueFilename}`);
-	    execSync(`git commit -m "File report on broken links found in ${specResult.title}"`);
-	    needsPush[issueMoniker] = {title: `Broken references in ${specResult.title}`, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
-	    console.log("- done");
-	    execSync(`git checkout ${currentBranch}`);
+	    if (!(await fs.stat(issueFilename)).isFile()) {
+	      console.error(`${issueFilename} already exists but is not a file`);
+	    } else {
+	      console.log(`${issueFilename} already exists, bailing`);
+	    }
+	    return;
 	  } catch (err) {
-	    console.error(`Failed to commit error report for ${specResult.title}`, err);
-	    fs.unlink(issueFilename);
-	    execSync(`git checkout ${currentBranch}`);
+	    // Intentionally blank
+	  }
+	  // if not, we create the file, add it in a branch
+	  // and submit it as a pull request to the repo
+	  const {title, content: issueReportContent} = issueWrapper(specResult, anomalies, anomalyType);
+	  const issueReportData = matter(issueReportContent);
+	  issueReportData.data = {
+	    Repo: specResult.repo,
+	    Tracked: "N/A",
+	    Title: title
+	  };
+	  let issueReport;
+	  try {
+	    issueReport = issueReportData.stringify();
+	  } catch (err) {
+	    console.error(`Failed to stringify report of ${anomalyType} for ${title}: ${err}`, issueReportContent);
+	    return;
+	  };
+	  if (dryRun) {
+	    console.log(`Would add ${issueFilename} with`);
+	    console.log(issueReport);
+	    console.log();
+	  } else {
+	    await fs.writeFile(issueFilename, issueReport, 'utf-8');
+	    try {
+	      if (!noGit) {
+		console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
+		execSync(`git checkout -b ${issueMoniker}`);
+		execSync(`git add ${issueFilename}`);
+		execSync(`git commit -m "File report on ${issueReportData.title}"`);
+		needsPush[issueMoniker] = {title: issueReportData.title, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
+		console.log("- done");
+		execSync(`git checkout ${currentBranch}`);
+	      }
+	    } catch (err) {
+	      console.error(`Failed to commit error report for ${specResult.title}`, err);
+	      fs.unlink(issueFilename);
+	      execSync(`git checkout ${currentBranch}`);
+	    }
 	  }
 	}
       }
