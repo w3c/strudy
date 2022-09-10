@@ -106,7 +106,7 @@ function computeShortname(url) {
 
 
 // shortnames for specs that should no longer be linked to
-const shortNamesOfOutdatedSpecs = {
+const shortNamesOfTransferedSpecs = {
   "2dcontext": "html",
   "2dcontext2": "html",
   "cors":  "fetch",
@@ -120,22 +120,19 @@ const shortNamesOfOutdatedSpecs = {
   "selectors-api": "dom",
   "webmessaging": "html",
   "websockets": "html",
+  "html": "html",
   "webstorage": "html",
   "workers": "html",
-  "worklets-1": "html"
+  "worklets-1": "html",
+  "WebIDL": "webidl",
+  "WebIDL-1": "webidl"
 };
 
-const shortnameMap = {
-  "accname-1.1": "accname",
-  "accname-aam-1.1": "accname",
+const outdatedShortnames = {
   "BackgroundSync": "background-sync",
   "content-security-policy": "CSP",
-  "core-aam-1.1": "core-aam",
-  "csp": "CSP",
-  "CSP2": "CSP",
   "css-selectors": "selectors",
   "css-selectors-3": "selectors-3",
-  "css2": "CSS21",
   "css3-align": "css-align-3",
   "css3-animations": "css-animations-1",
   "css3-background": "css-backgrounds",
@@ -161,17 +158,26 @@ const shortnameMap = {
   "css3-values": "css-values-3",
   "css3-writing-modes": "css-writing-modes-3",
   "feature-policy": "permissions-policy",
-  "hr-time-2": "hr-time",
-  "html-aam": "html-aam-1.0",
-  "input-events-1": "input-events",
   "InputDeviceCapabilities": "input-device-capabilities",
   "IntersectionObserver": "intersection-observer",
   "mixedcontent": "mixed-content",
-  "pointerevents2": "pointerevents",
+  "ServiceWorker": "service-workers",
   "powerfulfeatures": "secure-contexts",
+};
+
+const shortnameMap = {
+  "accname-1.1": "accname",
+  "accname-aam-1.1": "accname",
+  "core-aam-1.1": "core-aam",
+  "csp": "CSP",
+  "CSP2": "CSP",
+  "css2": "CSS21",
+  "hr-time-2": "hr-time",
+  "html-aam": "html-aam-1.0",
+  "input-events-1": "input-events",
+  "pointerevents2": "pointerevents",
   "resource-timing": "resource-timing-2",
   "resource-timing-1": "resource-timing",
-  "ServiceWorker": "service-workers",
   "wai-aria-1.1": "wai-aria-1.2",
   "wasm-core-1": "wasm-core",
   "webauthn-1": "webauthn",
@@ -278,7 +284,8 @@ async function studyBackrefs(edResults, trResults = []) {
         notExported: [],
         notDfn: [],
         brokenLinks: [],
-    	  frailLinks: [],
+    	frailLinks: [],
+	nonCanonicalRefs: [],
         notExported: [],
         notDfn: [],
         evolvingLinks: [],
@@ -343,7 +350,7 @@ async function studyBackrefs(edResults, trResults = []) {
           }
 	}
 
-        if (shortNamesOfOutdatedSpecs[shortname]) {
+        if ((link.match(/w3\.org/) || link.match(/w3c\.github\.io/))  && shortNamesOfTransferedSpecs[shortname]) {
           // The specification should no longer be referenced.
           // In theory, we could still try to match the anchor against the
           // right spec. In practice, these outdated specs are sufficiently
@@ -356,8 +363,15 @@ async function studyBackrefs(edResults, trResults = []) {
           return;
         }
 
+	if (link.match(/heycam\.github\.io/)) {
+	  recordAnomaly(spec, "nonCanonicalRefs", link);
+          shortname = "webidl";
+        }
+	if (outdatedShortnames[shortname]) {
+	  shortname = outdatedShortnames[shortname];
+	  recordAnomaly(spec, "nonCanonicalRefs", link);
+	}
         if (shortnameMap[shortname]) {
-          // TODO: Consider reporting that as a "non ideal" link.
           shortname = shortnameMap[shortname];
         }
 
