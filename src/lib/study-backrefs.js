@@ -146,7 +146,7 @@ const shortnameMap = {
   "css3-fonts": "css-fonts-3",
   "css3-grid-layout": "css-grid-1",
   "css3-images": "css-images-3",
-  "css3-mediaqueries": "mediaqueries",
+  "css3-mediaqueries": "mediaqueries-3",
   "css3-multicol": "css-multicol-1",
   "css3-namespace": "css-namespaces-3",
   "css3-page": "css-page-3",
@@ -261,7 +261,12 @@ async function studyBackrefs(edResults, trResults = []) {
 
   // Donwload automatic map of multipages anchors in HTML spec
   // FIXME: this makes the script network-dependent
-  const htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
+  let htmlFragments ;
+  try {
+    htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
+  } catch (err) {
+    console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec");
+  }
 
   function recordAnomaly(spec, anomalyType, link) {
     if (!report[spec.url]) {
@@ -410,8 +415,8 @@ async function studyBackrefs(edResults, trResults = []) {
 		  // is there an equivalent id in the multipage spec?
 		  && ids.find(i => i.startsWith("https://html.spec.whatwg.org/multipage/") && i.endsWith("#" + anchor))) {
 		    // Should we keep track of those? ignoring for now
-	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage")
-		  && htmlFragments[anchor]
+	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage") && htmlFragments
+			 && htmlFragments[anchor]
 			 && ids.includes(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html#${anchor}`)) {
 		// Deal with anchors that are JS-redirected from
 		// the multipage version of HTML
