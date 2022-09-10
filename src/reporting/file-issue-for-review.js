@@ -65,8 +65,10 @@ ${issueReport}
 if (require.main === module) {
   let edCrawlResultsPath = process.argv[2];
   let trCrawlResultsPath = process.argv[3];
-  const dryRun = process.argv[4] === "--dry-run";
-  const noGit = dryRun || process.argv[4] === "--no-git";
+  const anomalyFilter = process.argv.slice(4).filter(p => !p.startsWith("--"));
+  const anomalyTypes = anomalyFilter.length ? anomalyFilter : ["brokenLinks", "outdatedSpecs", "nonCanonicalRefs"];
+  const dryRun = process.argv.includes("--dry-run");
+  const noGit = dryRun || process.argv.includes("--no-git");
 
   if (!noGit && !GH_TOKEN) {
     console.error("GH_TOKEN must be set to some personal access token as an env variable or in a config.json file");
@@ -90,7 +92,7 @@ if (require.main === module) {
     const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     const needsPush = {};
     await Promise.all(Object.keys(results).map(async uri => {
-      for (let anomalyType of ["brokenLinks", "outdatedSpecs", "nonCanonicalRefs"]) {
+      for (let anomalyType of anomalyTypes) {
 	const specResult = results[uri];
 	console.log(`Compiling ${anomalyType} report for ${specResult.title}…`);
 	const anomalies = specResult[anomalyType] || [];
