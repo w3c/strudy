@@ -294,11 +294,11 @@ async function studyBackrefs(edResults, trResults = []) {
           }
 
           // Detect links to dated specs
-          const match = nakedLink.match(/www\.w3\.org\/TR\/[0-9]{4}\/[A-Z]+-(.+)-[0-9]{8}\//);
+          const match = nakedLink.match(/www\.w3\.org\/TR\/[0-9]{4}\/([A-Z]+)-(.+)-[0-9]{8}\//);
           if (match) {
             // ED should not link to dated versions of the spec, unless it
             // voluntarily links to previous versions of itself
-            if (match[1] !== spec.shortname) {
+            if ((match[2] !== spec.shortname || outdatedShortnames[match[2]] === spec.shortname) && !["REC", "NOTE"].includes(match[1])) {
               recordAnomaly(spec, "datedUrls", link);
             }
 
