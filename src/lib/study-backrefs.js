@@ -106,7 +106,7 @@ function computeShortname(url) {
 
 
 // shortnames for specs that should no longer be linked to
-const shortNamesOfOutdatedSpecs = {
+const shortNamesOfTransferedSpecs = {
   "2dcontext": "html",
   "2dcontext2": "html",
   "cors":  "fetch",
@@ -120,33 +120,31 @@ const shortNamesOfOutdatedSpecs = {
   "selectors-api": "dom",
   "webmessaging": "html",
   "websockets": "html",
+  "html": "html",
   "webstorage": "html",
   "workers": "html",
-  "worklets-1": "html"
+  "worklets-1": "html",
+  "WebIDL": "webidl",
+  "WebIDL-1": "webidl"
 };
 
-const shortnameMap = {
-  "accname-1.1": "accname",
-  "accname-aam-1.1": "accname",
+const outdatedShortnames = {
   "BackgroundSync": "background-sync",
   "content-security-policy": "CSP",
-  "core-aam-1.1": "core-aam",
-  "csp": "CSP",
-  "CSP2": "CSP",
   "css-selectors": "selectors",
   "css-selectors-3": "selectors-3",
-  "css2": "CSS21",
   "css3-align": "css-align-3",
   "css3-animations": "css-animations-1",
   "css3-background": "css-backgrounds",
   "css3-box": "css-box-3",
   "css3-break": "css-break-3",
   "css3-color": "css-color-3",
+  "css3-exclusions": "css-shapes-1",
   "css3-flexbox": "css-flexbox-1",
   "css3-fonts": "css-fonts-3",
   "css3-grid-layout": "css-grid-1",
   "css3-images": "css-images-3",
-  "css3-mediaqueries": "mediaqueries",
+  "css3-mediaqueries": "mediaqueries-3",
   "css3-multicol": "css-multicol-1",
   "css3-namespace": "css-namespaces-3",
   "css3-page": "css-page-3",
@@ -161,22 +159,11 @@ const shortnameMap = {
   "css3-values": "css-values-3",
   "css3-writing-modes": "css-writing-modes-3",
   "feature-policy": "permissions-policy",
-  "hr-time-2": "hr-time",
-  "html-aam": "html-aam-1.0",
-  "input-events-1": "input-events",
   "InputDeviceCapabilities": "input-device-capabilities",
   "IntersectionObserver": "intersection-observer",
   "mixedcontent": "mixed-content",
-  "pointerevents2": "pointerevents",
-  "powerfulfeatures": "secure-contexts",
-  "resource-timing": "resource-timing-2",
-  "resource-timing-1": "resource-timing",
   "ServiceWorker": "service-workers",
-  "wai-aria-1.1": "wai-aria-1.2",
-  "wasm-core-1": "wasm-core",
-  "webauthn-1": "webauthn",
-  "webdriver": "webdriver2",
-  "webdriver1": "webdriver2"
+  "powerfulfeatures": "secure-contexts",
 };
 
 // TODO: check the link is non-normative (somehow)
@@ -261,7 +248,12 @@ async function studyBackrefs(edResults, trResults = []) {
 
   // Donwload automatic map of multipages anchors in HTML spec
   // FIXME: this makes the script network-dependent
-  const htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
+  let htmlFragments ;
+  try {
+    htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
+  } catch (err) {
+    console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec");
+  }
 
   function recordAnomaly(spec, anomalyType, link) {
     if (!report[spec.url]) {
@@ -273,9 +265,8 @@ async function studyBackrefs(edResults, trResults = []) {
         notExported: [],
         notDfn: [],
         brokenLinks: [],
-    	  frailLinks: [],
-        notExported: [],
-        notDfn: [],
+    	frailLinks: [],
+	nonCanonicalRefs: [],
         evolvingLinks: [],
         outdatedSpecs: [],
         unknownSpecs: [],
@@ -303,11 +294,11 @@ async function studyBackrefs(edResults, trResults = []) {
           }
 
           // Detect links to dated specs
-          const match = nakedLink.match(/www\.w3\.org\/TR\/[0-9]{4}\/[A-Z]+-(.+)-[0-9]{8}\//);
+          const match = nakedLink.match(/www\.w3\.org\/TR\/[0-9]{4}\/([A-Z]+)-(.+)-[0-9]{8}\//);
           if (match) {
             // ED should not link to dated versions of the spec, unless it
             // voluntarily links to previous versions of itself
-            if (match[1] !== spec.shortname) {
+            if ((match[2] !== spec.shortname || outdatedShortnames[match[2]] === spec.shortname) && !["REC", "NOTE"].includes(match[1])) {
               recordAnomaly(spec, "datedUrls", link);
             }
 
@@ -338,7 +329,7 @@ async function studyBackrefs(edResults, trResults = []) {
           }
 	}
 
-        if (shortNamesOfOutdatedSpecs[shortname]) {
+        if ((link.match(/w3\.org/) || link.match(/w3c\.github\.io/))  && shortNamesOfTransferedSpecs[shortname]) {
           // The specification should no longer be referenced.
           // In theory, we could still try to match the anchor against the
           // right spec. In practice, these outdated specs are sufficiently
@@ -351,10 +342,14 @@ async function studyBackrefs(edResults, trResults = []) {
           return;
         }
 
-        if (shortnameMap[shortname]) {
-          // TODO: Consider reporting that as a "non ideal" link.
-          shortname = shortnameMap[shortname];
+	if (link.match(/heycam\.github\.io/)) {
+	  recordAnomaly(spec, "nonCanonicalRefs", link);
+          shortname = "webidl";
         }
+	if (outdatedShortnames[shortname]) {
+	  shortname = outdatedShortnames[shortname];
+	  recordAnomaly(spec, "nonCanonicalRefs", link);
+	}
 
         // At this point, we managed to associate the link with a shortname,
         // let's check whether the shortname matches a spec in the crawl,
@@ -410,8 +405,8 @@ async function studyBackrefs(edResults, trResults = []) {
 		  // is there an equivalent id in the multipage spec?
 		  && ids.find(i => i.startsWith("https://html.spec.whatwg.org/multipage/") && i.endsWith("#" + anchor))) {
 		    // Should we keep track of those? ignoring for now
-	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage")
-		  && htmlFragments[anchor]
+	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage") && htmlFragments
+			 && htmlFragments[anchor]
 			 && ids.includes(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html#${anchor}`)) {
 		// Deal with anchors that are JS-redirected from
 		// the multipage version of HTML
