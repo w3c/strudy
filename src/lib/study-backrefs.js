@@ -400,9 +400,9 @@ async function studyBackrefs(edResults, trResults = []) {
             if ((trSourceSpec.ids || []).includes(fullReleaseLink) && link.match(/w3\.org\/TR\//)) {
               recordAnomaly(spec, "evolvingLinks", link + "#" + anchor);
             } else {
-	      if (link.startsWith("https://html.spec.whatwg.org/C")) {
+	      if (link.startsWith("https://html.spec.whatwg.org/C") || link.startsWith("http://html.spec.whatwg.org/C")) {
 		recordAnomaly(spec, "nonCanonicalRefs", link);
-		link = link.replace("https://html.spec.whatwg.org/C", "https://html.spec.whatwg.org/multipage");
+		link = link.replace("http:", "https:").replace("https://html.spec.whatwg.org/C", "https://html.spec.whatwg.org/multipage");
 	      }
 	      // Links to single-page version of HTML spec
 	      if (link === "https://html.spec.whatwg.org/"
