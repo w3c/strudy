@@ -31,7 +31,7 @@ const { expandCrawlResult, isLatestLevelThatPasses } = require('reffy');
 const { studyBackrefs } = require('../cli/study-backrefs');
 const checkMissingDefinitions = require('../cli/check-missing-dfns').checkSpecDefinitions;
 
-const {canonicalizeUrl, canonicalizesTo} = require("./lib/canonicalize-url");
+const {canonicalizeUrl, canonicalizesTo} = require("./canonicalize-url");
 
 const array_concat = (a,b) => a.concat(b);
 const uniqueFilter = (item, idx, arr) => arr.indexOf(item) === idx;
