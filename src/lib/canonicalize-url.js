@@ -8,9 +8,7 @@
  * to canonicalize dated W3C URLs to the Latest version, and to use a list of
  * equivalent URLs (that the crawler typically generates).
  */
-function canonicalizeUrl(url, options) {
-    options = options || {};
-
+function canonicalizeUrl(url, options = {}) {
     // Same code as in Reffy:
     // https://github.com/w3c/reffy/blob/841db672190cf28658c29de3b8d7b8e28687ef47/src/postprocessing/annotate-links.js#L8-L19
     let canon = url.replace(/^http:/, 'https:')
@@ -40,13 +38,9 @@ function canonicalizeUrl(url, options) {
 }
 
 
-function canonicalizesTo(url, refUrl, options) {
-    let newOptions = {
-        datedToLatest: (options ? options.datedToLatest : false),
-        equivalents: (options ? options.equivalents : null),
-        returnAlternatives: true
-    };
-    let canon = canonicalizeUrl(url, newOptions);
+function canonicalizesTo(url, refUrl, options = {datedToLatest: false, equivalents: null, returnAlternatives: true}) {
+    if (!url) return url;
+    let canon = canonicalizeUrl(url, options);
     return Array.isArray(refUrl) ?
         refUrl.some(u => canon.includes(u)) :
         canon.includes(refUrl);
