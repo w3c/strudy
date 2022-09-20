@@ -218,7 +218,7 @@ function studyCrawlResults(results, options = {}) {
         // about because we cannot find a matching "Global" name in
         // any other spec
         unknownExposedNames: exposed
-          .filter(name => knownGlobalNames.indexOf(name) === -1)
+          .filter(name => !knownGlobalNames.includes(name) && name !== "*")
           .sort(),
 
         // List of IDL names used in the spec that we know nothing about
