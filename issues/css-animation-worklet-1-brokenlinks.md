@@ -6,8 +6,6 @@ Title: Broken references in CSS Animation Worklet API
 ---
 
 While crawling [CSS Animation Worklet API](https://drafts.css-houdini.org/css-animationworklet-1/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
-* [ ] http://w3c.github.io/html/infrastructure.html#structureddeserialize
-* [ ] http://w3c.github.io/html/infrastructure.html#structuredserialize
 * [ ] https://drafts.csswg.org/web-animations#timing-function
 * [ ] https://drafts.csswg.org/web-animations#current-time
 * [ ] https://drafts.csswg.org/web-animations#inherited-time
