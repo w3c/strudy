@@ -289,11 +289,11 @@ function generateReportPerSpec(study) {
 
   const orgs = [...new Set(study.results.map(r => r.organization))].sort();
   for (let org of orgs) {
-    w(`# ${org} {#${toSlug(org)}}`);
+    w(`# ${org} {#org-${toSlug(org)}}`);
     w();
     const groups = [...new Set(study.results.filter(r => r.organization === org).map(r => r.groups.map(g => g.name)).flat())].sort();
     for (let group of groups) {
-      w(`## ${group} {#${toSlug(group)}}`);
+      w(`## ${group} {#group-${toSlug(group)}}`);
       w();
       study.results
         .filter(r => r.organization === org && r.groups.find(g => g.name === group))
