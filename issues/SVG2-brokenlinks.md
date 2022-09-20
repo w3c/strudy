@@ -9,13 +9,10 @@ While crawling [Scalable Vector Graphics (SVG) 2](https://svgwg.org/svg2-draft/)
 * [ ] https://drafts.csswg.org/web-animations/#animation-interpolation
 * [ ] https://drafts.csswg.org/web-animations/#discrete-animation-type-section
 * [ ] https://drafts.csswg.org/web-animations/#real-number-animation-type
-* [ ] https://html.spec.whatwg.org/C/#boolean-attribute
-* [ ] https://html.spec.whatwg.org/C/#attr-fe-autofocus
 * [ ] https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable
 * [ ] https://w3c.github.io/svg-aam/#details-id-69
 * [ ] https://www.w3.org/TR/css-position-3/#vp
 * [ ] https://www.w3.org/TR/css-selectors-3/#the-user-action-pseudo-classes-hover-act
-* [ ] https://www.w3.org/TR/css3-mediaqueries/#syntax
 * [ ] https://www.w3.org/TR/geometry-1/#dom-dompoint
 * [ ] https://www.w3.org/TR/geometry-1/#dom-dompointreadonly
 * [ ] https://www.w3.org/TR/web-animations-1/#keyframeeffectreadonly
