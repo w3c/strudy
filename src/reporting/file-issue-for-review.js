@@ -27,7 +27,13 @@ const octokit = new Octokit({
   //log: console
 });
 
+// based on `jq .[].nightly.repository index.json |sort|uniq -c|sort -rn|less`
+// in browser-specs
+// TODO: automate it?
+const multiSpecRepos = ["w3c/csswg-drafts", "w3c/fxtf-drafts", "w3c/svgwg", "KhronosGroup/WebGL", "httpwg/httpwg.github.io", "w3c/css-houdini-drafts", "WebAssembly/spec", "w3c/woff", "w3c/mediacapture-handle", "w3c/epub-specs", "gpuweb/gpuweb"].map(r => "https://github.com/" + r);
+
 function issueWrapper(spec, anomalies, anomalyType) {
+  const titlePrefix = (multiSpecRepos.includes(spec.repo)) ? `[${spec.shortname}] ` : "";
   let anomalyReport = "", title = "";
   switch(anomalyType) {
   case "brokenLinks":
@@ -42,7 +48,7 @@ function issueWrapper(spec, anomalies, anomalyType) {
     anomalyReport = "the following links were detected as pointing to outdated URLs";
   }
   return {
-    title,
+    title: titlePrefix + title,
     content: `
 While crawling [${spec.title}](${spec.crawled}), ${anomalyReport}:
 ${anomalies.map(anomaly => `* [ ] ${anomaly}`).join("\n")}
