@@ -1,6 +1,6 @@
 {
   "name": "strudy",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Web spec analysis tool that can process crawl reports created by Reffy.",
   "repository": {
     "type": "git",
