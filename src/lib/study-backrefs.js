@@ -139,7 +139,6 @@ const outdatedShortnames = {
   "css3-box": "css-box-3",
   "css3-break": "css-break-3",
   "css3-color": "css-color-3",
-  "css3-exclusions": "css-shapes-1",
   "css3-flexbox": "css-flexbox-1",
   "css3-fonts": "css-fonts-3",
   "css3-grid-layout": "css-grid-1",

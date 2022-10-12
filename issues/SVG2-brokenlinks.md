@@ -11,9 +11,6 @@ While crawling [Scalable Vector Graphics (SVG) 2](https://svgwg.org/svg2-draft/)
 * [ ] https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable
 * [ ] https://w3c.github.io/svg-aam/#details-id-69
 * [ ] https://www.w3.org/TR/css-position-3/#vp
-* [ ] https://www.w3.org/TR/css3-exclusions/#content-area
-* [ ] https://www.w3.org/TR/css3-exclusions/#wrapping-context
-* [ ] https://www.w3.org/TR/css3-exclusions/#wrapping-area
 * [ ] https://www.w3.org/TR/geometry-1/#dom-dompoint
 * [ ] https://www.w3.org/TR/geometry-1/#dom-dompointreadonly
 * [ ] https://www.w3.org/TR/web-animations-1/#keyframeeffectreadonly
