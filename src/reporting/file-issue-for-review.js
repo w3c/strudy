@@ -73,8 +73,9 @@ if (require.main === module) {
   let trCrawlResultsPath = process.argv[3];
   const anomalyFilter = process.argv.slice(4).filter(p => !p.startsWith("--"));
   const anomalyTypes = anomalyFilter.length ? anomalyFilter : ["brokenLinks", "outdatedSpecs", "nonCanonicalRefs"];
+  const updateMode = process.argv.includes("--update");
   const dryRun = process.argv.includes("--dry-run");
-  const noGit = dryRun || process.argv.includes("--no-git");
+  const noGit = dryRun || updateMode || process.argv.includes("--no-git");
 
   if (!noGit && !GH_TOKEN) {
     console.error("GH_TOKEN must be set to some personal access token as an env variable or in a config.json file");
@@ -106,23 +107,49 @@ if (require.main === module) {
 	  const issueMoniker = `${specResult.shortname}-${anomalyType.toLowerCase()}`;
 	  // is there already a file with that moniker?
 	  const issueFilename = path.join('issues/', issueMoniker + '.md');
+	  let tracked = "N/A";
+	  let existingReportContent;
 	  try {
 	    if (!(await fs.stat(issueFilename)).isFile()) {
 	      console.error(`${issueFilename} already exists but is not a file`);
+	      continue;
 	    } else {
-	      console.log(`${issueFilename} already exists, bailing`);
+	      if (!updateMode) {
+		console.log(`${issueFilename} already exists, bailing`);
+		continue;
+	      } else {
+		try {
+		const existingReport = matter(await fs.readFile(issueFilename, "utf-8"));
+		  tracked = existingReport.data.Tracked;
+		  existingReportContent = existingReport.content;
+		  // already submitted, let's not update it
+		  if (tracked !== "N/A") {
+		    continue;
+		  }
+		} catch (e) {
+		  console.error("Failed to parse existing content", e);
+		  continue;
+		}
+	      }
 	    }
-	    return;
 	  } catch (err) {
 	    // Intentionally blank
 	  }
 	  // if not, we create the file, add it in a branch
 	  // and submit it as a pull request to the repo
 	  const {title, content: issueReportContent} = issueWrapper(specResult, anomalies, anomalyType);
+	  if (updateMode && existingReportContent) {
+	    const existingAnomalies = existingReportContent.split("\n").filter(l => l.startsWith("* [ ] ")).map(l => l.slice(6));
+	    if (existingAnomalies.every((a, i) => anomalies[i] === a) && existingAnomalies.length === anomalies.length) {
+	      // no substantial change, skip
+	      console.log(`Skipping ${title}, no change`);
+	      continue;
+	    }
+	  }
 	  const issueReportData = matter(issueReportContent);
 	  issueReportData.data = {
 	    Repo: specResult.repo,
-	    Tracked: "N/A",
+	    Tracked: tracked,
 	    Title: title
 	  };
 	  let issueReport;
@@ -130,7 +157,7 @@ if (require.main === module) {
 	    issueReport = issueReportData.stringify();
 	  } catch (err) {
 	    console.error(`Failed to stringify report of ${anomalyType} for ${title}: ${err}`, issueReportContent);
-	    return;
+	    continue;
 	  };
 	  if (dryRun) {
 	    console.log(`Would add ${issueFilename} with`);
