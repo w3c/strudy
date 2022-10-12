@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/core-aam
-Tracked: N/A
+Repo: 'https://github.com/w3c/core-aam'
+Tracked: 'https://github.com/w3c/core-aam/issues/146'
 Title: Broken references in Core Accessibility API Mappings 1.2
-
 ---
 
 While crawling [Core Accessibility API Mappings 1.2](https://w3c.github.io/core-aam/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
