@@ -10,7 +10,6 @@ While crawling [HTML Standard](https://html.spec.whatwg.org/multipage/), the fol
 * [ ] https://dom.spec.whatwg.org/#concept-event-target
 * [ ] https://drafts.csswg.org/css-align/#propdef-propdef-justify-content
 * [ ] https://drafts.csswg.org/css-align/#propdef-propdef-justify-items
-* [ ] https://drafts.csswg.org/css-color/#valdef-color-profile-rendering-intent-relative-colorimetric
 * [ ] https://drafts.csswg.org/css-grid/#propdef-grid-column-gap
 * [ ] https://drafts.csswg.org/css-grid/#propdef-grid-row-gap
 * [ ] https://drafts.csswg.org/css-multicol/#propdef-column-gap
@@ -24,7 +23,6 @@ While crawling [HTML Standard](https://html.spec.whatwg.org/multipage/), the fol
 * [ ] https://w3c.github.io/FileAPI/#DefinitionOfScheme
 * [ ] https://w3c.github.io/aria/#dfn-accessible-name
 * [ ] https://w3c.github.io/battery/#widl-Navigator-getBattery-Promise-BatteryManager
-* [ ] https://w3c.github.io/webappsec-feature-policy/#process-permissions-policy-attributes
 * [ ] https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigation-status
 * [ ] https://w3c.github.io/webvtt/#webvtt-file-using-cue-text
 
