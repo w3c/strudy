@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/background-fetch
-Tracked: N/A
+Repo: 'https://github.com/WICG/background-fetch'
+Tracked: 'https://github.com/WICG/background-fetch/issues/167'
 Title: Broken references in Background Fetch
-
 ---
 
 While crawling [Background Fetch](https://wicg.github.io/background-fetch/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
