@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/webappsec-cspee
 Tracked: N/A
-Title: Broken references in Content Security Policy: Embedded Enforcement
+Title: 'Broken references in Content Security Policy: Embedded Enforcement'
 
 ---
 
