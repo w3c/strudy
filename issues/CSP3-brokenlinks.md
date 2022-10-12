@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/webappsec-csp
-Tracked: N/A
+Repo: 'https://github.com/w3c/webappsec-csp'
+Tracked: 'https://github.com/w3c/webappsec-csp/issues/571'
 Title: Broken references in Content Security Policy Level 3
-
 ---
 
 While crawling [Content Security Policy Level 3](https://w3c.github.io/webappsec-csp/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
