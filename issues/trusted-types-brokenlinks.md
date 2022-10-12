@@ -1,11 +1,12 @@
 ---
-Repo: https://github.com/w3c/webappsec-trusted-types
+Repo: 'https://github.com/w3c/trusted-types'
 Tracked: N/A
 Title: Broken references in Trusted Types
-
 ---
 
-While crawling [Trusted Types](https://w3c.github.io/webappsec-trusted-types/dist/spec/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Trusted Types](https://w3c.github.io/trusted-types/dist/spec/), the following links to other specifications were detected as pointing to non-existing anchors:
+* [ ] https://w3c.github.io/DOM-Parsing/#widl-Element-innerHTML
+* [ ] https://w3c.github.io/DOM-Parsing/#widl-Element-outerHTML
 * [ ] https://w3c.github.io/DOM-Parsing/#html-fragment-parsing-algorithm
 * [ ] https://w3c.github.io/DOM-Parsing/#supportedtype
 

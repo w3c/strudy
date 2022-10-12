@@ -1,12 +1,10 @@
 ---
-Repo: https://github.com/w3c/webdriver-bidi
+Repo: 'https://github.com/w3c/webdriver-bidi'
 Tracked: N/A
 Title: Broken references in WebDriver BiDi
-
 ---
 
-While crawling [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
-* [ ] https://html.spec.whatwg.org/multipage/multipage/window-object.html#window-open-steps
+While crawling [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://w3c.github.io/webdriver/#dfn-sessions
 * [ ] https://w3c.github.io/webdriver/#dfn-errors
 * [ ] https://w3c.github.io/webdriver/#dfn-intermediary-node
