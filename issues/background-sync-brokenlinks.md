@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/background-sync
-Tracked: N/A
+Repo: 'https://github.com/WICG/background-sync'
+Tracked: 'https://github.com/WICG/background-sync/issues/186'
 Title: Broken references in Web Background Synchronization
-
 ---
 
 While crawling [Web Background Synchronization](https://wicg.github.io/background-sync/spec/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
