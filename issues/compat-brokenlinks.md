@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/whatwg/compat
-Tracked: N/A
+Repo: 'https://github.com/whatwg/compat'
+Tracked: 'https://github.com/whatwg/compat/issues/214'
 Title: Broken references in Compatibility Standard
-
 ---
 
 While crawling [Compatibility Standard](https://compat.spec.whatwg.org/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
