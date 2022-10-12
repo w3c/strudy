@@ -1,13 +1,11 @@
 ---
-Repo: https://github.com/gpuweb/gpuweb
+Repo: 'https://github.com/gpuweb/gpuweb'
 Tracked: N/A
-Title: Broken references in WebGPU Shading Language
-
+Title: '[WGSL] Broken references in WebGPU Shading Language'
 ---
 
-While crawling [WebGPU Shading Language](https://gpuweb.github.io/gpuweb/wgsl/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [WebGPU Shading Language](https://gpuweb.github.io/gpuweb/wgsl/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://gpuweb.github.io/gpuweb/#dom-gputextureusage-storage
-* [ ] https://gpuweb.github.io/gpuweb/#GPUExternalTexture
 * [ ] https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatch
 * [ ] https://gpuweb.github.io/gpuweb/#dom-gpurenderpipelinedescriptor-samplecount
 

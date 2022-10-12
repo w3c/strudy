@@ -1,13 +1,11 @@
 ---
-Repo: https://github.com/WICG/manifest-incubations
+Repo: 'https://github.com/WICG/manifest-incubations'
 Tracked: N/A
 Title: Broken references in Manifest Incubations
-
 ---
 
-While crawling [Manifest Incubations](https://wicg.github.io/manifest-incubations/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Manifest Incubations](https://wicg.github.io/manifest-incubations/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://wicg.github.io/file-system-access/#valid-suffix-code-points
-* [ ] https://www.w3.org/TR/appmanifest/#dfn-display-modes-values
 * [ ] https://www.w3.org/TR/appmanifest/#dfn-display-mode
 * [ ] https://www.w3.org/TR/appmanifest/#dfn-object
 * [ ] https://www.w3.org/TR/appmanifest/#dfn-processing-extension-point-of-web-manifest
