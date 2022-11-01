@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout strudy
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup node.js
       uses: actions/setup-node@v2
@@ -21,7 +21,7 @@ jobs:
         npm install
 
     - name: Drop reports locally when related issues/PR are closed
-      run: node tools/clean-reports.js
+      run: node src/reporting/clean-reports.js
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
