@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/csswg-drafts
 Tracked: N/A
-Title: [css-overflow-4] Broken references in CSS Overflow Module Level 4
+Title: "[css-overflow-4] Broken references in CSS Overflow Module Level 4"
 
 ---
 

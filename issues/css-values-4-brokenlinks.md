@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/csswg-drafts
 Tracked: N/A
-Title: [css-values-4] Broken link in CSS Values and Units Module Level 4
+Title: "[css-values-4] Broken link in CSS Values and Units Module Level 4"
 
 ---
 

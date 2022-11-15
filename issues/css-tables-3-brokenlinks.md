@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/csswg-drafts
 Tracked: N/A
-Title: [css-tables-3] Broken references in CSS Table Module Level 3
+Title: "[css-tables-3] Broken references in CSS Table Module Level 3"
 
 ---
 

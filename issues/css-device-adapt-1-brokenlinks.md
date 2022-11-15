@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/csswg-drafts
 Tracked: N/A
-Title: [css-device-adapt] Broken references in CSS Device Adaptation Module Level 1
+Title: "[css-device-adapt] Broken references in CSS Device Adaptation Module Level 1"
 
 ---
 
