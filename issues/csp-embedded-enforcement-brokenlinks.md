@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/webappsec-cspee
-Tracked: N/A
+Repo: 'https://github.com/w3c/webappsec-cspee'
+Tracked: 'https://github.com/w3c/webappsec-cspee/issues/27'
 Title: 'Broken references in Content Security Policy: Embedded Enforcement'
-
 ---
 
 While crawling [Content Security Policy: Embedded Enforcement](https://w3c.github.io/webappsec-cspee/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
