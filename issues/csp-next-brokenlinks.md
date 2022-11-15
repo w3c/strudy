@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/csp-next'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/csp-next/issues/8'
 Title: Broken references in Scripting Policy
 ---
 
