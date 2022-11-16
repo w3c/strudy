@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-line-grid] Broken references in CSS Line Grid Module Level 1"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8080'
+Title: '[css-line-grid] Broken references in CSS Line Grid Module Level 1'
 ---
 
 While crawling [CSS Line Grid Module Level 1](https://drafts.csswg.org/css-line-grid/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
