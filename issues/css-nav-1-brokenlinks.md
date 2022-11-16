@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-nav-1] Broken references in CSS Spatial Navigation Level 1"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8081'
+Title: '[css-nav-1] Broken references in CSS Spatial Navigation Level 1'
 ---
 
 While crawling [CSS Spatial Navigation Level 1](https://drafts.csswg.org/css-nav-1/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
