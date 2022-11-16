@@ -1,8 +1,9 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-backgrounds-4] Broken references in CSS Backgrounds and Borders Module Level 4"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8076'
+Title: >-
+  [css-backgrounds-4] Broken references in CSS Backgrounds and Borders Module
+  Level 4
 ---
 
 While crawling [CSS Backgrounds and Borders Module Level 4](https://drafts.csswg.org/css-backgrounds-4/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
