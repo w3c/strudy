@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-device-adapt] Broken references in CSS Device Adaptation Module Level 1"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8078'
+Title: '[css-device-adapt] Broken references in CSS Device Adaptation Module Level 1'
 ---
 
 While crawling [CSS Device Adaptation Module Level 1](https://drafts.csswg.org/css-device-adapt/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
