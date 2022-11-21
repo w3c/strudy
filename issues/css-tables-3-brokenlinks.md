@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-tables-3] Broken references in CSS Table Module Level 3"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8117'
+Title: '[css-tables-3] Broken references in CSS Table Module Level 3'
 ---
 
 While crawling [CSS Table Module Level 3](https://drafts.csswg.org/css-tables-3/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
