@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/DOM-Parsing
-Tracked: N/A
+Repo: 'https://github.com/w3c/DOM-Parsing'
+Tracked: 'https://github.com/w3c/DOM-Parsing/issues/74'
 Title: Broken references in DOM Parsing and Serialization
-
 ---
 
 While crawling [DOM Parsing and Serialization](https://w3c.github.io/DOM-Parsing/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
