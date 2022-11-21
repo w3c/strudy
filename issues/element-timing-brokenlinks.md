@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/element-timing
-Tracked: N/A
+Repo: 'https://github.com/WICG/element-timing'
+Tracked: 'https://github.com/WICG/element-timing/issues/72'
 Title: Broken references in Element Timing API
-
 ---
 
 While crawling [Element Timing API](https://wicg.github.io/element-timing/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
