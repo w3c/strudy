@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/encrypted-media
-Tracked: N/A
+Repo: 'https://github.com/w3c/encrypted-media'
+Tracked: 'https://github.com/w3c/encrypted-media/issues/502'
 Title: Broken references in Encrypted Media Extensions
-
 ---
 
 While crawling [Encrypted Media Extensions](https://w3c.github.io/encrypted-media/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
