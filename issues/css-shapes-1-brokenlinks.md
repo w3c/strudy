@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-shapes] Broken references in CSS Shapes Module Level 1"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8116'
+Title: '[css-shapes] Broken references in CSS Shapes Module Level 1'
 ---
 
 While crawling [CSS Shapes Module Level 1](https://drafts.csswg.org/css-shapes/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
