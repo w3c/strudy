@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-values-4] Broken link in CSS Values and Units Module Level 4"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8119'
+Title: '[css-values-4] Broken link in CSS Values and Units Module Level 4'
 ---
 
 While crawling [CSS Values and Units Module Level 4](https://drafts.csswg.org/css-values-4/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
