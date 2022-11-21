@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
-Title: "[css-overflow-4] Broken references in CSS Overflow Module Level 4"
-
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8115'
+Title: '[css-overflow-4] Broken references in CSS Overflow Module Level 4'
 ---
 
 While crawling [CSS Overflow Module Level 4](https://drafts.csswg.org/css-overflow-4/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
