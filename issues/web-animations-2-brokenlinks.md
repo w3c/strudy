@@ -1,7 +1,7 @@
 ---
 Repo: https://github.com/w3c/csswg-drafts
 Tracked: N/A
-Title: [web-animations-2] Broken references in Web Animations Level 2
+Title: '[web-animations-2] Broken references in Web Animations Level 2'
 
 ---
 
