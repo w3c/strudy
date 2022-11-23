@@ -82,6 +82,7 @@ if (require.main === module) {
     process.exit(1);
   }
 
+
   // Target the index file if needed
   if (!edCrawlResultsPath.endsWith('index.json')) {
     edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
@@ -90,7 +91,21 @@ if (require.main === module) {
     trCrawlResultsPath = path.join(trCrawlResultsPath, 'index.json');
   }
   (async function() {
-    console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`)
+    let existingReports = [];
+    if (updateMode) {
+      console.log(`Compiling list of relevant existing issue reports…`);
+      // List all existing reports to serve as a comparison point
+      // to detect if any report can be deleted
+      // if the anomalies are no longer reported
+      const reportFiles = (await fs.readdir('issues')).map(p => 'issues/' + p);;
+      for (let anomalyType of anomalyTypes) {
+	existingReports = existingReports.concat(reportFiles.filter(p => p.endsWith(`-${anomalyType.toLowerCase()}.md`)));
+      }
+      console.log("- done");
+    }
+    const nolongerRelevantReports = new Set(existingReports);
+
+    console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`);
     const crawl = await loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath);
     console.log("- done");
     console.log("Running back references analysis…");
@@ -118,8 +133,9 @@ if (require.main === module) {
 		console.log(`${issueFilename} already exists, bailing`);
 		continue;
 	      } else {
+		nolongerRelevantReports.delete(issueFilename);
 		try {
-		const existingReport = matter(await fs.readFile(issueFilename, "utf-8"));
+		  const existingReport = matter(await fs.readFile(issueFilename, "utf-8"));
 		  tracked = existingReport.data.Tracked;
 		  existingReportContent = existingReport.content;
 		  // already submitted, let's not update it
@@ -177,13 +193,17 @@ if (require.main === module) {
 	      }
 	    } catch (err) {
 	      console.error(`Failed to commit error report for ${specResult.title}`, err);
-	      fs.unlink(issueFilename);
+	      await fs.unlink(issueFilename);
 	      execSync(`git checkout ${currentBranch}`);
 	    }
 	  }
 	}
       }
     }));
+    if (nolongerRelevantReports.size) {
+      console.log("The following reports are no longer relevant, deleting them", [...nolongerRelevantReports]);
+      [...nolongerRelevantReports].forEach(async issueFilename =>  await fs.unlink(issueFilename));
+    }
     if (Object.keys(needsPush).length) {
       let counter = 0;
       for (let branch in needsPush) {
