@@ -202,7 +202,9 @@ if (require.main === module) {
     }));
     if (nolongerRelevantReports.size) {
       console.log("The following reports are no longer relevant, deleting them", [...nolongerRelevantReports]);
-      [...nolongerRelevantReports].forEach(async issueFilename =>  await fs.unlink(issueFilename));
+      for (const issueFilemane of nolongerRelevantReports) {
+        await fs.unlink(issueFilename);
+      }
     }
     if (Object.keys(needsPush).length) {
       let counter = 0;
