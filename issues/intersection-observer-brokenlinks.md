@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/IntersectionObserver
-Tracked: N/A
+Repo: 'https://github.com/w3c/IntersectionObserver'
+Tracked: 'https://github.com/w3c/IntersectionObserver/issues/506'
 Title: Broken references in Intersection Observer
-
 ---
 
 While crawling [Intersection Observer](https://w3c.github.io/IntersectionObserver/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
