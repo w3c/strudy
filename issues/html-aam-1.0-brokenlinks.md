@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/html-aam
-Tracked: N/A
+Repo: 'https://github.com/w3c/html-aam'
+Tracked: 'https://github.com/w3c/html-aam/issues/447'
 Title: Broken references in HTML Accessibility API Mappings 1.0
-
 ---
 
 While crawling [HTML Accessibility API Mappings 1.0](https://w3c.github.io/html-aam/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
