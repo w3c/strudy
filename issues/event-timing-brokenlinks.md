@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/event-timing
-Tracked: N/A
+Repo: 'https://github.com/w3c/event-timing'
+Tracked: 'https://github.com/w3c/event-timing/issues/127'
 Title: Broken references in Event Timing API
-
 ---
 
 While crawling [Event Timing API](https://w3c.github.io/event-timing), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
