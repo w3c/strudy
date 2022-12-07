@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/js-self-profiling'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/js-self-profiling/issues/77'
 Title: Broken references in JS Self-Profiling API
 ---
 
