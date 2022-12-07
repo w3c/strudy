@@ -5,7 +5,6 @@ Title: Broken references in Generic Sensor API
 ---
 
 While crawling [Generic Sensor API](https://w3c.github.io/sensors/), the following links to other specifications were detected as pointing to non-existing anchors:
-* [ ] https://w3c.github.io/permissions/#dfn-state
 * [ ] https://w3c.github.io/webdriver/#dfn-extension-command
 * [ ] https://w3c.github.io/webdriver/#dfn-errors
 * [ ] https://w3c.github.io/webdriver/#dfn-sessions
