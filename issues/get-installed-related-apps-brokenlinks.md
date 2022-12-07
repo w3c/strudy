@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/get-installed-related-apps
-Tracked: N/A
+Repo: 'https://github.com/WICG/get-installed-related-apps'
+Tracked: 'https://github.com/WICG/get-installed-related-apps/issues/35'
 Title: Broken references in Get Installed Related Apps API
-
 ---
 
 While crawling [Get Installed Related Apps API](https://wicg.github.io/get-installed-related-apps/spec/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
