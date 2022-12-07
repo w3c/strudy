@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/FileAPI
-Tracked: N/A
+Repo: 'https://github.com/w3c/FileAPI'
+Tracked: 'https://github.com/w3c/FileAPI/issues/185'
 Title: Broken references in File API
-
 ---
 
 While crawling [File API](https://w3c.github.io/FileAPI/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
