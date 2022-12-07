@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/mediacapture-image
-Tracked: N/A
+Repo: 'https://github.com/w3c/mediacapture-image'
+Tracked: 'https://github.com/w3c/mediacapture-image/issues/295'
 Title: Broken references in MediaStream Image Capture
-
 ---
 
 While crawling [MediaStream Image Capture](https://w3c.github.io/mediacapture-image/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
