@@ -227,10 +227,10 @@ function generateReportPerSpec(study) {
         });
       }
       [
-        {prop: 'css', warning: false, title: 'No definition for CSS properties'},
-        {prop: 'idl', warning: false, title: 'No definition for IDL properties'},
-        {prop: 'css', warning: true, title: 'Possibly no definition for CSS properties'},
-        {prop: 'idl', warning: true, title: 'Possibly no definition for IDL properties'}
+        {prop: 'css', warning: false, title: 'No definition for CSS constructs'},
+        {prop: 'idl', warning: false, title: 'No definition for IDL constructs'},
+        {prop: 'css', warning: true, title: 'Possibly no definition for CSS constructs'},
+        {prop: 'idl', warning: true, title: 'Possibly no definition for IDL constructs'}
       ].forEach(type => {
         if (report.missingDfns && report.missingDfns[type.prop] &&
             (report.missingDfns[type.prop].filter(r => !!r.warning === type.warning).length > 0)) {
@@ -563,10 +563,10 @@ function generateReportPerIssue(study) {
   w();
 
   [
-    {prop: 'css', warning: false, title: 'No definition for CSS properties'},
-    {prop: 'idl', warning: false, title: 'No definition for IDL properties'},
-    {prop: 'css', warning: true, title: 'Possibly no definition for CSS properties'},
-    {prop: 'idl', warning: true, title: 'Possibly no definition for IDL properties'}
+    {prop: 'css', warning: false, title: 'No definition for CSS constructs'},
+    {prop: 'idl', warning: false, title: 'No definition for IDL constructs'},
+    {prop: 'css', warning: true, title: 'Possibly no definition for CSS constructs'},
+    {prop: 'idl', warning: true, title: 'Possibly no definition for IDL constructs'}
   ].forEach(type => {
     count = 0;
     countrefs = 0;
@@ -596,7 +596,7 @@ function generateReportPerIssue(study) {
     });
 
     w();
-    w('=> ' + countrefs + ' propert' + ((countrefs > 1) ? 'ies' : 'y') +
+    w('=> ' + countrefs + ' construct' + ((countrefs > 1) ? 's' : '') +
       ' without definition found in ' + count + ' specification' +
       ((count > 1) ? 's' : ''));
     w();
