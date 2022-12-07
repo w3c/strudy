@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/html-aria
-Tracked: N/A
+Repo: 'https://github.com/w3c/html-aria'
+Tracked: 'https://github.com/w3c/html-aria/issues/439'
 Title: Broken references in ARIA in HTML
-
 ---
 
 While crawling [ARIA in HTML](https://w3c.github.io/html-aria/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
