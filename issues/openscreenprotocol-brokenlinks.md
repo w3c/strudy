@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/openscreenprotocol'
-Tracked: N/A
+Tracked: https://github.com/w3c/openscreenprotocol/pull/307
 Title: Broken references in Open Screen Protocol
 ---
 
