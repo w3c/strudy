@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/manifest-incubations'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/manifest-incubations/issues/66'
 Title: Broken references in Manifest Incubations
 ---
 
