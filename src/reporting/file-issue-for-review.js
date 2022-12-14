@@ -161,11 +161,16 @@ if (require.main === module) {
 	  // if not, we create the file, add it in a branch
 	  // and submit it as a pull request to the repo
 	  const {title, content: issueReportContent} = issueWrapper(specResult, anomalies, anomalyType);
-	  if (updateMode && existingReportContent) {
-	    const existingAnomalies = existingReportContent.split("\n").filter(l => l.startsWith("* [ ] ")).map(l => l.slice(6));
-	    if (existingAnomalies.every((a, i) => anomalies[i] === a) && existingAnomalies.length === anomalies.length) {
-	      // no substantial change, skip
-	      console.log(`Skipping ${title}, no change`);
+	  if (updateMode) {
+	    if (existingReportContent) {
+	      const existingAnomalies = existingReportContent.split("\n").filter(l => l.startsWith("* [ ] ")).map(l => l.slice(6));
+	      if (existingAnomalies.every((a, i) => anomalies[i] === a) && existingAnomalies.length === anomalies.length) {
+		// no substantial change, skip
+		console.log(`Skipping ${title}, no change`);
+		continue;
+	      }
+	    } else {
+	      // in update mode, we only care about existing reports
 	      continue;
 	    }
 	  }
