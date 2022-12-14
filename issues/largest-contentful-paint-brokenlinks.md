@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/largest-contentful-paint
-Tracked: N/A
+Repo: 'https://github.com/w3c/largest-contentful-paint'
+Tracked: 'https://github.com/w3c/largest-contentful-paint/issues/109'
 Title: Broken references in Largest Contentful Paint
-
 ---
 
 While crawling [Largest Contentful Paint](https://w3c.github.io/largest-contentful-paint/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
