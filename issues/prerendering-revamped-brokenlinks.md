@@ -8,6 +8,7 @@ While crawling [Prerendering Revamped](https://wicg.github.io/nav-speculation/pr
 * [ ] https://html.spec.whatwg.org/multipage/browsing-the-web.html#refused-to-allow-the-document-to-be-unloaded
 * [ ] https://w3c.github.io/battery/#dfn-battery-promise
 * [ ] https://w3c.github.io/geolocation-api/#dfn-watch-process
+* [ ] https://w3c.github.io/picture-in-picture/#dom-htmlvideoelement-autopictureinpicture
 * [ ] https://w3c.github.io/pointerlock/#dfn-requestpointerlock-pointerlockoptions-options
 * [ ] https://w3c.github.io/screen-orientation/#dfn-apply-an-orientation-lock
 * [ ] https://wicg.github.io/serial/#dom-serial-requestPort
