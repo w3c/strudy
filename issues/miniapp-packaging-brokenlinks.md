@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/miniapp-packaging
-Tracked: N/A
+Repo: 'https://github.com/w3c/miniapp-packaging'
+Tracked: 'https://github.com/w3c/miniapp-packaging/issues/66'
 Title: Broken references in MiniApp Packaging
-
 ---
 
 While crawling [MiniApp Packaging](https://w3c.github.io/miniapp-packaging/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
