@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/mediacapture-automation
-Tracked: N/A
+Repo: 'https://github.com/w3c/mediacapture-automation'
+Tracked: 'https://github.com/w3c/mediacapture-automation/issues/2'
 Title: Broken references in Media Capture Automation
-
 ---
 
 While crawling [Media Capture Automation](https://w3c.github.io/mediacapture-automation/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
