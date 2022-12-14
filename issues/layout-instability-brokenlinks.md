@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/layout-instability
-Tracked: N/A
+Repo: 'https://github.com/WICG/layout-instability'
+Tracked: 'https://github.com/WICG/layout-instability/issues/116'
 Title: Broken references in Layout Instability API
-
 ---
 
 While crawling [Layout Instability API](https://wicg.github.io/layout-instability/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
