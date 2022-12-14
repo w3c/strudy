@@ -69,10 +69,17 @@ ${issueReport}
 }
 
 if (require.main === module) {
+  const knownAnomalyTypes = ["brokenLinks", "outdatedSpecs", "nonCanonicalRefs"];
+
   let edCrawlResultsPath = process.argv[2];
   let trCrawlResultsPath = process.argv[3];
   const anomalyFilter = process.argv.slice(4).filter(p => !p.startsWith("--"));
-  const anomalyTypes = anomalyFilter.length ? anomalyFilter : ["brokenLinks", "outdatedSpecs", "nonCanonicalRefs"];
+  const unknownAnomalyType = anomalyFilter.find(p => !knownAnomalyTypes.includes(p));
+  if (unknownAnomalyType) {
+    console.error(`Unknown report type ${unknownAnomalyType} - known types are ${knownAnomalyTypes.join(", ")}`);
+    process.exit(1);
+  }
+  const anomalyTypes = anomalyFilter.length ? anomalyFilter : knownAnomalyTypes;
   const updateMode = process.argv.includes("--update");
   const dryRun = process.argv.includes("--dry-run");
   const noGit = dryRun || updateMode || process.argv.includes("--no-git");
