@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/miniapp-manifest
-Tracked: N/A
+Repo: 'https://github.com/w3c/miniapp-manifest'
+Tracked: 'https://github.com/w3c/miniapp-manifest/issues/62'
 Title: Broken references in MiniApp Manifest
-
 ---
 
 While crawling [MiniApp Manifest](https://w3c.github.io/miniapp-manifest/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
