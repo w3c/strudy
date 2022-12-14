@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/keyboard-lock
-Tracked: N/A
+Repo: 'https://github.com/WICG/keyboard-lock'
+Tracked: 'https://github.com/WICG/keyboard-lock/issues/68'
 Title: Broken references in Keyboard Lock
-
 ---
 
 While crawling [Keyboard Lock](https://wicg.github.io/keyboard-lock/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
