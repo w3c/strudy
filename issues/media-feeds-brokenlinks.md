@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/media-feeds
-Tracked: N/A
+Repo: 'https://github.com/WICG/media-feeds'
+Tracked: 'https://github.com/WICG/media-feeds/issues/56'
 Title: Broken references in Media Feeds
-
 ---
 
 While crawling [Media Feeds](https://wicg.github.io/media-feeds/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
