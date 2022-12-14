@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/webappsec-mixed-content
-Tracked: N/A
+Repo: 'https://github.com/w3c/webappsec-mixed-content'
+Tracked: 'https://github.com/w3c/webappsec-mixed-content/issues/61'
 Title: Broken references in Mixed Content
-
 ---
 
 While crawling [Mixed Content](https://w3c.github.io/webappsec-mixed-content/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
