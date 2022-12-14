@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/keyboard-map
-Tracked: N/A
+Repo: 'https://github.com/WICG/keyboard-map'
+Tracked: 'https://github.com/WICG/keyboard-map/issues/43'
 Title: Broken references in Keyboard Map
-
 ---
 
 While crawling [Keyboard Map](https://wicg.github.io/keyboard-map/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
