@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/network-error-logging
-Tracked: N/A
+Repo: 'https://github.com/w3c/network-error-logging'
+Tracked: 'https://github.com/w3c/network-error-logging/issues/132'
 Title: Broken references in Network Error Logging
-
 ---
 
 While crawling [Network Error Logging](https://w3c.github.io/network-error-logging/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
