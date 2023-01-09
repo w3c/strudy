@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/permissions-request
-Tracked: N/A
+Repo: 'https://github.com/WICG/permissions-request'
+Tracked: 'https://github.com/WICG/permissions-request/issues/8'
 Title: Broken references in Requesting Permissions
-
 ---
 
 While crawling [Requesting Permissions](https://wicg.github.io/permissions-request/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
