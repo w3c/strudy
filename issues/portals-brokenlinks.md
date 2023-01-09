@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/portals
-Tracked: N/A
+Repo: 'https://github.com/WICG/portals'
+Tracked: 'https://github.com/WICG/portals/issues/285'
 Title: Broken references in Portals
-
 ---
 
 While crawling [Portals](https://wicg.github.io/portals/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
