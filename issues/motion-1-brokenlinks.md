@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/fxtf-drafts
-Tracked: N/A
+Repo: 'https://github.com/w3c/fxtf-drafts'
+Tracked: 'https://github.com/w3c/fxtf-drafts/issues/484'
 Title: '[motion-1] Broken references in Motion Path Module Level 1'
-
 ---
 
 While crawling [Motion Path Module Level 1](https://drafts.fxtf.org/motion-1/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
