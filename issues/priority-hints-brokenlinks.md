@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/priority-hints
-Tracked: N/A
+Repo: 'https://github.com/WICG/priority-hints'
+Tracked: 'https://github.com/WICG/priority-hints/issues/73'
 Title: Broken references in Priority Hints
-
 ---
 
 While crawling [Priority Hints](https://wicg.github.io/priority-hints/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
