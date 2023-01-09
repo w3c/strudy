@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/periodic-background-sync
-Tracked: N/A
+Repo: 'https://github.com/WICG/periodic-background-sync'
+Tracked: 'https://github.com/WICG/periodic-background-sync/issues/11'
 Title: Broken references in Web Periodic Background Synchronization
-
 ---
 
 While crawling [Web Periodic Background Synchronization](https://wicg.github.io/periodic-background-sync/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
