@@ -9,6 +9,7 @@ While crawling [Scalable Vector Graphics (SVG) 2](https://svgwg.org/svg2-draft/)
 * [ ] https://drafts.csswg.org/web-animations/#discrete-animation-type-section
 * [ ] https://drafts.csswg.org/web-animations/#real-number-animation-type
 * [ ] https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable
+* [ ] https://html.spec.whatwg.org/multipage/webappapis.html#documentandelementeventhandlers
 * [ ] https://w3c.github.io/svg-aam/#details-id-69
 * [ ] https://www.w3.org/TR/css-position-3/#vp
 * [ ] https://www.w3.org/TR/geometry-1/#dom-dompoint

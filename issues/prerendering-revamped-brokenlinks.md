@@ -11,6 +11,8 @@ While crawling [Prerendering Revamped](https://wicg.github.io/nav-speculation/pr
 * [ ] https://w3c.github.io/picture-in-picture/#dom-htmlvideoelement-autopictureinpicture
 * [ ] https://w3c.github.io/pointerlock/#dfn-requestpointerlock-pointerlockoptions-options
 * [ ] https://w3c.github.io/screen-orientation/#dfn-apply-an-orientation-lock
+* [ ] https://wicg.github.io/client-hints-infrastructure#add-a-new-accept-ch-cache-entry
+* [ ] https://wicg.github.io/client-hints-infrastructure#abstract-opdef-update-the-client-hints-set
 * [ ] https://wicg.github.io/serial/#dom-serial-requestPort
 
 <sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>
