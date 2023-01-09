@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/deviceorientation
-Tracked: N/A
+Repo: 'https://github.com/w3c/deviceorientation'
+Tracked: 'https://github.com/w3c/deviceorientation/issues/105'
 Title: Broken references in DeviceOrientation Event Specification
-
 ---
 
 While crawling [DeviceOrientation Event Specification](https://w3c.github.io/deviceorientation/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
