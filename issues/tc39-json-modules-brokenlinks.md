@@ -1,6 +1,6 @@
 ---
 Repo: https://github.com/tc39/proposal-json-modules
-Tracked: N/A
+Tracked: https://github.com/tc39/proposal-json-modules/pull/28
 Title: Broken references in JSON modules
 
 ---
