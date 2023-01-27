@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/proximity
-Tracked: N/A
+Repo: 'https://github.com/w3c/proximity'
+Tracked: 'https://github.com/w3c/proximity/issues/53'
 Title: Broken references in Proximity Sensor
-
 ---
 
 While crawling [Proximity Sensor](https://w3c.github.io/proximity/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
