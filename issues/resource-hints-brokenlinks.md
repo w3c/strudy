@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/resource-hints
-Tracked: N/A
+Repo: 'https://github.com/w3c/resource-hints'
+Tracked: 'https://github.com/w3c/resource-hints/issues/99'
 Title: Broken references in Resource Hints
-
 ---
 
 While crawling [Resource Hints](https://w3c.github.io/resource-hints/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
