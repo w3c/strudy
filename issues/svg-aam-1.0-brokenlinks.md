@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/svg-aam
-Tracked: N/A
+Repo: 'https://github.com/w3c/svg-aam'
+Tracked: 'https://github.com/w3c/svg-aam/issues/23'
 Title: Broken references in SVG Accessibility API Mappings
-
 ---
 
 While crawling [SVG Accessibility API Mappings](https://w3c.github.io/svg-aam/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
