@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/savedata
-Tracked: N/A
+Repo: 'https://github.com/WICG/savedata'
+Tracked: 'https://github.com/WICG/savedata/issues/10'
 Title: Broken references in Save Data API
-
 ---
 
 While crawling [Save Data API](https://wicg.github.io/savedata/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
