@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/webappsec-referrer-policy
-Tracked: N/A
+Repo: 'https://github.com/w3c/webappsec-referrer-policy'
+Tracked: 'https://github.com/w3c/webappsec-referrer-policy/issues/166'
 Title: Broken references in Referrer Policy
-
 ---
 
 While crawling [Referrer Policy](https://w3c.github.io/webappsec-referrer-policy/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
