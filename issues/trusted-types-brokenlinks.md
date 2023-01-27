@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/trusted-types'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/trusted-types/issues/378'
 Title: Broken references in Trusted Types
 ---
 
