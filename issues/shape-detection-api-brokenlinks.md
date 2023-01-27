@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/shape-detection-api
-Tracked: N/A
+Repo: 'https://github.com/WICG/shape-detection-api'
+Tracked: 'https://github.com/WICG/shape-detection-api/issues/94'
 Title: Broken references in Accelerated Shape Detection in Images
-
 ---
 
 While crawling [Accelerated Shape Detection in Images](https://wicg.github.io/shape-detection-api/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
