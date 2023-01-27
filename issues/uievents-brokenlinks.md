@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/uievents
-Tracked: N/A
+Repo: 'https://github.com/w3c/uievents'
+Tracked: 'https://github.com/w3c/uievents/issues/340'
 Title: Broken references in UI Events
-
 ---
 
 While crawling [UI Events](https://w3c.github.io/uievents/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
