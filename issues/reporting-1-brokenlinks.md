@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/reporting
-Tracked: N/A
+Repo: 'https://github.com/w3c/reporting'
+Tracked: 'https://github.com/w3c/reporting/issues/261'
 Title: Broken references in Reporting API
-
 ---
 
 While crawling [Reporting API](https://w3c.github.io/reporting/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
