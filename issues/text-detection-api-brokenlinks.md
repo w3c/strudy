@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/shape-detection-api
-Tracked: N/A
+Repo: 'https://github.com/WICG/shape-detection-api'
+Tracked: 'https://github.com/WICG/shape-detection-api/issues/95'
 Title: Broken references in Accelerated Text Detection in Images
-
 ---
 
 While crawling [Accelerated Text Detection in Images](https://wicg.github.io/shape-detection-api/text.html), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
