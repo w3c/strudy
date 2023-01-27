@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8368'
 Title: '[resize-observer] Broken references in Resize Observer'
-
 ---
 
 While crawling [Resize Observer](https://drafts.csswg.org/resize-observer/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
