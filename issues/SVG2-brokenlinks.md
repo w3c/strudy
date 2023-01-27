@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/svgwg'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/svgwg/issues/903'
 Title: '[SVG2] Broken references in Scalable Vector Graphics (SVG) 2'
 ---
 
