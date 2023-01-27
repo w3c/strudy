@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/touch-events
-Tracked: N/A
+Repo: 'https://github.com/w3c/touch-events'
+Tracked: 'https://github.com/w3c/touch-events/issues/134'
 Title: Broken references in Touch Events - Level 2
-
 ---
 
 While crawling [Touch Events - Level 2](https://w3c.github.io/touch-events/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
