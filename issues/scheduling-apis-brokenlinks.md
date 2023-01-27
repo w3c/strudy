@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/scheduling-apis
-Tracked: N/A
+Repo: 'https://github.com/WICG/scheduling-apis'
+Tracked: 'https://github.com/WICG/scheduling-apis/issues/66'
 Title: Broken references in Prioritized Task Scheduling
-
 ---
 
 While crawling [Prioritized Task Scheduling](https://wicg.github.io/scheduling-apis/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
