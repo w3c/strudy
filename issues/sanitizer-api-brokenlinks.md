@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/sanitizer-api
-Tracked: N/A
+Repo: 'https://github.com/WICG/sanitizer-api'
+Tracked: 'https://github.com/WICG/sanitizer-api/issues/186'
 Title: Broken references in HTML Sanitizer API
-
 ---
 
 While crawling [HTML Sanitizer API](https://wicg.github.io/sanitizer-api/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
