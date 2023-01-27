@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/scroll-to-text-fragment
-Tracked: N/A
+Repo: 'https://github.com/WICG/scroll-to-text-fragment'
+Tracked: 'https://github.com/WICG/scroll-to-text-fragment/issues/209'
 Title: Broken references in Text Fragments
-
 ---
 
 While crawling [Text Fragments](https://wicg.github.io/scroll-to-text-fragment/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
