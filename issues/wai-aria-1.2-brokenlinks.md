@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/aria
-Tracked: N/A
+Repo: 'https://github.com/w3c/aria'
+Tracked: 'https://github.com/w3c/aria/issues/1868'
 Title: Broken references in Accessible Rich Internet Applications (WAI-ARIA) 1.3
-
 ---
 
 While crawling [Accessible Rich Internet Applications (WAI-ARIA) 1.3](https://w3c.github.io/aria/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
