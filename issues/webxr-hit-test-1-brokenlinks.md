@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/immersive-web/hit-test
-Tracked: N/A
+Repo: 'https://github.com/immersive-web/hit-test'
+Tracked: 'https://github.com/immersive-web/hit-test/issues/114'
 Title: Broken references in WebXR Hit Test Module
-
 ---
 
 While crawling [WebXR Hit Test Module](https://immersive-web.github.io/hit-test/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
