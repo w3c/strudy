@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/csswg-drafts
-Tracked: N/A
+Repo: 'https://github.com/w3c/csswg-drafts'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8382'
 Title: '[web-animations-1] Broken references in Web Animations'
-
 ---
 
 While crawling [Web Animations](https://drafts.csswg.org/web-animations-1/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
