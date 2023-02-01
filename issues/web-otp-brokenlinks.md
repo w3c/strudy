@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WICG/web-otp
-Tracked: N/A
+Repo: 'https://github.com/WICG/web-otp'
+Tracked: 'https://github.com/WICG/web-otp/issues/59'
 Title: Broken references in WebOTP API
-
 ---
 
 While crawling [WebOTP API](https://wicg.github.io/web-otp/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
