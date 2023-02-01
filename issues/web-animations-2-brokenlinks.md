@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/csswg-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8383'
 Title: '[web-animations-2] Broken references in Web Animations Level 2'
 ---
 
