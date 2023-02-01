@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/immersive-web/depth-sensing
-Tracked: N/A
+Repo: 'https://github.com/immersive-web/depth-sensing'
+Tracked: 'https://github.com/immersive-web/depth-sensing/issues/40'
 Title: Broken references in WebXR Depth Sensing Module
-
 ---
 
 While crawling [WebXR Depth Sensing Module](https://immersive-web.github.io/depth-sensing/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
