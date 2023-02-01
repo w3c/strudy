@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/webdriver-bidi'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webdriver-bidi/issues/360'
 Title: Broken references in WebDriver BiDi
 ---
 
