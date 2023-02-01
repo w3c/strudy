@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/WebAudio/web-audio-api
-Tracked: N/A
+Repo: 'https://github.com/WebAudio/web-audio-api'
+Tracked: 'https://github.com/WebAudio/web-audio-api/issues/2535'
 Title: Broken references in Web Audio API
-
 ---
 
 While crawling [Web Audio API](https://webaudio.github.io/web-audio-api/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
