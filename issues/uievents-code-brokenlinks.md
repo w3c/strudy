@@ -1,8 +1,7 @@
 ---
-Repo: https://github.com/w3c/uievents-code
-Tracked: N/A
+Repo: 'https://github.com/w3c/uievents-code'
+Tracked: 'https://github.com/w3c/uievents-code/issues/37'
 Title: Broken references in UI Events KeyboardEvent code Values
-
 ---
 
 While crawling [UI Events KeyboardEvent code Values](https://w3c.github.io/uievents-code/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
