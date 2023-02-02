@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/fxtf-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/fxtf-drafts/issues/490'
 Title: '[compositing-2] Broken references in Compositing and Blending Level 2'
 ---
 
