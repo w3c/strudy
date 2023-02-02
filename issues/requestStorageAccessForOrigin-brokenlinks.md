@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/privacycg/requestStorageAccessForOrigin'
-Tracked: N/A
+Tracked: 'https://github.com/privacycg/requestStorageAccessForOrigin/issues/22'
 Title: Broken references in requestStorageAccessForOrigin API
 ---
 
