@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/tc39/proposal-import-assertions'
-Tracked: N/A
+Tracked: 'https://github.com/tc39/proposal-import-assertions/issues/128'
 Title: Broken references in import assertions
 ---
 
