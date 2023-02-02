@@ -80,7 +80,7 @@ if (require.main === module) {
     process.exit(1);
   }
   const anomalyTypes = anomalyFilter.length ? anomalyFilter : knownAnomalyTypes;
-  const updateMode = process.argv.includes("--update");
+  const updateMode = process.argv.includes("--update") ? "update-untracked" : (process.argv.includes("--update-tracked") ? "update-tracked" : false);
   const dryRun = process.argv.includes("--dry-run");
   const noGit = dryRun || updateMode || process.argv.includes("--no-git");
 
@@ -145,8 +145,9 @@ if (require.main === module) {
 		  const existingReport = matter(await fs.readFile(issueFilename, "utf-8"));
 		  tracked = existingReport.data.Tracked;
 		  existingReportContent = existingReport.content;
-		  // already submitted, let's not update it
-		  if (tracked !== "N/A") {
+		  // only update tracked or untracked reports based on
+		  // CLI parameter
+		  if ((updateMode === "update-untracked" && tracked !== "N/A") || (updateMode === "update-tracked" && tracked === "N/A")) {
 		    continue;
 		  }
 		} catch (e) {
