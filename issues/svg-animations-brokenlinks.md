@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/svgwg'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/svgwg/issues/904'
 Title: '[svg-animations] Broken references in SVG Animations'
 ---
 
