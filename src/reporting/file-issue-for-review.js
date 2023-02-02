@@ -198,8 +198,8 @@ if (require.main === module) {
 		console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
 		execSync(`git checkout -b ${issueMoniker}`);
 		execSync(`git add ${issueFilename}`);
-		execSync(`git commit -m "File report on ${issueReportData.title}"`);
-		needsPush[issueMoniker] = {title: issueReportData.title, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
+		execSync(`git commit -m "File report on ${issueReportData.data.Title}"`);
+		needsPush[issueMoniker] = {title: issueReportData.data.Title, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
 		console.log("- done");
 		execSync(`git checkout ${currentBranch}`);
 	      }
