@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/whatwg/dom'
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/dom/issues/1149'
 Title: Broken references in DOM Standard
 ---
 
