@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/whatwg/quirks'
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/quirks/issues/69'
 Title: Broken references in Quirks Mode Standard
 ---
 
