@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/whatwg/url'
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/url/issues/759'
 Title: Broken references in URL Standard
 ---
 
