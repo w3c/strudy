@@ -19,6 +19,7 @@ function recordAnomaly(spec, anomalyType, error) {
       noIdlExposure: [],
       duplicateIdlDefinition: [],
       unexpectedEventHandler: [],
+      singleEnumValue: [],
       wrongCaseEnumValue: []
     };
   }
@@ -42,6 +43,22 @@ function checkEventHandlers(spec, memberHolder, iface = memberHolder) {
     recordAnomaly(spec, "unexpectedEventHandler", `${iface.name} has an event handler ${eventHandler.name} but does not inherit from EventTarget`);
   }
 }
+
+function checkEnumMultipleValues(spec, idl) {
+  if (idl.values.length <= 1) {
+    recordAnomaly(spec, "singleEnumValue", `The ${idl.name} enum has fewer than 2 possible values`);
+  }
+}
+
+function checkSyntaxOfEnumValue(spec, idl) {
+  idl.values.forEach(({value}) => {
+    if (value.match(/[A-Z]_/)) {
+      recordAnomaly(spec, "wrongCaseEnumValue", `The value ${value} of  ${idl.name} enum does not match the expected conventions (lower case, hyphen separated words)`);
+    }
+  });
+}
+
+
 const specName = ({spec}) => spec.shortname;
 
 async function studyWebIdl(edResults) {
@@ -94,6 +111,10 @@ async function studyWebIdl(edResults) {
       switch(idl.type) {
       case "interface":
 	checkEventHandlers(spec, idl, mainDef);
+	break;
+      case "enum":
+	checkEnumMultipleValues(spec, idl);
+	checkSyntaxOfEnumValue(spec, idl);
 	break;
       }
     }
