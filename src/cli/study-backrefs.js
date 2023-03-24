@@ -27,7 +27,8 @@
  * @module backrefs
  */
 
-const { loadCrawlResults, studyBackrefs } = require('../lib/study-backrefs');
+const { loadCrawlResults } = require('../lib/util');
+const { studyBackrefs } = require('../lib/study-backrefs');
 const path = require("path");
 
 function reportToConsole(results) {

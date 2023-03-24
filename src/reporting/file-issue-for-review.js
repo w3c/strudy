@@ -2,7 +2,8 @@
    creates a draft of an issue per spec and per anomaly type
    and submits as a pull request in this repo if no existing one matches
 */
-const {studyBackrefs, loadCrawlResults} = require("../lib/study-backrefs");
+const { loadCrawlResults } = require('../lib/util');
+const {studyBackrefs } = require("../lib/study-backrefs");
 const path = require("path");
 const fs = require("fs").promises;
 const { execSync } = require('child_process');

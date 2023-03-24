@@ -1,5 +1,3 @@
-const requireFromWorkingDirectory = require('../lib/require-cwd');
-const { expandCrawlResult } = require("reffy");
 const fetch = require("node-fetch");
 
 /**
@@ -218,28 +216,6 @@ const shortnameOfNonNormativeDocs = [
   "webrtc-interop-reports",
   "webrtc-nv-use-cases"
 ];
-async function loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath) {
-  let edCrawlResults, trCrawlResults;
-  try {
-    edCrawlResults = requireFromWorkingDirectory(edCrawlResultsPath);
-  } catch(e) {
-    throw "Impossible to read " + edCrawlResultsPath + ": " + e;
-  }
-  try {
-    trCrawlResults = requireFromWorkingDirectory(trCrawlResultsPath);
-  } catch(e) {
-    throw "Impossible to read " + trCrawlResultsPath + ": " + e;
-  }
-
-  edCrawlResults = await expandCrawlResult(edCrawlResults, edCrawlResultsPath.replace(/index\.json$/, ''));
-  trCrawlResults = await expandCrawlResult(trCrawlResults, trCrawlResultsPath.replace(/index\.json$/, ''));
-
-  return {
-    ed: edCrawlResults.results,
-    tr: trCrawlResults.results
-  };
-}
-
 
 async function studyBackrefs(edResults, trResults = []) {
   trResults = trResults || [];
@@ -435,4 +411,4 @@ async function studyBackrefs(edResults, trResults = []) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports = { studyBackrefs, loadCrawlResults };
+module.exports = { studyBackrefs };
