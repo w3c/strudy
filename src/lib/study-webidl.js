@@ -17,6 +17,7 @@ function recordAnomaly(spec, anomalyType, error) {
       idlNameReused: [],
       noMainIdlDefinition: [],
       noIdlExposure: [],
+      incompatiblePartialIdlExposure: [],
       duplicateIdlDefinition: [],
       unexpectedEventHandler: [],
       singleEnumValue: [],
@@ -27,6 +28,7 @@ function recordAnomaly(spec, anomalyType, error) {
 }
 
 const platformIdl = {};
+const globals = {};
 
 function inheritsFrom(iface, ancestor) {
   if (!iface.inheritance) return false;
@@ -41,6 +43,49 @@ function checkEventHandlers(spec, memberHolder, iface = memberHolder) {
   const eventHandler = memberHolder.members.find(m => m?.name?.startsWith("on") && m.type === "attribute" && m.idlType?.idlType === "EventHandler");
   if (eventHandler && !inheritsFrom(iface, "EventTarget")) {
     recordAnomaly(spec, "unexpectedEventHandler", `${iface.name} has an event handler ${eventHandler.name} but does not inherit from EventTarget`);
+  }
+}
+
+function getExposure(iface) {
+  let exposure = iface.extAttrs.find(ea => ea.name === "Exposed")?.rhs;
+  if (!exposure) return [];
+  if (exposure?.type === "*") {
+    exposure = Object.keys(globals);
+  } else {
+    if (exposure?.type === "identifier-list") {
+      exposure = exposure.value.map(({value}) => value);
+    } else if (exposure?.type === "identifier") {
+      exposure = [exposure.value];
+    }
+    // Expand encompassing globals to facilitate comparison
+    let additionalExposures = [];
+    for (let value of exposure) {
+      if (globals[value].subrealms.length) {
+	additionalExposures = additionalExposures.concat(globals[value].subrealms);
+      }
+    }
+    // remove duplicate values
+    exposure = [...new Set(exposure.concat(additionalExposures))];
+  }
+  return exposure;
+}
+
+function checkExposure(spec, iface, mainInterface) {
+  const mainExposure = getExposure(mainInterface);
+  if (iface.partial) {
+    // check exposure of partial is compatible with main
+    const partialExposure = getExposure(iface);
+    if (!mainExposure && partialExposure) {
+      recordAnomaly(spec, "incompatiblePartialIdlExposure", `partial interface ${iface.name} exposure (${partialExposure}) is incompatible with main exposure (${mainExposure})`);
+    } else if (partialExposure && mainExposure[0] !== "*" && partialExposure.some(x => !mainExposure.includes(x))) {
+      // FIXME: some exposure (e.g. Worker) encompasses other (e.g. DedicatedWorker), so this test is wrong
+      recordAnomaly(spec, "incompatiblePartialIdlExposure", `partial interface ${iface.name} exposure (${partialExposure}) is incompatible with main exposure (${mainExposure})`);
+    }
+  } else {
+    // check an exposure is defined and matches a well-known scope
+    if (!mainExposure) {
+      recordAnomaly(spec, "noIdlExposure", `Interface ${mainInterface.name} has no [Exposed] extended attribute`);
+    }
   }
 }
 
@@ -72,6 +117,19 @@ async function studyWebIdl(edResults) {
 	  platformIdl[idlItem.name] = [];
 	}
 	platformIdl[idlItem.name].push({spec, idl: idlItem});
+	let globalEA;
+	if (idlItem.type === "interface" && (globalEA = idlItem?.extAttrs?.find(ea => ea.name === "Global"))) {
+	  // mostly copied from webidlpedia - DRY?
+	  const globalValues = Array.isArray(globalEA.rhs.value) ? globalEA.rhs.value.map(({value}) => value) : [globalEA.rhs.value];
+	  for (const value of globalValues)  {
+            // '*' is not a name
+            if (value === '*') break;
+            if (!globals[value]) {
+              globals[value] = {components: []};
+            }
+            globals[value].components.push(idlItem.name);
+          }
+	}
       }
     } catch (e) {
       // TODO: load from curated?
@@ -79,6 +137,18 @@ async function studyWebIdl(edResults) {
       return;
     }
   });
+
+  // mostly copied from webidlpedia - DRY?
+  for (const global of Object.keys(globals)) {
+    let subrealms = [];
+    // If several interfaces use this name as a Global EA
+    // it serves as a grouping of realms rather than as a realm definition
+    if (globals[global].components.length > 1) {
+      subrealms = Object.keys(globals).filter(g => globals[g].components.length === 1 && globals[global].components.includes(globals[g].components[0]));
+    }
+    globals[global].subrealms = subrealms;
+  }
+
   for (const name in platformIdl) {
     const types = new Set(platformIdl[name].map(({idl}) => idl.type));
     const specNames = platformIdl[name].map(specName);
@@ -111,6 +181,7 @@ async function studyWebIdl(edResults) {
       switch(idl.type) {
       case "interface":
 	checkEventHandlers(spec, idl, mainDef);
+	checkExposure(spec, idl, mainDef);
 	break;
       case "enum":
 	checkEnumMultipleValues(spec, idl);
