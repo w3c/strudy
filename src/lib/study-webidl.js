@@ -78,7 +78,6 @@ function checkExposure(spec, iface, mainInterface) {
     if (!mainExposure && partialExposure) {
       recordAnomaly(spec, "incompatiblePartialIdlExposure", `partial interface ${iface.name} exposure (${partialExposure}) is incompatible with main exposure (${mainExposure})`);
     } else if (partialExposure && mainExposure[0] !== "*" && partialExposure.some(x => !mainExposure.includes(x))) {
-      // FIXME: some exposure (e.g. Worker) encompasses other (e.g. DedicatedWorker), so this test is wrong
       recordAnomaly(spec, "incompatiblePartialIdlExposure", `partial interface ${iface.name} exposure (${partialExposure}) is incompatible with main exposure (${mainExposure})`);
     }
   } else {
