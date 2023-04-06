@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/csswg-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8692'
 Title: '[css-color-3] Broken references in CSS Color Module Level 3'
 ---
 
