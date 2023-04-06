@@ -32,32 +32,32 @@ interface Valid {};`);
   it('reports invalid IDL', async () => {
     const crawlResult = toCrawlResult(
 `[Global=Window,Exposed=*]
-interface invalid;`);
+interface Invalid;`);
     const report = await studyWebIdl(crawlResult);
     assert.deepEqual(
       report?.[specUrl]?.invalidWebIdl?.[0],
-      `Syntax error at line 2, since \`interface invalid\`:
-interface invalid;
+      `Syntax error at line 2, since \`interface Invalid\`:
+interface Invalid;
                  ^ Bodyless interface`);
   });
 
   it('forgets about previous results', async () => {
     await studyWebIdl(toCrawlResult(
 `[Global=Window,Exposed=*]
-interface invalid;`));
+interface Invalid;`));
     const crawlResult = toCrawlResult(
 `[Global=Window,Exposed=*]
-interface valid {};`);
+interface Valid {};`);
     const report = await studyWebIdl(crawlResult);
     assert.deepEqual(report, {});
   });
 
   it('warns when an [Exposed] extended attribute is missing', async () => {
     const crawlResult = toCrawlResult(
-`interface unexposed {};`);
+`interface Unexposed {};`);
     const report = await studyWebIdl(crawlResult);
     assert.deepEqual(
       report?.[specUrl]?.noIdlExposure?.[0],
-      'Interface unexposed has no [Exposed] extended attribute');
+      'Interface Unexposed has no [Exposed] extended attribute');
   });
 });
