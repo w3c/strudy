@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/csswg-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8693'
 Title: '[css-gcpm-3] Broken references in CSS Generated Content for Paged Media Module'
 ---
 
