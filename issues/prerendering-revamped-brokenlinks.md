@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/nav-speculation'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/nav-speculation/issues/264'
 Title: Broken references in Prerendering Revamped
 ---
 
