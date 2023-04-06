@@ -24,7 +24,7 @@ describe('The Web IDL analyser', async _ => {
   it('reports no anomaly if IDL is valid', async () => {
     const crawlResult = toCrawlResult(
 `[Global=Window,Exposed=*]
-interface valid {};`);
+interface Valid {};`);
     const report = await studyWebIdl(crawlResult);
     assert.deepEqual(report, {});
   });
