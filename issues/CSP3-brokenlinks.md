@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/webappsec-csp'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-csp/issues/594'
 Title: Broken references in Content Security Policy Level 3
 ---
 
