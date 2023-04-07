@@ -1,37 +1,64 @@
+/**
+ * Analyze the Web IDL extracted during a crawl and create an anomalies report.
+ *
+ * Returned report is a list of anomalies. Each anomaly follows the following
+ * object structure:
+ * 
+ * {
+ *   "category": "webidl",
+ *   "name": "type of anomaly",
+ *   "message": "Description of the anomaly",
+ *   "specs": [
+ *     { spec that contains or triggers the anomaly },
+ *     { another spec that contains or triggers the anomaly },
+ *     ...
+ *   ]
+ * }
+ *
+ * All anomalies will be associated with at least one spec (so specs.length > 0)
+ * but some of them may be associated with more than one, when the code cannot
+ * tell which of them needs to be fixed (e.g. when checking duplicates while
+ * merging partials).
+ *
+ * The spec object returned in the "specs" array is the spec object provided in
+ * the crawl results parameter.
+ */
+
 const { expandCrawlResult } = require("reffy");
 const fetch = require("node-fetch");
 const WebIDL2 = require("webidl2");
 
-const specName = ({spec}) => spec.shortname;
+const specName = ({spec}) => spec.shortname ?? spec.url;
+
+const possibleAnomalies = [
+  "invalid",
+  "redefined",
+  "redefinedWithDifferentTypes",
+  "noExposure",
+  "unknownExposure",
+  "incompatiblePartialIdlExposure",
+  "noOriginalDefinition",
+  "unexpectedEventHandler",
+  "singleEnumValue",
+  "wrongCaseEnumValue"
+];
 
 async function studyWebIdl(edResults) {
-  const report = {};
-
-  // DRY with study-backref
-  function recordAnomaly(spec, anomalyType, error) {
-    if (!report[spec.url]) {
-      report[spec.url] = {
-        title: spec.title,
-        crawled: spec.crawled,
-        shortname: spec.shortname,
-        repo: spec.nightly.repository,
-        // specific to this report
-        invalidWebIdl: [],
-        idlNameReused: [],
-        noMainIdlDefinition: [],
-        noIdlExposure: [],
-        incompatiblePartialIdlExposure: [],
-        duplicateIdlDefinition: [],
-        unexpectedEventHandler: [],
-        singleEnumValue: [],
-        wrongCaseEnumValue: []
-      };
-    }
-    report[spec.url][anomalyType].push(error);
-  }
-
+  const report = [];
   const platformIdl = {};
   const globals = {};
+
+  // Record an anomaly for the given spec(s).
+  function recordAnomaly(specs, name, message) {
+    if (!specs) {
+      throw new Error(`Cannot record an anomaly without also recording an offending spec`);
+    }
+    specs = Array.isArray(specs) ? specs : [specs];
+    if (!possibleAnomalies.includes(name)) {
+      throw new Error(`Cannot record an anomaly with name "${name}"`);
+    }
+    report.push({ category: "webidl", name, message, specs });
+  }
 
   function inheritsFrom(iface, ancestor) {
     if (!iface.inheritance) return false;
@@ -45,62 +72,75 @@ async function studyWebIdl(edResults) {
   function checkEventHandlers(spec, memberHolder, iface = memberHolder) {
     const eventHandler = memberHolder.members.find(m => m?.name?.startsWith("on") && m.type === "attribute" && m.idlType?.idlType === "EventHandler");
     if (eventHandler && !inheritsFrom(iface, "EventTarget")) {
-      recordAnomaly(spec, "unexpectedEventHandler", `${iface.name} has an event handler ${eventHandler.name} but does not inherit from EventTarget`);
+      recordAnomaly(spec, "unexpectedEventHandler", `The interface "${iface.name}" defines an event handler "${eventHandler.name}" but does not inherit from EventTarget`);
     }
   }
 
   function getExposure(iface) {
     let exposure = iface.extAttrs.find(ea => ea.name === "Exposed")?.rhs;
-    if (!exposure) return [];
-    if (exposure?.type === "*") {
-      exposure = Object.keys(globals);
-    } else {
-      if (exposure?.type === "identifier-list") {
-        exposure = exposure.value.map(({value}) => value);
-      } else if (exposure?.type === "identifier") {
-        exposure = [exposure.value];
-      }
-      // Expand encompassing globals to facilitate comparison
-      let additionalExposures = [];
-      for (let value of exposure) {
-        if (globals[value].subrealms.length) {
-          additionalExposures = additionalExposures.concat(globals[value].subrealms);
-        }
-      }
-      // remove duplicate values
-      exposure = [...new Set(exposure.concat(additionalExposures))];
+    if (!exposure) {
+      return [];
     }
+    if (exposure.type === "*") {
+      return ["*"];
+    }
+    if (exposure.type === "identifier-list") {
+      exposure = exposure.value.map(({value}) => value);
+    }
+    else if (exposure.type === "identifier") {
+      exposure = [exposure.value];
+    }
+    // Expand encompassing globals to facilitate comparison
+    let additionalExposures = [];
+    for (let value of exposure) {
+      if (globals[value]?.subrealms.length) {
+        additionalExposures = additionalExposures.concat(globals[value].subrealms);
+      }
+    }
+    // remove duplicate values
+    exposure = [...new Set(exposure.concat(additionalExposures))];
     return exposure;
   }
 
   function checkExposure(spec, iface, mainInterface) {
-    const mainExposure = getExposure(mainInterface);
-    if (iface.partial) {
-      // check exposure of partial is compatible with main
-      const partialExposure = getExposure(iface);
-      if (mainExposure.length === 0 && partialExposure) {
-        recordAnomaly(spec, "incompatiblePartialIdlExposure", `partial interface ${iface.name} exposure (${partialExposure}) is incompatible with main exposure (${mainExposure})`);
-      } else if (partialExposure && mainExposure[0] !== "*" && partialExposure.some(x => !mainExposure.includes(x))) {
-        recordAnomaly(spec, "incompatiblePartialIdlExposure", `partial interface ${iface.name} exposure (${partialExposure}) is incompatible with main exposure (${mainExposure})`);
+    // Make sure that the interface is defined somewhere
+    const ifaceExposure = getExposure(iface);
+    if (ifaceExposure.length === 0 && !iface.partial) {
+      recordAnomaly(spec, "noExposure", `The interface "${iface.name}" has no [Exposed] extended attribute`);
+    }
+    // Make sure that the interface is exposed on known globals
+    else if (ifaceExposure.length > 0 && ifaceExposure[0] !== "*") {
+      const unknown = ifaceExposure.filter(e => !Object.keys(globals).includes(e));
+      if (unknown.length > 0) {
+        recordAnomaly(spec, "unknownExposure", `The [Exposed] extended attribute of the interface "${iface.name}" references unknown global(s): ${unknown.join(", ")}`);
       }
-    } else {
-      // check an exposure is defined and matches a well-known scope
-      if (mainExposure.length === 0) {
-        recordAnomaly(spec, "noIdlExposure", `Interface ${mainInterface.name} has no [Exposed] extended attribute`);
+    }
+
+    // Make sure that exposure of partial is compatible with original
+    if (iface.partial) {
+      const mainExposure = getExposure(mainInterface);
+      if (ifaceExposure[0] === "*" && mainExposure[0] !== "*") {
+        recordAnomaly(spec, "incompatiblePartialIdlExposure", `The partial interface "${iface.name}" is exposed on all globals but the original interface is not (${mainExposure.join(", ")})`);
+      }
+      else if (ifaceExposure.length > 0 && mainExposure.length > 0 && mainExposure[0] !== "*") {
+        const problematic = ifaceExposure.filter(x => !mainExposure.includes(x));
+        if (problematic.length > 0) {
+          recordAnomaly(spec, "incompatiblePartialIdlExposure", `The [Exposed] extended attribute of the partial interface "${iface.name}" references globals on which the original interface is not exposed: ${problematic.join(", ")} (original exposure: ${mainExposure.join(", ")})`);
+        }
       }
     }
   }
 
   function checkEnumMultipleValues(spec, idl) {
     if (idl.values.length <= 1) {
-      recordAnomaly(spec, "singleEnumValue", `The ${idl.name} enum has fewer than 2 possible values`);
+      recordAnomaly(spec, "singleEnumValue", `The enum "${idl.name}" has fewer than 2 possible values`);
     }
   }
 
   function checkSyntaxOfEnumValue(spec, idl) {
     idl.values.forEach(({value}) => {
       if (value.match(/[A-Z]_/)) {
-        recordAnomaly(spec, "wrongCaseEnumValue", `The value ${value} of  ${idl.name} enum does not match the expected conventions (lower case, hyphen separated words)`);
+        recordAnomaly(spec, "wrongCaseEnumValue", `The value "${value}" of the enum "${idl.name}" does not match the expected conventions (lower case, hyphen separated words)`);
       }
     });
   }
@@ -131,7 +171,7 @@ async function studyWebIdl(edResults) {
       }
     } catch (e) {
       // TODO: load from curated?
-      recordAnomaly(spec, "invalidWebIdl", e.message);
+      recordAnomaly(spec, "invalid", e.message);
       return;
     }
   });
@@ -151,7 +191,7 @@ async function studyWebIdl(edResults) {
     const types = new Set(platformIdl[name].map(({idl}) => idl.type));
     const specNames = platformIdl[name].map(specName);
     if (types.size > 1) {
-      recordAnomaly(platformIdl[name][0].spec, "idlNameReused", `${name} is used as the IDL for different types: ${[...types].join(', ')} in ${specNames.join(', ')}`);
+      recordAnomaly(platformIdl[name].map(({spec}) => spec), "redefinedWithDifferentTypes", `"${name}" is defined multiple times with different types (${[...types].join(', ')}) in ${specNames.join(', ')}`);
       continue;
     }
     const type = [...types][0];
@@ -160,7 +200,7 @@ async function studyWebIdl(edResults) {
     const allowMultipleDefs = allowPartials.concat("includes");
     if (!allowMultipleDefs.includes(type)) {
       if (platformIdl[name].length > 1) {
-        recordAnomaly(platformIdl[name][0].spec, "duplicateIdlDefinition", `${name} is defined as ${type} in several specifications ${specNames.join(', ')}`);
+        recordAnomaly(platformIdl[name].map(({spec}) => spec), "redefined", `"${name}" is defined multiple times (with type ${type}) in ${specNames.join(', ')}`);
       } else {
         mainDef = platformIdl[name][0].idl;
       }
@@ -168,10 +208,10 @@ async function studyWebIdl(edResults) {
     if (allowPartials.includes(type)) {
       const mainDefs = platformIdl[name].filter(({idl}) => !idl.partial);
       if (mainDefs.length === 0) {
-        recordAnomaly(platformIdl[name][0].spec, "noMainIdlDefinition", `${name} is only defined as partial ${type} (in specifications ${platformIdl[name].map(specName).join(', ')})`);
+        recordAnomaly(platformIdl[name][0].spec, "noOriginalDefinition", `"${name}" is only defined as a partial ${type} (in ${platformIdl[name].map(specName).join(', ')})`);
         continue;
       } else if (mainDefs.length > 1) {
-        recordAnomaly(platformIdl[name][0].spec, "duplicateIdlDefinition", `${name} is defined as non-partial ${type} in several specifications ${mainDefs.map(specName).join(', ')}`);
+        recordAnomaly(platformIdl[name].map(({spec}) => spec), "redefined", `"${name}" is defined as a non-partial ${type} mutiple times in ${mainDefs.map(specName).join(', ')}`);
       }
       mainDef = mainDefs[0].idl;
     }
