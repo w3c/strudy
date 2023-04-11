@@ -139,7 +139,7 @@ async function studyWebIdl(edResults) {
 
   function checkSyntaxOfEnumValue(spec, idl) {
     idl.values.forEach(({value}) => {
-      if (value.match(/[A-Z]_/)) {
+      if (value.match(/[A-Z_]/)) {
         recordAnomaly(spec, "wrongCaseEnumValue", `The value "${value}" of the enum "${idl.name}" does not match the expected conventions (lower case, hyphen separated words)`);
       }
     });
