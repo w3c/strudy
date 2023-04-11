@@ -188,4 +188,33 @@ partial interface MyPlace {};
     assert.deepEqual(report[0].message, `"MyPlace" is only defined as a partial interface (in ${specUrl})`);
     assert.deepEqual(report.length, 1);
   });
+
+
+  it('alerts about single enum values', async () => {
+    const report = await analyzeIdl(`
+enum SingleValue {
+  "single"
+};
+`);
+    assert.deepEqual(report[0]?.name, 'singleEnumValue');
+    assert.deepEqual(report[0].message, `The enum "SingleValue" has fewer than 2 possible values`);
+    assert.deepEqual(report.length, 1);
+  });
+
+
+  it('alerts when enum values do not follow casing conventions', async () => {
+    const report = await analyzeIdl(`
+enum WrongCase {
+  "good",
+  "NotGood",
+  "very-good",
+  "not_good"
+};
+`);
+    assert.deepEqual(report[0]?.name, 'wrongCaseEnumValue');
+    assert.deepEqual(report[0].message, `The value "NotGood" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)`);
+    assert.deepEqual(report[1]?.name, 'wrongCaseEnumValue');
+    assert.deepEqual(report[1].message, `The value "not_good" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)`);
+    assert.deepEqual(report.length, 2);
+  });
 });
