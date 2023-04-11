@@ -217,6 +217,8 @@ const shortnameOfNonNormativeDocs = [
   "webrtc-nv-use-cases"
 ];
 
+// the fragment part of URLs aren't systematically URL-encoded
+// so we compare links both with and without an additional URL encoding pass
 const matchAnchor = (url, anchor) => link => {
   return link === (url + "#" + anchor) || link === (url + "#" + encodeURIComponent(anchor));
 };
