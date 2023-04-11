@@ -217,6 +217,10 @@ const shortnameOfNonNormativeDocs = [
   "webrtc-nv-use-cases"
 ];
 
+const matchAnchor = (url, anchor) => link => {
+  return link === (url + "#" + anchor) || link === (url + "#" + encodeURIComponent(anchor));
+};
+
 async function studyBackrefs(edResults, trResults = []) {
   trResults = trResults || [];
   const report = {};
@@ -366,13 +370,13 @@ async function studyBackrefs(edResults, trResults = []) {
         const anchors = spec.links[link].anchors || [];
         for (let anchor of anchors) {
 	  const baseLink = (sourceSpec.nightly.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly.url;
-	  const fullNightlyLink = baseLink + "#" + anchor;
-	  const fullReleaseLink = (sourceSpec.release || sourceSpec.nightly).url + "#" + anchor;
-          const isKnownId = ids.includes(fullNightlyLink);
-          const heading = headings.find(h => h.href === fullNightlyLink);
-          const dfn = dfns.find(d => d.href === fullNightlyLink);
+	  const matchFullNightlyLink = matchAnchor(baseLink, anchor);
+	  const matchFullReleaseLink = matchAnchor((sourceSpec.release || sourceSpec.nightly).url, anchor);
+          const isKnownId = ids.find(matchFullNightlyLink);
+          const heading = headings.find(h => matchFullNightlyLink(h.href));
+          const dfn = dfns.find(d => matchFullNightlyLink(d.href));
           if (!isKnownId) {
-            if ((trSourceSpec.ids || []).includes(fullReleaseLink) && link.match(/w3\.org\/TR\//)) {
+            if ((trSourceSpec.ids || []).find(matchFullReleaseLink) && link.match(/w3\.org\/TR\//)) {
               recordAnomaly(spec, "evolvingLinks", link + "#" + anchor);
             } else {
 	      if (link.startsWith("https://html.spec.whatwg.org/C") || link.startsWith("http://html.spec.whatwg.org/C")) {
@@ -382,11 +386,11 @@ async function studyBackrefs(edResults, trResults = []) {
 	      // Links to single-page version of HTML spec
 	      if (link === "https://html.spec.whatwg.org/"
 		  // is there an equivalent id in the multipage spec?
-		  && ids.find(i => i.startsWith("https://html.spec.whatwg.org/multipage/") && i.endsWith("#" + anchor))) {
+		  && ids.find(i => i.startsWith("https://html.spec.whatwg.org/multipage/") && i.endsWith("#" + anchor) || i.endsWith("#" + encodeURIComponent(anchor)))) {
 		    // Should we keep track of those? ignoring for now
 	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage") && htmlFragments
 			 && htmlFragments[anchor]
-			 && ids.includes(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html#${anchor}`)) {
+			 && ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`,anchor))) {
 		// Deal with anchors that are JS-redirected from
 		// the multipage version of HTML
 		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
