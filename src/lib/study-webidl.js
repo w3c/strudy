@@ -32,20 +32,21 @@ const getSpecs = list => [...new Set(list.map(({spec}) => spec))];
 const specName = spec => spec.shortname ?? spec.url;
 
 const possibleAnomalies = [
+  "incompatiblePartialIdlExposure",
   "invalid",
+  "noExposure",
+  "noOriginalDefinition",
   "redefined",
   "redefinedIncludes",
   "redefinedWithDifferentTypes",
-  "noExposure",
-  "unknownExposure",
-  "incompatiblePartialIdlExposure",
-  "noOriginalDefinition",
-  "unexpectedEventHandler",
   "singleEnumValue",
+  "unexpectedEventHandler",
+  "unknownExposure",
+  "unknownExtAttr",
+  "unknownType",
   "wrongCaseEnumValue",
   "wrongKind",
-  "unknownType",
-  "unknownExtAttr"
+  "wrongType"
 ];
 
 const basicTypes = new Set([
@@ -430,8 +431,11 @@ async function studyWebIdl(edResults, curatedResults) {
       if (!target) {
         recordAnomaly(statement.spec, "unknownType", `Target "${statement.idl.target}" in includes statement "${key}" is not defined anywhere`);
       }
-      else if (target[0].idl.type !== "interface") {
-        recordAnomaly(statement.spec, "wrongKind", `Target "${statement.idl.target}" in includes statement "${key}" must be of kind "interface", not "${target[0].idl.type}"`);
+      // In theory, target is defined only once, but IDL may redefine it by
+      // mistake (already reported as an anomaly, no need to report it again).
+      // Let's just make sure that there is an "interface" definition.
+      else if (!target.find(({idl}) => idl.type === "interface")) {
+        recordAnomaly(statement.spec, "wrongKind", `Target "${statement.idl.target}" in includes statement "${key}" must be of kind "interface"`);
       }
 
       // Check mixin exists and is an interface mixin
@@ -439,8 +443,11 @@ async function studyWebIdl(edResults, curatedResults) {
       if (!mixin) {
         recordAnomaly(statement.spec, "unknownType", `Mixin "${statement.idl.includes}" in includes statement "${key}" is not defined anywhere`);
       }
-      else if (mixin[0].idl.type !== "interface mixin") {
-        recordAnomaly(statement.spec, "wrongKind", `Mixin "${statement.idl.includes}" in includes statement "${key}" must be of kind "interface mixin", not "${mixin[0].idl.type}"`);
+      // In theory, mixin is defined only once, but IDL may redefine it by
+      // mistake (already reported as an anomaly, no need to report it again).
+      // let's just make sure that there is an "interface mixin" definition.
+      else if (!mixin.find(({idl}) => idl.type === "interface mixin")) {
+        recordAnomaly(statement.spec, "wrongKind", `Mixin "${statement.idl.includes}" in includes statement "${key}" must be of kind "interface mixin"`);
       }
     }
   }
@@ -450,6 +457,25 @@ async function studyWebIdl(edResults, curatedResults) {
     if (!basicTypes.has(name) && !dfns[name]) {
       for (const { spec, idl } of usedTypes[name]) {
         recordAnomaly(spec, "unknownType", `Unknown type "${name}" used in definition of "${idl.name}"`);
+      }
+    }
+    else if (dfns[name]) {
+      // Namespaces and interface mixins "do not create types".
+      const types = dfns[name].map(({idl}) => idl.type);
+      if (types.every(type => type === "namespace")) {
+        for (const { spec, idl } of usedTypes[name]) {
+          recordAnomaly(spec, "wrongType", `Namespace "${name}" cannot be used as a type in definition of "${idl.name}"`);
+        }
+      }
+      else if (types.every(type => type === "interface mixin")) {
+        for (const { spec, idl } of usedTypes[name]) {
+          recordAnomaly(spec, "wrongType", `Interface mixin "${name}" cannot be used as a type in definition of "${idl.name}"`);
+        }
+      }
+      else if (types.every(type => type === "namespace" || type === "interface mixin")) {
+        for (const { spec, idl } of usedTypes[name]) {
+          recordAnomaly(spec, "wrongType", `Name "${name}" exists but is not a type and cannot be used in definition of "${idl.name}"`);
+        }
       }
     }
   }
