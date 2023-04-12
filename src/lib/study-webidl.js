@@ -93,6 +93,7 @@ const basicTypes = new Set([
 
 const knownExtAttrs = new Set([
   // Extended attributes defined by Web IDL itself:
+  "AllowResizable", // https://webidl.spec.whatwg.org/#AllowResizable
   "AllowShared", // https://webidl.spec.whatwg.org/#AllowShared
   "Clamp", // https://webidl.spec.whatwg.org/#Clamp
   "CrossOriginIsolated", // https://webidl.spec.whatwg.org/#CrossOriginIsolated
