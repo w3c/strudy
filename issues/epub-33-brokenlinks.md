@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/epub-specs'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/epub-specs/issues/2552'
 Title: '[epub-33] Broken references in EPUB 3.3'
 ---
 
