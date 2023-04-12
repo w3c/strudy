@@ -128,6 +128,11 @@ const knownExtAttrs = new Set([
   "WebGLHandlesContextLoss" // https://registry.khronos.org/webgl/specs/latest/1.0/##5.14
 ]);
 
+const listIdlTypes = type => {
+  if (Array.isArray(type)) return type.map(listIdlTypes).flat();
+  if (typeof type === "string") return [type];
+  return listIdlTypes(type.idlType);
+};
 
 async function studyWebIdl(edResults) {
   const report = [];              // List of anomalies to report
@@ -256,10 +261,13 @@ async function studyWebIdl(edResults) {
     dfn = dfn ?? node;
     for (const [key, value] of Object.entries(node)) {
       if (key === "idlType") {
-        if (!usedTypes[value.idlType]) {
-          usedTypes[value.idlType] = [];
-        }
-        usedTypes[value.idlType].push({ spec, idl: dfn });
+	const idlTypes = listIdlTypes(value);
+	for (const idlType of idlTypes) {
+          if (!usedTypes[idlType]) {
+            usedTypes[idlType] = [];
+          }
+          usedTypes[idlType].push({ spec, idl: dfn });
+	}
       }
       else if (key === "extAttrs" && Array.isArray(value)) {
         for (const extAttr of value) {

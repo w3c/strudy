@@ -291,6 +291,7 @@ dictionary MyShelf : MyHome { required boolean full; };
   attribute bool boolDoesNotExist;
   attribute MyBed bed;
   undefined doSomething(USVString name, MyUnknownType thing);
+  attribute (DOMString or sequence<UnknownInnerType>) table;
 };
 `);
     assert.deepEqual(report[0]?.name, 'unknownType');
@@ -299,7 +300,9 @@ dictionary MyShelf : MyHome { required boolean full; };
     assert.deepEqual(report[1].message, `Unknown type "MyBed" used in definition of "MyRoom"`);
     assert.deepEqual(report[2]?.name, 'unknownType');
     assert.deepEqual(report[2].message, `Unknown type "MyUnknownType" used in definition of "MyRoom"`);
-    assert.deepEqual(report.length, 3);
+    assert.deepEqual(report[3]?.name, 'unknownType');
+    assert.deepEqual(report[3].message, `Unknown type "UnknownInnerType" used in definition of "MyRoom"`);
+    assert.deepEqual(report.length, 4);
   });
 
 
