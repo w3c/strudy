@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/rdf-canon'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-canon/issues/95'
 Title: Broken references in RDF Dataset Canonicalization
 ---
 
