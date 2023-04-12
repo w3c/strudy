@@ -50,40 +50,40 @@ const possibleAnomalies = [
 
 const basicTypes = new Set([
   // Types defined by Web IDL itself:
-  "any", // https://heycam.github.io/webidl/#idl-any
-  "ArrayBuffer", // https://heycam.github.io/webidl/#idl-ArrayBuffer
-  "bigint", // https://heycam.github.io/webidl/#idl-bigint
-  "boolean", // https://heycam.github.io/webidl/#idl-boolean
-  "byte", // https://heycam.github.io/webidl/#idl-byte
-  "ByteString", // https://heycam.github.io/webidl/#idl-ByteString
-  "DataView", // https://heycam.github.io/webidl/#idl-DataView
-  "DOMString", // https://heycam.github.io/webidl/#idl-DOMString
-  "double", // https://heycam.github.io/webidl/#idl-double
-  "float", // https://heycam.github.io/webidl/#idl-float
-  "Float32Array", // https://heycam.github.io/webidl/#idl-Float32Array
-  "Float64Array", // https://heycam.github.io/webidl/#idl-Float64Array
-  "Int16Array", // https://heycam.github.io/webidl/#idl-Int16Array
-  "Int32Array", // https://heycam.github.io/webidl/#idl-Int32Array
-  "Int8Array", // https://heycam.github.io/webidl/#idl-Int8Array
-  "long long", // https://heycam.github.io/webidl/#idl-long-long
-  "long", // https://heycam.github.io/webidl/#idl-long
-  "object", // https://heycam.github.io/webidl/#idl-object
-  "octet", // https://heycam.github.io/webidl/#idl-octet
-  "short", // https://heycam.github.io/webidl/#idl-short
-  "symbol", // https://heycam.github.io/webidl/#idl-symbol
-  "BigUint64Array", // https://heycam.github.io/webidl/#idl-BigUint64Array
-  "BigInt64Array", // https://heycam.github.io/webidl/#idl-BigInt64Array
-  "Uint16Array", // https://heycam.github.io/webidl/#idl-Uint16Array
-  "Uint32Array", // https://heycam.github.io/webidl/#idl-Uint32Array
-  "Uint8Array", // https://heycam.github.io/webidl/#idl-Uint8Array
-  "Uint8ClampedArray", // https://heycam.github.io/webidl/#idl-Uint8ClampedArray
-  "unrestricted double", // https://heycam.github.io/webidl/#idl-unrestricted-double
-  "unrestricted float", // https://heycam.github.io/webidl/#idl-unrestricted-float
-  "unsigned long long", // https://heycam.github.io/webidl/#idl-unsigned-long-long
-  "unsigned long", // https://heycam.github.io/webidl/#idl-unsigned-long
-  "unsigned short", // https://heycam.github.io/webidl/#idl-unsigned-short
-  "USVString", // https://heycam.github.io/webidl/#idl-USVString
-  "undefined", // https://heycam.github.io/webidl/#idl-undefined
+  "any", // https://webidl.spec.whatwg.org/#idl-any
+  "ArrayBuffer", // https://webidl.spec.whatwg.org/#idl-ArrayBuffer
+  "bigint", // https://webidl.spec.whatwg.org/#idl-bigint
+  "boolean", // https://webidl.spec.whatwg.org/#idl-boolean
+  "byte", // https://webidl.spec.whatwg.org/#idl-byte
+  "ByteString", // https://webidl.spec.whatwg.org/#idl-ByteString
+  "DataView", // https://webidl.spec.whatwg.org/#idl-DataView
+  "DOMString", // https://webidl.spec.whatwg.org/#idl-DOMString
+  "double", // https://webidl.spec.whatwg.org/#idl-double
+  "float", // https://webidl.spec.whatwg.org/#idl-float
+  "Float32Array", // https://webidl.spec.whatwg.org/#idl-Float32Array
+  "Float64Array", // https://webidl.spec.whatwg.org/#idl-Float64Array
+  "Int16Array", // https://webidl.spec.whatwg.org/#idl-Int16Array
+  "Int32Array", // https://webidl.spec.whatwg.org/#idl-Int32Array
+  "Int8Array", // https://webidl.spec.whatwg.org/#idl-Int8Array
+  "long long", // https://webidl.spec.whatwg.org/#idl-long-long
+  "long", // https://webidl.spec.whatwg.org/#idl-long
+  "object", // https://webidl.spec.whatwg.org/#idl-object
+  "octet", // https://webidl.spec.whatwg.org/#idl-octet
+  "short", // https://webidl.spec.whatwg.org/#idl-short
+  "symbol", // https://webidl.spec.whatwg.org/#idl-symbol
+  "BigUint64Array", // https://webidl.spec.whatwg.org/#idl-BigUint64Array
+  "BigInt64Array", // https://webidl.spec.whatwg.org/#idl-BigInt64Array
+  "Uint16Array", // https://webidl.spec.whatwg.org/#idl-Uint16Array
+  "Uint32Array", // https://webidl.spec.whatwg.org/#idl-Uint32Array
+  "Uint8Array", // https://webidl.spec.whatwg.org/#idl-Uint8Array
+  "Uint8ClampedArray", // https://webidl.spec.whatwg.org/#idl-Uint8ClampedArray
+  "unrestricted double", // https://webidl.spec.whatwg.org/#idl-unrestricted-double
+  "unrestricted float", // https://webidl.spec.whatwg.org/#idl-unrestricted-float
+  "unsigned long long", // https://webidl.spec.whatwg.org/#idl-unsigned-long-long
+  "unsigned long", // https://webidl.spec.whatwg.org/#idl-unsigned-long
+  "unsigned short", // https://webidl.spec.whatwg.org/#idl-unsigned-short
+  "USVString", // https://webidl.spec.whatwg.org/#idl-USVString
+  "undefined", // https://webidl.spec.whatwg.org/#idl-undefined
 
   // Types defined by other specs:
   "CSSOMString", // https://drafts.csswg.org/cssom/#cssomstring-type
@@ -93,30 +93,30 @@ const basicTypes = new Set([
 
 const knownExtAttrs = new Set([
   // Extended attributes defined by Web IDL itself:
-  "AllowShared", // https://heycam.github.io/webidl/#AllowShared
-  "Clamp", // https://heycam.github.io/webidl/#Clamp
-  "CrossOriginIsolated", // https://heycam.github.io/webidl/#CrossOriginIsolated
-  "Default", // https://heycam.github.io/webidl/#Default
-  "EnforceRange", // https://heycam.github.io/webidl/#EnforceRange
-  "Exposed", // https://heycam.github.io/webidl/#Exposed
-  "Global", // https://heycam.github.io/webidl/#Global
-  "LegacyFactoryFunction", // https://heycam.github.io/webidl/#LegacyFactoryFunction
-  "LegacyLenientSetter", // https://heycam.github.io/webidl/#LegacyLenientSetter
-  "LegacyLenientThis", // https://heycam.github.io/webidl/#LegacyLenientThis
-  "LegacyNamespace", // https://heycam.github.io/webidl/#LegacyNamespace
-  "LegacyNoInterfaceObject", // https://heycam.github.io/webidl/#LegacyNoInterfaceObject
-  "LegacyNullToEmptyString", // https://heycam.github.io/webidl/#LegacyNullToEmptyString
-  "LegacyOverrideBuiltIns", // https://heycam.github.io/webidl/#LegacyOverrideBuiltIns
-  "LegacyTreatNonObjectAsNull", // https://heycam.github.io/webidl/#LegacyTreatNonObjectAsNull
-  "LegacyUnenumerableNamedProperties", // https://heycam.github.io/webidl/#LegacyUnenumerableNamedProperties
-  "LegacyUnforgeable", // https://heycam.github.io/webidl/#LegacyUnforgeable
-  "LegacyWindowAlias", // https://heycam.github.io/webidl/#LegacyWindowAlias
-  "NewObject", // https://heycam.github.io/webidl/#NewObject
-  "PutForwards", // https://heycam.github.io/webidl/#PutForwards
-  "Replaceable", // https://heycam.github.io/webidl/#Replaceable
-  "SameObject", // https://heycam.github.io/webidl/#SameObject
-  "SecureContext", // https://heycam.github.io/webidl/#SecureContext
-  "Unscopable", // https://heycam.github.io/webidl/#Unscopable
+  "AllowShared", // https://webidl.spec.whatwg.org/#AllowShared
+  "Clamp", // https://webidl.spec.whatwg.org/#Clamp
+  "CrossOriginIsolated", // https://webidl.spec.whatwg.org/#CrossOriginIsolated
+  "Default", // https://webidl.spec.whatwg.org/#Default
+  "EnforceRange", // https://webidl.spec.whatwg.org/#EnforceRange
+  "Exposed", // https://webidl.spec.whatwg.org/#Exposed
+  "Global", // https://webidl.spec.whatwg.org/#Global
+  "LegacyFactoryFunction", // https://webidl.spec.whatwg.org/#LegacyFactoryFunction
+  "LegacyLenientSetter", // https://webidl.spec.whatwg.org/#LegacyLenientSetter
+  "LegacyLenientThis", // https://webidl.spec.whatwg.org/#LegacyLenientThis
+  "LegacyNamespace", // https://webidl.spec.whatwg.org/#LegacyNamespace
+  "LegacyNoInterfaceObject", // https://webidl.spec.whatwg.org/#LegacyNoInterfaceObject
+  "LegacyNullToEmptyString", // https://webidl.spec.whatwg.org/#LegacyNullToEmptyString
+  "LegacyOverrideBuiltIns", // https://webidl.spec.whatwg.org/#LegacyOverrideBuiltIns
+  "LegacyTreatNonObjectAsNull", // https://webidl.spec.whatwg.org/#LegacyTreatNonObjectAsNull
+  "LegacyUnenumerableNamedProperties", // https://webidl.spec.whatwg.org/#LegacyUnenumerableNamedProperties
+  "LegacyUnforgeable", // https://webidl.spec.whatwg.org/#LegacyUnforgeable
+  "LegacyWindowAlias", // https://webidl.spec.whatwg.org/#LegacyWindowAlias
+  "NewObject", // https://webidl.spec.whatwg.org/#NewObject
+  "PutForwards", // https://webidl.spec.whatwg.org/#PutForwards
+  "Replaceable", // https://webidl.spec.whatwg.org/#Replaceable
+  "SameObject", // https://webidl.spec.whatwg.org/#SameObject
+  "SecureContext", // https://webidl.spec.whatwg.org/#SecureContext
+  "Unscopable", // https://webidl.spec.whatwg.org/#Unscopable
 
   // Extended attributes defined by other specs:
   "CEReactions", // https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions
