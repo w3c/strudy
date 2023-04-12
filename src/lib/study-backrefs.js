@@ -1,4 +1,17 @@
 const fetch = require("node-fetch");
+const { recordCategorizedAnomaly } = require("./util");
+
+const possibleAnomalies = [
+  "brokenLinks",
+  "datedUrls",
+  "evolvingLinks",
+  "frailLinks",
+  "nonCanonicalRefs",
+  "notDfn",
+  "notExported",
+  "outdatedSpecs",
+  "unknownSpecs"
+];
 
 /**
  * The backrefs analyzer only checks links to other specs. This function returns
@@ -225,7 +238,7 @@ const matchAnchor = (url, anchor) => link => {
 
 async function studyBackrefs(edResults, trResults = []) {
   trResults = trResults || [];
-  const report = {};
+  const report = [];
 
   // Donwload automatic map of multipages anchors in HTML spec
   // FIXME: this makes the script network-dependent
@@ -236,27 +249,7 @@ async function studyBackrefs(edResults, trResults = []) {
     console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec");
   }
 
-  function recordAnomaly(spec, anomalyType, link) {
-    if (!report[spec.url]) {
-      report[spec.url] = {
-        title: spec.title,
-	crawled: spec.crawled,
-	shortname: spec.shortname,
-	repo: spec.nightly.repository,
-        notExported: [],
-        notDfn: [],
-        brokenLinks: [],
-    	frailLinks: [],
-	nonCanonicalRefs: [],
-        evolvingLinks: [],
-        outdatedSpecs: [],
-        unknownSpecs: [],
-        datedUrls: [],
-      	crawlError: [],
-      };
-    }
-    report[spec.url][anomalyType].push(link);
-  }
+  const recordAnomaly = recordCategorizedAnomaly(report, "links", possibleAnomalies);
 
   edResults.forEach(spec => {
     Object.keys(spec.links || {})
@@ -280,7 +273,7 @@ async function studyBackrefs(edResults, trResults = []) {
             // ED should not link to dated versions of the spec, unless it
             // voluntarily links to previous versions of itself
             if ((match[2] !== spec.shortname || outdatedShortnames[match[2]] === spec.shortname) && !["REC", "NOTE"].includes(match[1])) {
-              recordAnomaly(spec, "datedUrls", link);
+              recordAnomaly([spec], "datedUrls", link);
             }
 
             // TODO: consider pursuing the analysis with the non-dated version,
@@ -304,7 +297,7 @@ async function studyBackrefs(edResults, trResults = []) {
               shortname = computeShortname(nakedLink);
             }
             catch (e) {
-              recordAnomaly(spec, "unknownSpecs", link);
+              recordAnomaly([spec], "unknownSpecs", link);
               return;
             }
           }
@@ -315,22 +308,22 @@ async function studyBackrefs(edResults, trResults = []) {
           // In theory, we could still try to match the anchor against the
           // right spec. In practice, these outdated specs are sufficiently
           // outdated that it does not make a lot of sense to do so.
-          recordAnomaly(spec, "outdatedSpecs", link);
+          recordAnomaly([spec], "outdatedSpecs", link);
           return;
         }
 	// Links to WHATWG commit snapshots
 	if (link.match(/spec\.whatwg\.org/) && link.match(/commit-snapshots/)) {
-	  recordAnomaly(spec, "outdatedSpecs", link);
+	  recordAnomaly([spec], "outdatedSpecs", link);
           return;
         }
 
 	if (link.match(/heycam\.github\.io/)) {
-	  recordAnomaly(spec, "nonCanonicalRefs", link);
+	  recordAnomaly([spec], "nonCanonicalRefs", link);
           shortname = "webidl";
         }
 	if (outdatedShortnames[shortname]) {
 	  shortname = outdatedShortnames[shortname];
-	  recordAnomaly(spec, "nonCanonicalRefs", link);
+	  recordAnomaly([spec], "nonCanonicalRefs", link);
 	}
 
         // At this point, we managed to associate the link with a shortname,
@@ -342,13 +335,13 @@ async function studyBackrefs(edResults, trResults = []) {
           edResults.find(s => s.series.shortname === shortname && s.series.currentSpecification === s.shortname);
         if (!sourceSpec) {
           if (!shortnameOfNonNormativeDocs.includes(shortname)) {
-            recordAnomaly(spec, "unknownSpecs", link);
+            recordAnomaly([spec], "unknownSpecs", link);
           }
           return;
         }
 	if (sourceSpec.error) {
 	  // no point in reporting an error on failed crawls
-	  recordAnomaly(spec, "crawlError", link);
+	  recordAnomaly([spec], "crawlError", link);
 	  return;
 	}
 
@@ -379,10 +372,10 @@ async function studyBackrefs(edResults, trResults = []) {
           const dfn = dfns.find(d => matchFullNightlyLink(d.href));
           if (!isKnownId) {
             if ((trSourceSpec.ids || []).find(matchFullReleaseLink) && link.match(/w3\.org\/TR\//)) {
-              recordAnomaly(spec, "evolvingLinks", link + "#" + anchor);
+              recordAnomaly([spec], "evolvingLinks", link + "#" + anchor);
             } else {
 	      if (link.startsWith("https://html.spec.whatwg.org/C") || link.startsWith("http://html.spec.whatwg.org/C")) {
-		recordAnomaly(spec, "nonCanonicalRefs", link);
+		recordAnomaly([spec], "nonCanonicalRefs", link);
 		link = link.replace("http:", "https:").replace("https://html.spec.whatwg.org/C", "https://html.spec.whatwg.org/multipage");
 	      }
 	      // Links to single-page version of HTML spec
@@ -395,18 +388,18 @@ async function studyBackrefs(edResults, trResults = []) {
 			 && ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`,anchor))) {
 		// Deal with anchors that are JS-redirected from
 		// the multipage version of HTML
-		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
+		recordAnomaly([spec], "frailLinks", link + "#" + anchor);
 	      } else if (anchor.startsWith(':~:text=')) {
 		// links using text fragments are inherently fragile
-		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
+		recordAnomaly([spec], "frailLinks", link + "#" + anchor);
 	      } else {
-		recordAnomaly(spec, "brokenLinks", link + "#" + anchor);
+		recordAnomaly([spec], "brokenLinks", link + "#" + anchor);
 	      }
             }
           } else if (!heading && !dfn) {
-            recordAnomaly(spec, "notDfn", link + "#" + anchor);
+            recordAnomaly([spec], "notDfn", link + "#" + anchor);
           } else if (dfn && dfn.access !== "public") {
-            recordAnomaly(spec, "notExported", link  + "#" + anchor);
+            recordAnomaly([spec], "notExported", link  + "#" + anchor);
           }
         }
       });

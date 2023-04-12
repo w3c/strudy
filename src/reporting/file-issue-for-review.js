@@ -34,7 +34,7 @@ const octokit = new Octokit({
 const multiSpecRepos = ["w3c/csswg-drafts", "w3c/fxtf-drafts", "w3c/svgwg", "KhronosGroup/WebGL", "httpwg/httpwg.github.io", "w3c/css-houdini-drafts", "WebAssembly/spec", "w3c/woff", "w3c/mediacapture-handle", "w3c/epub-specs", "gpuweb/gpuweb"].map(r => "https://github.com/" + r);
 
 function issueWrapper(spec, anomalies, anomalyType) {
-  const titlePrefix = (multiSpecRepos.includes(spec.repo)) ? `[${spec.shortname}] ` : "";
+  const titlePrefix = (multiSpecRepos.includes(spec.nightly.repository)) ? `[${spec.shortname}] ` : "";
   let anomalyReport = "", title = "";
   switch(anomalyType) {
   case "brokenLinks":
@@ -52,7 +52,7 @@ function issueWrapper(spec, anomalies, anomalyType) {
     title: titlePrefix + title,
     content: `
 While crawling [${spec.title}](${spec.crawled}), ${anomalyReport}:
-${anomalies.map(anomaly => `* [ ] ${anomaly}`).join("\n")}
+${anomalies.map(anomaly => `* [ ] ${anomaly.message}`).join("\n")}
 
 <sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`
   };
@@ -121,99 +121,104 @@ if (require.main === module) {
     console.log("- done");
     const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     const needsPush = {};
-    await Promise.all(Object.keys(results).map(async uri => {
-      for (let anomalyType of anomalyTypes) {
-	const specResult = results[uri];
-	console.log(`Compiling ${anomalyType} report for ${specResult.title}…`);
-	const anomalies = specResult[anomalyType] || [];
-	if (anomalies.length && specResult.repo) {
-	  const issueMoniker = `${specResult.shortname}-${anomalyType.toLowerCase()}`;
-	  // is there already a file with that moniker?
-	  const issueFilename = path.join('issues/', issueMoniker + '.md');
-	  let tracked = "N/A";
-	  let existingReportContent;
-	  try {
-	    if (!(await fs.stat(issueFilename)).isFile()) {
-	      console.error(`${issueFilename} already exists but is not a file`);
+    for (const anomalyType of anomalyTypes) {
+      const anomalies = results.filter(r => r.name === anomalyType);
+      const specs = [...new Set(anomalies.map(a => a.specs.map(s => s.url)).flat())];
+      for (let url of specs) {
+	const specAnomalies = anomalies.filter(a => a.specs[0].url === url);
+	const spec = specAnomalies[0].specs[0];
+	console.log(`Compiling ${anomalyType} report for ${spec.title}…`);
+	// if we don't know the repo, we can't file an issue
+	if (!spec.nightly.repository) {
+	  console.log(`No known repo for ${spec.title}, skipping`);
+	  continue;
+	}
+	const issueMoniker = `${spec.shortname}-${anomalyType.toLowerCase()}`;
+	// is there already a file with that moniker?
+	const issueFilename = path.join('issues/', issueMoniker + '.md');
+	let tracked = "N/A";
+	let existingReportContent;
+	try {
+	  if (!(await fs.stat(issueFilename)).isFile()) {
+	    console.error(`${issueFilename} already exists but is not a file`);
+	    continue;
+	  } else {
+	    if (!updateMode) {
+	      console.log(`${issueFilename} already exists, bailing`);
 	      continue;
 	    } else {
-	      if (!updateMode) {
-		console.log(`${issueFilename} already exists, bailing`);
-		continue;
-	      } else {
-		nolongerRelevantReports.delete(issueFilename);
-		try {
-		  const existingReport = matter(await fs.readFile(issueFilename, "utf-8"));
-		  tracked = existingReport.data.Tracked;
-		  existingReportContent = existingReport.content;
-		  // only update tracked or untracked reports based on
-		  // CLI parameter
-		  if ((updateMode === "update-untracked" && tracked !== "N/A") || (updateMode === "update-tracked" && tracked === "N/A")) {
-		    continue;
-		  }
-		} catch (e) {
-		  console.error("Failed to parse existing content", e);
+	      nolongerRelevantReports.delete(issueFilename);
+	      try {
+		const existingReport = matter(await fs.readFile(issueFilename, "utf-8"));
+		tracked = existingReport.data.Tracked;
+		existingReportContent = existingReport.content;
+		// only update tracked or untracked reports based on
+		// CLI parameter
+		if ((updateMode === "update-untracked" && tracked !== "N/A") || (updateMode === "update-tracked" && tracked === "N/A")) {
 		  continue;
 		}
-	      }
-	    }
-	  } catch (err) {
-	    // Intentionally blank
-	  }
-	  // if not, we create the file, add it in a branch
-	  // and submit it as a pull request to the repo
-	  const {title, content: issueReportContent} = issueWrapper(specResult, anomalies, anomalyType);
-	  if (updateMode) {
-	    if (existingReportContent) {
-	      const existingAnomalies = existingReportContent.split("\n").filter(l => l.startsWith("* [ ] ")).map(l => l.slice(6));
-	      if (existingAnomalies.every((a, i) => anomalies[i] === a) && existingAnomalies.length === anomalies.length) {
-		// no substantial change, skip
-		console.log(`Skipping ${title}, no change`);
+	      } catch (e) {
+		console.error("Failed to parse existing content", e);
 		continue;
 	      }
-	    } else {
-	      // in update mode, we only care about existing reports
-	      continue;
 	    }
 	  }
-	  const issueReportData = matter(issueReportContent);
-	  issueReportData.data = {
-	    Repo: specResult.repo,
-	    Tracked: tracked,
-	    Title: title
-	  };
-	  let issueReport;
-	  try {
-	    issueReport = issueReportData.stringify();
-	  } catch (err) {
-	    console.error(`Failed to stringify report of ${anomalyType} for ${title}: ${err}`, issueReportContent);
-	    continue;
-	  };
-	  if (dryRun) {
-	    console.log(`Would add ${issueFilename} with`);
-	    console.log(issueReport);
-	    console.log();
+	} catch (err) {
+	  // Intentionally blank
+	}
+	// if not, we create the file, add it in a branch
+	// and submit it as a pull request to the repo
+	const {title, content: issueReportContent} = issueWrapper(spec, specAnomalies, anomalyType);
+	if (updateMode) {
+	  if (existingReportContent) {
+	    const existingAnomalies = existingReportContent.split("\n").filter(l => l.startsWith("* [ ] ")).map(l => l.slice(6));
+	    if (existingAnomalies.every((a, i) => specAnomalies[i] === a) && existingAnomalies.length === specAnomalies.length) {
+	      // no substantial change, skip
+	      console.log(`Skipping ${title}, no change`);
+	      continue;
+	    }
 	  } else {
-	    await fs.writeFile(issueFilename, issueReport, 'utf-8');
-	    try {
-	      if (!noGit) {
-		console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
-		execSync(`git checkout -b ${issueMoniker}`);
-		execSync(`git add ${issueFilename}`);
-		execSync(`git commit -m "File report on ${issueReportData.data.Title}"`);
-		needsPush[issueMoniker] = {title: issueReportData.data.Title, report: issueReport, repo: specResult.repo, specTitle: specResult.title, uri: specResult.crawled, repo: specResult.repo};
-		console.log("- done");
-		execSync(`git checkout ${currentBranch}`);
-	      }
-	    } catch (err) {
-	      console.error(`Failed to commit error report for ${specResult.title}`, err);
-	      await fs.unlink(issueFilename);
+	    // in update mode, we only care about existing reports
+	    continue;
+	  }
+	}
+	const issueReportData = matter(issueReportContent);
+	issueReportData.data = {
+	  Repo: spec.nightly.repository,
+	  Tracked: tracked,
+	  Title: title
+	};
+	let issueReport;
+	try {
+	  issueReport = issueReportData.stringify();
+	} catch (err) {
+	  console.error(`Failed to stringify report of ${anomalyType} for ${title}: ${err}`, issueReportContent);
+	  continue;
+	};
+	if (dryRun) {
+	  console.log(`Would add ${issueFilename} with`);
+	  console.log(issueReport);
+	  console.log();
+	} else {
+	  await fs.writeFile(issueFilename, issueReport, 'utf-8');
+	  try {
+	    if (!noGit) {
+	      console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
+	      execSync(`git checkout -b ${issueMoniker}`);
+	      execSync(`git add ${issueFilename}`);
+	      execSync(`git commit -m "File report on ${issueReportData.data.Title}"`);
+	      needsPush[issueMoniker] = {title: issueReportData.data.Title, report: issueReport, repo: spec.nightly.repository, specTitle: spec.title, uri: spec.crawled, repo: spec.nightly.repository};
+	      console.log("- done");
 	      execSync(`git checkout ${currentBranch}`);
 	    }
+	  } catch (err) {
+	    console.error(`Failed to commit error report for ${spec.title}`, err);
+	    await fs.unlink(issueFilename);
+	    execSync(`git checkout ${currentBranch}`);
 	  }
 	}
       }
-    }));
+    }
     if (nolongerRelevantReports.size) {
       console.log("The following reports are no longer relevant, deleting them", [...nolongerRelevantReports]);
       for (const issueFilename of nolongerRelevantReports) {

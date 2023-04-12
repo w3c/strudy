@@ -24,8 +24,7 @@
  * the crawl results parameter.
  */
 
-const { expandCrawlResult } = require("reffy");
-const fetch = require("node-fetch");
+const { recordCategorizedAnomaly } = require("./util");
 const WebIDL2 = require("webidl2");
 
 const getSpecs = list => [...new Set(list.map(({spec}) => spec))];
@@ -203,17 +202,7 @@ async function studyWebIdl(edResults, curatedResults) {
   const usedExtAttrs = {};        // Index of extended attributes
 
   // Record an anomaly for the given spec(s).
-  function recordAnomaly(specs, name, message) {
-    if (!specs) {
-      throw new Error(`Cannot record an anomaly without also recording an offending spec`);
-    }
-    specs = Array.isArray(specs) ? specs : [specs];
-    specs = [...new Set(specs)];
-    if (!possibleAnomalies.includes(name)) {
-      throw new Error(`Cannot record an anomaly with name "${name}"`);
-    }
-    report.push({ category: "webidl", name, message, specs });
-  }
+  const recordAnomaly = recordCategorizedAnomaly(report, "webidl", possibleAnomalies);
 
   function inheritsFrom(iface, ancestor) {
     if (!iface.inheritance) return false;
