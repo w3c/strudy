@@ -43,6 +43,23 @@ interface Invalid;
     assert.deepEqual(report[0].specs[0].url, specUrl);
   });
 
+  it('reports invalid IDL and uses fallback from curated', async () => {
+    const crawlResult = toCrawlResult(`
+[Global=Window,Exposed=*]
+interface Invalid;
+`).concat(toCrawlResult(`
+[Global=Window,Exposed=*]
+interface Valid: Invalid {};
+`, specUrl2));
+    const curatedResult = toCrawlResult(`
+[Global=Window,Exposed=*]
+interface Invalid{};
+`);
+    const report = await studyWebIdl(crawlResult, curatedResult);
+    assert.deepEqual(report.length, 1);
+    assert.deepEqual(report[0]?.name, 'invalid');
+  });
+
 
   it('forgets about previous results', async () => {
     await analyzeIdl(`

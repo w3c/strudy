@@ -134,7 +134,7 @@ const listIdlTypes = type => {
   return listIdlTypes(type.idlType);
 };
 
-async function studyWebIdl(edResults) {
+async function studyWebIdl(edResults, curatedResults) {
   const report = [];              // List of anomalies to report
   const dfns = {};                // Index of IDL definitions (save includes)
   const includesStatements = {};  // Index of "includes" statements
@@ -297,7 +297,14 @@ async function studyWebIdl(edResults) {
       }
       catch (e) {
         recordAnomaly(spec, "invalid", e.message);
-        return { spec };
+	// Use fallback from curated version if available
+	// This avoids reporting errors e.g. of not-really unknown interfaces
+	try {
+	  const ast = WebIDL2.parse(curatedResults.find(s => s.url === spec.url).idl);
+	  return { spec, ast };
+	} catch (e) {
+          return { spec };
+	}
       }
     })
 
