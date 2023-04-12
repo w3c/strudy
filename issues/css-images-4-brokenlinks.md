@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/csswg-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8707'
 Title: '[css-images-4] Broken references in CSS Images Module Level 4'
 ---
 
