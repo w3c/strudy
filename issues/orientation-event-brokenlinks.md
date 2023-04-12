@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/deviceorientation'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/deviceorientation/issues/109'
 Title: Broken references in DeviceOrientation Event Specification
 ---
 
