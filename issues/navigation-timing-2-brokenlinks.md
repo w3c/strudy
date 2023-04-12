@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/navigation-timing'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/navigation-timing/issues/189'
 Title: Broken references in Navigation Timing Level 2
 ---
 
