@@ -279,9 +279,9 @@ dictionary MyHome { required boolean door; };
 MyHome includes MyRoom;
 `);
     assert.deepEqual(report[0]?.name, 'wrongKind');
-    assert.deepEqual(report[0].message, `Target "MyHome" in includes statement "MyHome includes MyRoom" must be of kind "interface", not "dictionary"`);
+    assert.deepEqual(report[0].message, `Target "MyHome" in includes statement "MyHome includes MyRoom" must be of kind "interface"`);
     assert.deepEqual(report[1]?.name, 'wrongKind');
-    assert.deepEqual(report[1].message, `Mixin "MyRoom" in includes statement "MyHome includes MyRoom" must be of kind "interface mixin", not "interface"`);
+    assert.deepEqual(report[1].message, `Mixin "MyRoom" in includes statement "MyHome includes MyRoom" must be of kind "interface mixin"`);
     assert.deepEqual(report.length, 2);
   });
 
@@ -320,6 +320,31 @@ dictionary MyShelf : MyHome { required boolean full; };
     assert.deepEqual(report[3]?.name, 'unknownType');
     assert.deepEqual(report[3].message, `Unknown type "UnknownInnerType" used in definition of "MyRoom"`);
     assert.deepEqual(report.length, 4);
+  });
+
+
+  it('reports wrong types', async () => {
+    const report = await analyzeIdl(`
+[Global=Home,Exposed=*] interface MyHome {
+  attribute MyNamespace space;
+  attribute MyLivingRoom room;
+  attribute MyNamespaceMixin basement;
+};
+namespace MyNamespace {};
+interface mixin MyLivingRoom {};
+
+namespace MyNamespaceMixin {};
+interface mixin MyNamespaceMixin {};
+`);
+    assert.deepEqual(report.length, 4);
+    assert.deepEqual(report[0].name, 'redefinedWithDifferentTypes');
+    assert.deepEqual(report[0].message, `"MyNamespaceMixin" is defined multiple times with different types (namespace, interface mixin) in ${specUrl}`);
+    assert.deepEqual(report[1].name, 'wrongType');
+    assert.deepEqual(report[1].message, `Namespace "MyNamespace" cannot be used as a type in definition of "MyHome"`);
+    assert.deepEqual(report[2].name, 'wrongType');
+    assert.deepEqual(report[2].message, `Interface mixin "MyLivingRoom" cannot be used as a type in definition of "MyHome"`);
+    assert.deepEqual(report[3].name, 'wrongType');
+    assert.deepEqual(report[3].message, `Name "MyNamespaceMixin" exists but is not a type and cannot be used in definition of "MyHome"`);
   });
 
 
