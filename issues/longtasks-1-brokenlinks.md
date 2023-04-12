@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/longtasks'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/longtasks/issues/108'
 Title: Broken references in Long Tasks API
 ---
 
