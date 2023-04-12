@@ -77,10 +77,18 @@ interface WhereIAm {};
 
   it('reports no anomaly for valid EventHandler attributes definitions', async () => {
     const report = await analyzeIdl(`
+[Exposed=*]
+interface Event {};
+[LegacyTreatNonObjectAsNull]
+callback EventHandlerNonNull = any (Event event);
+typedef EventHandlerNonNull? EventHandler;
+
 [Global=Window,Exposed=*]
 interface Carlos : EventTarget {
   attribute EventHandler onbigbisous;
 };
+[Exposed=*]
+interface EventTarget {};
 `);
     assert.deepEqual(report, []);
   });
@@ -216,5 +224,104 @@ enum WrongCase {
     assert.deepEqual(report[1]?.name, 'wrongCaseEnumValue');
     assert.deepEqual(report[1].message, `The value "not_good" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)`);
     assert.deepEqual(report.length, 2);
+  });
+
+
+  it('alerts on redefined includes statements', async () => {
+    const report = await analyzeIdl(`
+[Global=Home,Exposed=*] interface MyHome {};
+interface mixin MyRoom {};
+interface mixin MyLivingRoom {};
+
+MyHome includes MyRoom;
+MyHome includes MyLivingRoom;
+MyHome includes MyRoom;
+`);
+    assert.deepEqual(report[0]?.name, 'redefinedIncludes');
+    assert.deepEqual(report[0].message, `The includes statement "MyHome includes MyRoom" is defined more than once in ${specUrl}`);
+    assert.deepEqual(report.length, 1);
+  });
+
+
+  it('checks existence of target and mixin in includes statements', async () => {
+    const report = await analyzeIdl(`
+MyHome includes MyRoom;
+`);
+    assert.deepEqual(report[0]?.name, 'unknownType');
+    assert.deepEqual(report[0].message, `Target "MyHome" in includes statement "MyHome includes MyRoom" is not defined anywhere`);
+    assert.deepEqual(report[1]?.name, 'unknownType');
+    assert.deepEqual(report[1].message, `Mixin "MyRoom" in includes statement "MyHome includes MyRoom" is not defined anywhere`);
+    assert.deepEqual(report.length, 2);
+  });
+
+  it('checks kinds of target and mixin in includes statements', async () => {
+    const report = await analyzeIdl(`
+dictionary MyHome { required boolean door; };
+[Global=Home,Exposed=*] interface MyRoom {};
+
+MyHome includes MyRoom;
+`);
+    assert.deepEqual(report[0]?.name, 'wrongKind');
+    assert.deepEqual(report[0].message, `Target "MyHome" in includes statement "MyHome includes MyRoom" must be of kind "interface", not "dictionary"`);
+    assert.deepEqual(report[1]?.name, 'wrongKind');
+    assert.deepEqual(report[1].message, `Mixin "MyRoom" in includes statement "MyHome includes MyRoom" must be of kind "interface mixin", not "interface"`);
+    assert.deepEqual(report.length, 2);
+  });
+
+
+  it('checks inheritance', async () => {
+    const report = await analyzeIdl(`
+[Global=Home,Exposed=*] interface MyHome {};
+[Exposed=*] interface MyPalace : MyHome {};
+[Exposed=*] interface MyLivingRoom : MyRoom {};
+dictionary MyShelf : MyHome { required boolean full; };
+`);
+    assert.deepEqual(report[0]?.name, 'unknownType');
+    assert.deepEqual(report[0].message, `"MyLivingRoom" inherits from "MyRoom" which is not defined anywhere`);
+    assert.deepEqual(report[1]?.name, 'wrongKind');
+    assert.deepEqual(report[1].message, `"MyShelf" is of kind "dictionary" but inherits from "MyHome" which is of kind "interface"`);
+    assert.deepEqual(report.length, 2);
+  });
+
+
+  it('reports unknown types', async () => {
+    const report = await analyzeIdl(`
+[Global=Home,Exposed=*] interface MyHome {};
+[Exposed=*] interface MyRoom {
+  attribute bool boolDoesNotExist;
+  attribute MyBed bed;
+  undefined doSomething(USVString name, MyUnknownType thing);
+};
+`);
+    assert.deepEqual(report[0]?.name, 'unknownType');
+    assert.deepEqual(report[0].message, `Unknown type "bool" used in definition of "MyRoom"`);
+    assert.deepEqual(report[1]?.name, 'unknownType');
+    assert.deepEqual(report[1].message, `Unknown type "MyBed" used in definition of "MyRoom"`);
+    assert.deepEqual(report[2]?.name, 'unknownType');
+    assert.deepEqual(report[2].message, `Unknown type "MyUnknownType" used in definition of "MyRoom"`);
+    assert.deepEqual(report.length, 3);
+  });
+
+
+  it('reports unknown extended attributes', async () => {
+    const report = await analyzeIdl(`
+[Global=Home,Exposed=*] interface MyHome {};
+[Exposed=*,UnknownExtAttr] interface MyRoom {};
+[Exposed=*] interface MyLivingRoom {
+  [SuperUnknownExtAttr]
+  attribute boolean hasTV;
+};
+[Exposed=*] interface MyBedRoom {
+  [SuperUnknownExtAttr]
+  attribute boolean hasTVToo;
+};
+`);
+    assert.deepEqual(report[0]?.name, 'unknownExtAttr');
+    assert.deepEqual(report[0].message, `Unknown extended attribute "UnknownExtAttr" used in definition of "MyRoom"`);
+    assert.deepEqual(report[1]?.name, 'unknownExtAttr');
+    assert.deepEqual(report[1].message, `Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyLivingRoom"`);
+    assert.deepEqual(report[2]?.name, 'unknownExtAttr');
+    assert.deepEqual(report[2].message, `Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyBedRoom"`);
+    assert.deepEqual(report.length, 3);
   });
 });

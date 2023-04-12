@@ -28,11 +28,13 @@ const { expandCrawlResult } = require("reffy");
 const fetch = require("node-fetch");
 const WebIDL2 = require("webidl2");
 
-const specName = ({spec}) => spec.shortname ?? spec.url;
+const getSpecs = list => [...new Set(list.map(({spec}) => spec))];
+const specName = spec => spec.shortname ?? spec.url;
 
 const possibleAnomalies = [
   "invalid",
   "redefined",
+  "redefinedIncludes",
   "redefinedWithDifferentTypes",
   "noExposure",
   "unknownExposure",
@@ -40,13 +42,101 @@ const possibleAnomalies = [
   "noOriginalDefinition",
   "unexpectedEventHandler",
   "singleEnumValue",
-  "wrongCaseEnumValue"
+  "wrongCaseEnumValue",
+  "wrongKind",
+  "unknownType",
+  "unknownExtAttr"
 ];
 
+const basicTypes = new Set([
+  // Types defined by Web IDL itself:
+  "any", // https://webidl.spec.whatwg.org/#idl-any
+  "ArrayBuffer", // https://webidl.spec.whatwg.org/#idl-ArrayBuffer
+  "bigint", // https://webidl.spec.whatwg.org/#idl-bigint
+  "boolean", // https://webidl.spec.whatwg.org/#idl-boolean
+  "byte", // https://webidl.spec.whatwg.org/#idl-byte
+  "ByteString", // https://webidl.spec.whatwg.org/#idl-ByteString
+  "DataView", // https://webidl.spec.whatwg.org/#idl-DataView
+  "DOMString", // https://webidl.spec.whatwg.org/#idl-DOMString
+  "double", // https://webidl.spec.whatwg.org/#idl-double
+  "float", // https://webidl.spec.whatwg.org/#idl-float
+  "Float32Array", // https://webidl.spec.whatwg.org/#idl-Float32Array
+  "Float64Array", // https://webidl.spec.whatwg.org/#idl-Float64Array
+  "Int16Array", // https://webidl.spec.whatwg.org/#idl-Int16Array
+  "Int32Array", // https://webidl.spec.whatwg.org/#idl-Int32Array
+  "Int8Array", // https://webidl.spec.whatwg.org/#idl-Int8Array
+  "long long", // https://webidl.spec.whatwg.org/#idl-long-long
+  "long", // https://webidl.spec.whatwg.org/#idl-long
+  "object", // https://webidl.spec.whatwg.org/#idl-object
+  "octet", // https://webidl.spec.whatwg.org/#idl-octet
+  "short", // https://webidl.spec.whatwg.org/#idl-short
+  "symbol", // https://webidl.spec.whatwg.org/#idl-symbol
+  "BigUint64Array", // https://webidl.spec.whatwg.org/#idl-BigUint64Array
+  "BigInt64Array", // https://webidl.spec.whatwg.org/#idl-BigInt64Array
+  "Uint16Array", // https://webidl.spec.whatwg.org/#idl-Uint16Array
+  "Uint32Array", // https://webidl.spec.whatwg.org/#idl-Uint32Array
+  "Uint8Array", // https://webidl.spec.whatwg.org/#idl-Uint8Array
+  "Uint8ClampedArray", // https://webidl.spec.whatwg.org/#idl-Uint8ClampedArray
+  "unrestricted double", // https://webidl.spec.whatwg.org/#idl-unrestricted-double
+  "unrestricted float", // https://webidl.spec.whatwg.org/#idl-unrestricted-float
+  "unsigned long long", // https://webidl.spec.whatwg.org/#idl-unsigned-long-long
+  "unsigned long", // https://webidl.spec.whatwg.org/#idl-unsigned-long
+  "unsigned short", // https://webidl.spec.whatwg.org/#idl-unsigned-short
+  "USVString", // https://webidl.spec.whatwg.org/#idl-USVString
+  "undefined", // https://webidl.spec.whatwg.org/#idl-undefined
+
+  // Types defined by other specs:
+  "CSSOMString", // https://drafts.csswg.org/cssom/#cssomstring-type
+  "WindowProxy" // https://html.spec.whatwg.org/multipage/window-object.html#windowproxy
+]);
+
+
+const knownExtAttrs = new Set([
+  // Extended attributes defined by Web IDL itself:
+  "AllowResizable", // https://webidl.spec.whatwg.org/#AllowResizable
+  "AllowShared", // https://webidl.spec.whatwg.org/#AllowShared
+  "Clamp", // https://webidl.spec.whatwg.org/#Clamp
+  "CrossOriginIsolated", // https://webidl.spec.whatwg.org/#CrossOriginIsolated
+  "Default", // https://webidl.spec.whatwg.org/#Default
+  "EnforceRange", // https://webidl.spec.whatwg.org/#EnforceRange
+  "Exposed", // https://webidl.spec.whatwg.org/#Exposed
+  "Global", // https://webidl.spec.whatwg.org/#Global
+  "LegacyFactoryFunction", // https://webidl.spec.whatwg.org/#LegacyFactoryFunction
+  "LegacyLenientSetter", // https://webidl.spec.whatwg.org/#LegacyLenientSetter
+  "LegacyLenientThis", // https://webidl.spec.whatwg.org/#LegacyLenientThis
+  "LegacyNamespace", // https://webidl.spec.whatwg.org/#LegacyNamespace
+  "LegacyNoInterfaceObject", // https://webidl.spec.whatwg.org/#LegacyNoInterfaceObject
+  "LegacyNullToEmptyString", // https://webidl.spec.whatwg.org/#LegacyNullToEmptyString
+  "LegacyOverrideBuiltIns", // https://webidl.spec.whatwg.org/#LegacyOverrideBuiltIns
+  "LegacyTreatNonObjectAsNull", // https://webidl.spec.whatwg.org/#LegacyTreatNonObjectAsNull
+  "LegacyUnenumerableNamedProperties", // https://webidl.spec.whatwg.org/#LegacyUnenumerableNamedProperties
+  "LegacyUnforgeable", // https://webidl.spec.whatwg.org/#LegacyUnforgeable
+  "LegacyWindowAlias", // https://webidl.spec.whatwg.org/#LegacyWindowAlias
+  "NewObject", // https://webidl.spec.whatwg.org/#NewObject
+  "PutForwards", // https://webidl.spec.whatwg.org/#PutForwards
+  "Replaceable", // https://webidl.spec.whatwg.org/#Replaceable
+  "SameObject", // https://webidl.spec.whatwg.org/#SameObject
+  "SecureContext", // https://webidl.spec.whatwg.org/#SecureContext
+  "Unscopable", // https://webidl.spec.whatwg.org/#Unscopable
+
+  // Extended attributes defined by other specs:
+  "CEReactions", // https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions
+  "HTMLConstructor", // https://html.spec.whatwg.org/multipage/dom.html#htmlconstructor
+  "Serializable", // https://html.spec.whatwg.org/multipage/structured-data.html#serializable
+  "StringContext", // https://w3c.github.io/webappsec-trusted-types/dist/spec/#webidl-string-context-xattr
+  "Transferable", // https://html.spec.whatwg.org/multipage/structured-data.html#transferable
+  "WebGLHandlesContextLoss" // https://registry.khronos.org/webgl/specs/latest/1.0/##5.14
+]);
+
+
 async function studyWebIdl(edResults) {
-  const report = [];
-  const platformIdl = {};
-  const globals = {};
+  const report = [];              // List of anomalies to report
+  const dfns = {};                // Index of IDL definitions (save includes)
+  const includesStatements = {};  // Index of "includes" statements
+  const globals = {};             // Index of globals defined in the IDL
+  const objectTypes = {};         // Index of interface types
+  const usedTypes = {};           // Index of types used in the IDL
+  const usedExtAttrs = {};        // Index of extended attributes
 
   // Record an anomaly for the given spec(s).
   function recordAnomaly(specs, name, message) {
@@ -54,6 +144,7 @@ async function studyWebIdl(edResults) {
       throw new Error(`Cannot record an anomaly without also recording an offending spec`);
     }
     specs = Array.isArray(specs) ? specs : [specs];
+    specs = [...new Set(specs)];
     if (!possibleAnomalies.includes(name)) {
       throw new Error(`Cannot record an anomaly with name "${name}"`);
     }
@@ -63,7 +154,8 @@ async function studyWebIdl(edResults) {
   function inheritsFrom(iface, ancestor) {
     if (!iface.inheritance) return false;
     if (iface.inheritance === ancestor) return true;
-    const parentInterface = platformIdl[iface.inheritance].find(({idl}) => !idl.partial).idl;
+    const parentInterface = dfns[iface.inheritance].find(({idl}) => !idl.partial)?.idl;
+    if (!parentInterface) return false;
     return inheritsFrom(parentInterface, ancestor);
   }
 
@@ -145,81 +237,159 @@ async function studyWebIdl(edResults) {
     });
   }
 
-  edResults.forEach(spec => {
-    if (!spec.idl) return;
-    let ast;
-    try {
-      ast = WebIDL2.parse(spec.idl);
-      for (let idlItem of ast) {
-        if (!platformIdl[idlItem.name]) {
-          platformIdl[idlItem.name] = [];
+  function checkInheritance(spec, idl) {
+    if (!idl.inheritance) return;
+    const parent = dfns[idl.inheritance];
+    if (!parent) {
+      recordAnomaly(spec, "unknownType", `"${idl.name}" inherits from "${idl.inheritance}" which is not defined anywhere`);
+    }
+    else if (parent[0].idl.type !== idl.type) {
+      recordAnomaly(spec, "wrongKind", `"${idl.name}" is of kind "${idl.type}" but inherits from "${idl.inheritance}" which is of kind "${parent[0].idl.type}"`);
+    }
+  }
+
+  // Parse an AST node to extract the list of types and extended attributes
+  // that the node uses. Note that, in the indexes, we only store the root
+  // definition, not the exact method or parameter where the type or extended
+  // attribute is found.
+  function parseIdlNode(node, spec, dfn) {
+    dfn = dfn ?? node;
+    for (const [key, value] of Object.entries(node)) {
+      if (key === "idlType") {
+        if (!usedTypes[value.idlType]) {
+          usedTypes[value.idlType] = [];
         }
-        platformIdl[idlItem.name].push({spec, idl: idlItem});
-        let globalEA;
-        if (idlItem.type === "interface" && (globalEA = idlItem?.extAttrs?.find(ea => ea.name === "Global"))) {
-          // mostly copied from webidlpedia - DRY?
-          const globalValues = Array.isArray(globalEA.rhs.value) ? globalEA.rhs.value.map(({value}) => value) : [globalEA.rhs.value];
-          for (const value of globalValues)  {
-            // '*' is not a name
-            if (value === '*') break;
-            if (!globals[value]) {
-              globals[value] = {components: []};
-            }
-            globals[value].components.push(idlItem.name);
+        usedTypes[value.idlType].push({ spec, idl: dfn });
+      }
+      else if (key === "extAttrs" && Array.isArray(value)) {
+        for (const extAttr of value) {
+          if (!usedExtAttrs[extAttr.name]) {
+            usedExtAttrs[extAttr.name] = [];
           }
+          usedExtAttrs[extAttr.name].push({ spec, idl: dfn });
         }
       }
-    } catch (e) {
-      // TODO: load from curated?
-      recordAnomaly(spec, "invalid", e.message);
-      return;
+      else if (typeof value === "object" && value !== null) {
+        // Recurse into methods and parameters
+        parseIdlNode(value, spec, dfn);
+      }
     }
-  });
+  }
 
-  // mostly copied from webidlpedia - DRY?
+  edResults
+    // We're only interested in specs that define Web IDL content
+    .filter(spec => !!spec.idl)
+
+    // Parse the Web IDL into AST trees,
+    // reporting invalid IDL content as anomalies
+    .map(spec => {
+      try {
+        const ast = WebIDL2.parse(spec.idl);
+        return { spec, ast };
+      }
+      catch (e) {
+        recordAnomaly(spec, "invalid", e.message);
+        return { spec };
+      }
+    })
+
+    // Filter out specs that contain invalid Web IDL content
+    .filter(res => !!res.ast)
+
+    // Populate internal indexes from AST trees
+    .forEach(({ spec, ast }) => {
+      for (let dfn of ast) {
+        if (dfn.name) {
+          // Basically all definitions except includes statements:
+          // https://webidl.spec.whatwg.org/#index-prod-Definition
+          if (!dfns[dfn.name]) {
+            dfns[dfn.name] = [];
+          }
+          dfns[dfn.name].push({spec, idl: dfn});
+          let globalEA;
+          if (dfn.type === "interface" && (globalEA = dfn?.extAttrs?.find(ea => ea.name === "Global"))) {
+            // mostly copied from webidlpedia - DRY?
+            const globalValues = Array.isArray(globalEA.rhs.value) ? globalEA.rhs.value.map(({value}) => value) : [globalEA.rhs.value];
+            for (const value of globalValues)  {
+              // "*" is not a name
+              if (value === "*") break;
+              if (!globals[value]) {
+                globals[value] = {components: []};
+              }
+              globals[value].components.push(dfn.name);
+            }
+          }
+          parseIdlNode(dfn, spec);
+        }
+        else if (dfn.type === "includes") {
+          // Includes statement:
+          // https://webidl.spec.whatwg.org/#index-prod-IncludesStatement
+          const key = `${dfn.target} includes ${dfn.includes}`;
+          if (!includesStatements[key]) {
+            includesStatements[key] = [];
+             }
+          includesStatements[key].push({spec, idl: dfn});
+        }
+        else {
+          // Apart from includes statements, all valid Web IDL definitions have
+          // a name. We should only ever reach this point if the WebIDL parser
+          // has a bug or if the WebIDL grammar starts supporting a new type of
+          // construct that would require updating the above logic.
+          throw new Error(`Unknown definition in parsed Web IDL: ${JSON.stringify(dfn)}`);
+        }
+      }
+    });
+
+  // A global may either be a real realm definition of a grouping of realms,
+  // depending on how many interfaces use the global name.
+  // TODO: mostly copied from webidlpedia - DRY?
   for (const global of Object.keys(globals)) {
     let subrealms = [];
-    // If several interfaces use this name as a Global EA
-    // it serves as a grouping of realms rather than as a realm definition
     if (globals[global].components.length > 1) {
       subrealms = Object.keys(globals).filter(g => globals[g].components.length === 1 && globals[global].components.includes(globals[g].components[0]));
     }
     globals[global].subrealms = subrealms;
   }
 
-  for (const name in platformIdl) {
-    const types = new Set(platformIdl[name].map(({idl}) => idl.type));
-    const specNames = platformIdl[name].map(specName);
+  // Time to run checks on IDL definitions
+  for (const name in dfns) {
+    const types = new Set(dfns[name].map(({idl}) => idl.type));
+    const specs = getSpecs(dfns[name]);
     if (types.size > 1) {
-      recordAnomaly(platformIdl[name].map(({spec}) => spec), "redefinedWithDifferentTypes", `"${name}" is defined multiple times with different types (${[...types].join(', ')}) in ${specNames.join(', ')}`);
+      recordAnomaly(specs, "redefinedWithDifferentTypes", `"${name}" is defined multiple times with different types (${[...types].join(', ')}) in ${specs.map(specName).join(', ')}`);
       continue;
     }
     const type = [...types][0];
     let mainDef;
     const allowPartials = ["interface", "dictionary", "namespace", "interface mixin"];
-    const allowMultipleDefs = allowPartials.concat("includes");
-    if (!allowMultipleDefs.includes(type)) {
-      if (platformIdl[name].length > 1) {
-        recordAnomaly(platformIdl[name].map(({spec}) => spec), "redefined", `"${name}" is defined multiple times (with type ${type}) in ${specNames.join(', ')}`);
-      } else {
-        mainDef = platformIdl[name][0].idl;
-      }
-    }
     if (allowPartials.includes(type)) {
-      const mainDefs = platformIdl[name].filter(({idl}) => !idl.partial);
+      const mainDefs = dfns[name].filter(({idl}) => !idl.partial);
       if (mainDefs.length === 0) {
-        recordAnomaly(platformIdl[name][0].spec, "noOriginalDefinition", `"${name}" is only defined as a partial ${type} (in ${platformIdl[name].map(specName).join(', ')})`);
+        recordAnomaly(specs, "noOriginalDefinition", `"${name}" is only defined as a partial ${type} (in ${specs.map(specName).join(', ')})`);
         continue;
-      } else if (mainDefs.length > 1) {
-        recordAnomaly(platformIdl[name].map(({spec}) => spec), "redefined", `"${name}" is defined as a non-partial ${type} mutiple times in ${mainDefs.map(specName).join(', ')}`);
+      }
+      else if (mainDefs.length > 1) {
+        recordAnomaly(getSpecs(mainDefs), "redefined", `"${name}" is defined as a non-partial ${type} mutiple times in ${getSpecs(mainDefs).map(specName).join(', ')}`);
       }
       mainDef = mainDefs[0].idl;
     }
-    for (let {spec, idl} of platformIdl[name]) {
+    else {
+      if (dfns[name].length > 1) {
+        recordAnomaly(dfns[name].map(({spec}) => spec), "redefined", `"${name}" is defined multiple times (with type ${type}) in ${specs.map(specName).join(', ')}`);
+      }
+      else {
+        mainDef = dfns[name][0].idl;
+      }
+    }
+    for (let {spec, idl} of dfns[name]) {
       switch(idl.type) {
+      case "dictionary":
+        checkInheritance(spec, mainDef);
+        break;
       case "interface":
         checkEventHandlers(spec, idl, mainDef);
         checkExposure(spec, idl, mainDef);
+        checkInheritance(spec, mainDef);
         break;
       case "enum":
         checkEnumMultipleValues(spec, idl);
@@ -228,6 +398,57 @@ async function studyWebIdl(edResults) {
       }
     }
   }
+
+  // Check includes statements
+  for (const key in includesStatements) {
+    const statements = includesStatements[key];
+    if (statements.length > 1) {
+      const specs = getSpecs(statements);
+      recordAnomaly(specs, "redefinedIncludes", `The includes statement "${key}" is defined more than once in ${specs.map(specName).join(', ')}`);
+    }
+    else {
+      const statement = statements[0];
+      includesStatements[key] = statement;
+
+      // Check target exists and is an interface
+      const target = dfns[statement.idl.target];
+      if (!target) {
+        recordAnomaly(statement.spec, "unknownType", `Target "${statement.idl.target}" in includes statement "${key}" is not defined anywhere`);
+      }
+      else if (target[0].idl.type !== "interface") {
+        recordAnomaly(statement.spec, "wrongKind", `Target "${statement.idl.target}" in includes statement "${key}" must be of kind "interface", not "${target[0].idl.type}"`);
+      }
+
+      // Check mixin exists and is an interface mixin
+      const mixin = dfns[statement.idl.includes];
+      if (!mixin) {
+        recordAnomaly(statement.spec, "unknownType", `Mixin "${statement.idl.includes}" in includes statement "${key}" is not defined anywhere`);
+      }
+      else if (mixin[0].idl.type !== "interface mixin") {
+        recordAnomaly(statement.spec, "wrongKind", `Mixin "${statement.idl.includes}" in includes statement "${key}" must be of kind "interface mixin", not "${mixin[0].idl.type}"`);
+      }
+    }
+  }
+
+  // Report unknown used types
+  for (const name in usedTypes) {
+    if (!basicTypes.has(name) && !dfns[name]) {
+      for (const { spec, idl } of usedTypes[name]) {
+        recordAnomaly(spec, "unknownType", `Unknown type "${name}" used in definition of "${idl.name}"`);
+      }
+    }
+  }
+
+  // Report unknown extended attributes
+  for (const name in usedExtAttrs) {
+    if (!knownExtAttrs.has(name)) {
+      for (const { spec, idl } of usedExtAttrs[name]) {
+        recordAnomaly(spec, "unknownExtAttr", `Unknown extended attribute "${name}" used in definition of "${idl.name}"`);
+      }
+    }
+  }
+
+
   return report;
 }
 
