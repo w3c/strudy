@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/html-media-capture'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/html-media-capture/issues/40'
 Title: Broken references in HTML Media Capture
 ---
 
