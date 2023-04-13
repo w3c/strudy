@@ -30,14 +30,18 @@ const WebIDL2 = require("webidl2");
 
 const getSpecs = list => [...new Set(list.map(({spec}) => spec))];
 const specName = spec => spec.shortname ?? spec.url;
+const dfnName = dfn => `${dfn.idl.partial ? 'partial ' : ''}${dfn.idl.type} "${dfn.idl.name}"`;
+const getExtAttr = (node, name) => node.extAttrs && node.extAttrs.find((attr) => attr.name === name);
 
 const possibleAnomalies = [
   "incompatiblePartialIdlExposure",
   "invalid",
   "noExposure",
   "noOriginalDefinition",
+  "overloaded",
   "redefined",
   "redefinedIncludes",
+  "redefinedMember",
   "redefinedWithDifferentTypes",
   "singleEnumValue",
   "unexpectedEventHandler",
@@ -134,6 +138,61 @@ const listIdlTypes = type => {
   if (typeof type === "string") return [type];
   return listIdlTypes(type.idlType);
 };
+
+// Helper to test if two members define the same thing, such as the same
+// attribute or the same method. Should match requirements in spec:
+// https://heycam.github.io/webidl/#idl-overloading
+function isOverloadedOperation(a, b) {
+  if (a.type !== "constructor" && a.type !== "operation") {
+    return false;
+  }
+  if (a.type !== b.type) {
+    return false;
+  }
+  // Note that |name| or |special| could be null/undefined, but even then
+  // they have to be the same for both members.
+  if (a.name !== b.name) {
+    return false;
+  }
+  if (a.special !== b.special) {
+    return false;
+  }
+  return true;
+}
+
+// Helper to test if two members define an operation with the same identifier,
+// one of them being a static operation and the other a regular one. This is
+// allowed in Web IDL, see https://github.com/whatwg/webidl/issues/1097
+function isAllowedOperationWithSameIdentifier(a, b) {
+  if (a.type !== "operation") {
+    return false;
+  }
+  if (a.type !== b.type) {
+    return false;
+  }
+  if (a.name !== b.name) {
+    return false;
+  }
+  if (a.special !== "static" && b.special !== "static") {
+    return false;
+  }
+  if (a.special === b.special) {
+    return false;
+  }
+  return true;
+}
+
+function describeMember(member) {
+  let desc = member.type;
+  if (member.name) {
+    desc += " " + member.name;
+  }
+  if (member.special) {
+    desc = member.special + " " + desc;
+  }
+  return desc;
+}
+
 
 async function studyWebIdl(edResults, curatedResults) {
   const report = [];              // List of anomalies to report
@@ -262,13 +321,13 @@ async function studyWebIdl(edResults, curatedResults) {
     dfn = dfn ?? node;
     for (const [key, value] of Object.entries(node)) {
       if (key === "idlType") {
-	const idlTypes = listIdlTypes(value);
-	for (const idlType of idlTypes) {
-          if (!usedTypes[idlType]) {
-            usedTypes[idlType] = [];
-          }
-          usedTypes[idlType].push({ spec, idl: dfn });
-	}
+        const idlTypes = listIdlTypes(value);
+        for (const idlType of idlTypes) {
+                if (!usedTypes[idlType]) {
+                  usedTypes[idlType] = [];
+                }
+                usedTypes[idlType].push({ spec, idl: dfn });
+        }
       }
       else if (key === "extAttrs" && Array.isArray(value)) {
         for (const extAttr of value) {
@@ -285,6 +344,87 @@ async function studyWebIdl(edResults, curatedResults) {
     }
   }
 
+  function checkMembers(target, source) {
+    const selfCheck = !source;
+    source = source ?? target;
+    const knownDuplicates = [];
+    if (!target.idl.members || !source.idl.members) {
+      return;
+    }
+    for (const targetMember of target.idl.members) {
+      if (!targetMember.name) {
+        continue;
+      }
+
+      for (const sourceMember of source.idl.members) {
+        if (!sourceMember.name) {
+          continue;
+        }
+        if (targetMember === sourceMember) {
+          // Self check and same member, skip
+          continue;
+        }
+        if (targetMember.name !== sourceMember.name) {
+          continue;
+        }
+
+        // Prepare anomaly parameters
+        let targetName = dfnName(target);
+        let sourceName = dfnName(source);
+        const specs = [target.spec];
+        if (sourceName === targetName) {
+          // TODO: find a better way to disambiguate between both definitions
+          sourceName = 'another ' + sourceName;
+        }
+        if (target.spec !== source.spec) {
+          sourceName += ` (in ${specName(source.spec)})`;
+          // Should we also blame the "source" spec if we report an anomaly?
+          // We will if we're looking at two partial mixins or two partial
+          // interface definitions, since there's no way to tell which of them
+          // is supposed to pay attention to the other. We won't blame the
+          // "source" spec otherwise
+          if (target.idl.partial && source.idl.partial &&
+              target.idl.type === source.idl.type) {
+            targetName += ` (in ${specName(target.spec)})`;
+            specs.push(source.spec);
+          }
+        }
+
+        if (isOverloadedOperation(targetMember, sourceMember)) {
+          if (!selfCheck) {
+            recordAnomaly(specs, "overloaded", `"${describeMember(targetMember)}" in ${targetName} overloads an operation defined in ${sourceName}`);
+          }
+          break;
+        }
+
+        // Non-overlapping exposure sets are OK. Assume it's OK if either
+        // member has an [Exposed] extended attribute.
+        // TODO: check and compare actual Exposed values
+        if (getExtAttr(targetMember, 'Exposed') || getExtAttr(sourceMember, 'Exposed')) {
+          continue;
+        }
+
+        // A static operation that has the same identifier as a regular one is OK
+        if (isAllowedOperationWithSameIdentifier(targetMember, sourceMember)) {
+          continue;
+        }
+
+        if (!knownDuplicates.includes(targetMember.name)) {
+          if (selfCheck) {
+            recordAnomaly(specs, "redefinedMember", `"${targetMember.name}" in ${targetName} is defined more than once`);
+          }
+          else {
+            recordAnomaly(specs, "redefinedMember", `"${targetMember.name}" in ${targetName} duplicates a member defined in ${sourceName}`);
+          }
+        }
+        // No need to report the same redefined member twice
+        knownDuplicates.push(targetMember.name);
+        break;
+      }
+    }
+  }
+
+
   edResults
     // We're only interested in specs that define Web IDL content
     .filter(spec => !!spec.idl)
@@ -298,14 +438,14 @@ async function studyWebIdl(edResults, curatedResults) {
       }
       catch (e) {
         recordAnomaly(spec, "invalid", e.message);
-	// Use fallback from curated version if available
-	// This avoids reporting errors e.g. of not-really unknown interfaces
-	try {
-	  const ast = WebIDL2.parse(curatedResults.find(s => s.url === spec.url).idl);
-	  return { spec, ast };
-	} catch (e) {
+        // Use fallback from curated version if available
+        // This avoids reporting errors e.g. of not-really unknown interfaces
+        try {
+          const ast = WebIDL2.parse(curatedResults.find(s => s.url === spec.url).idl);
+          return { spec, ast };
+        } catch (e) {
           return { spec };
-	}
+        }
       }
     })
 
@@ -393,10 +533,25 @@ async function studyWebIdl(edResults, curatedResults) {
       if (dfns[name].length > 1) {
         recordAnomaly(dfns[name].map(({spec}) => spec), "redefined", `"${name}" is defined multiple times (with type ${type}) in ${specs.map(specName).join(', ')}`);
       }
-      else {
-        mainDef = dfns[name][0].idl;
-      }
+      mainDef = dfns[name][0].idl;
     }
+
+    // If Web IDL adds new kinds of definitions, we will very likely need to
+    // adjust our logic. Let's not pretend that we understand new kinds
+    const knownDfnKinds = new Set([
+      "callback interface",
+      "callback",
+      "dictionary",
+      "enum",
+      "interface",
+      "interface mixin",
+      "namespace",
+      "typedef"
+    ]);
+    if (!knownDfnKinds.has(mainDef.type)) {
+      throw new Error(`Unknown definition kind "${mainDef.type}" in parsed Web IDL: ${JSON.stringify(mainDef)}`);
+    }
+
     for (let {spec, idl} of dfns[name]) {
       switch(idl.type) {
       case "dictionary":
@@ -422,33 +577,32 @@ async function studyWebIdl(edResults, curatedResults) {
       const specs = getSpecs(statements);
       recordAnomaly(specs, "redefinedIncludes", `The includes statement "${key}" is defined more than once in ${specs.map(specName).join(', ')}`);
     }
-    else {
-      const statement = statements[0];
-      includesStatements[key] = statement;
 
-      // Check target exists and is an interface
-      const target = dfns[statement.idl.target];
-      if (!target) {
-        recordAnomaly(statement.spec, "unknownType", `Target "${statement.idl.target}" in includes statement "${key}" is not defined anywhere`);
-      }
-      // In theory, target is defined only once, but IDL may redefine it by
-      // mistake (already reported as an anomaly, no need to report it again).
-      // Let's just make sure that there is an "interface" definition.
-      else if (!target.find(({idl}) => idl.type === "interface")) {
-        recordAnomaly(statement.spec, "wrongKind", `Target "${statement.idl.target}" in includes statement "${key}" must be of kind "interface"`);
-      }
+    const statement = statements[0];
+    includesStatements[key] = statement;
 
-      // Check mixin exists and is an interface mixin
-      const mixin = dfns[statement.idl.includes];
-      if (!mixin) {
-        recordAnomaly(statement.spec, "unknownType", `Mixin "${statement.idl.includes}" in includes statement "${key}" is not defined anywhere`);
-      }
-      // In theory, mixin is defined only once, but IDL may redefine it by
-      // mistake (already reported as an anomaly, no need to report it again).
-      // let's just make sure that there is an "interface mixin" definition.
-      else if (!mixin.find(({idl}) => idl.type === "interface mixin")) {
-        recordAnomaly(statement.spec, "wrongKind", `Mixin "${statement.idl.includes}" in includes statement "${key}" must be of kind "interface mixin"`);
-      }
+    // Check target exists and is an interface
+    const target = dfns[statement.idl.target];
+    if (!target) {
+      recordAnomaly(statement.spec, "unknownType", `Target "${statement.idl.target}" in includes statement "${key}" is not defined anywhere`);
+    }
+    // In theory, target is defined only once, but IDL may redefine it by
+    // mistake (already reported as an anomaly, no need to report it again).
+    // Let's just make sure that there is an "interface" definition.
+    else if (!target.find(({idl}) => idl.type === "interface")) {
+      recordAnomaly(statement.spec, "wrongKind", `Target "${statement.idl.target}" in includes statement "${key}" must be of kind "interface"`);
+    }
+
+    // Check mixin exists and is an interface mixin
+    const mixin = dfns[statement.idl.includes];
+    if (!mixin) {
+      recordAnomaly(statement.spec, "unknownType", `Mixin "${statement.idl.includes}" in includes statement "${key}" is not defined anywhere`);
+    }
+    // In theory, mixin is defined only once, but IDL may redefine it by
+    // mistake (already reported as an anomaly, no need to report it again).
+    // let's just make sure that there is an "interface mixin" definition.
+    else if (!mixin.find(({idl}) => idl.type === "interface mixin")) {
+      recordAnomaly(statement.spec, "wrongKind", `Mixin "${statement.idl.includes}" in includes statement "${key}" must be of kind "interface mixin"`);
     }
   }
 
@@ -489,6 +643,62 @@ async function studyWebIdl(edResults, curatedResults) {
     }
   }
 
+  // Check duplicate/overloaded type members across partial and mixins
+  // Note: When the IDL is correct, there is only one non-partial dfn per type
+  // defined in the IDL. In practice, there may be re-definitions, which have
+  // already been reported as anomalies. Here we'll consider that all
+  // non-partial dfns are correct and we'll handle them separately.
+  for (const name in dfns) {
+    const mainDfns = dfns[name].filter(({idl}) => !idl.partial);
+    for (const mainDfn of mainDfns) {
+      // Check duplicate members within the main dfn itself
+      checkMembers(mainDfn);
+
+      // Find all the partials and mixins, including partial mixins, that apply
+      // to the main dfn (note mixins are only for "interface" dfns)
+      const partials = dfns[name].filter((({idl}) => idl.partial && idl.type === mainDfn.idl.type));
+      const mixins = mainDfn.idl.type !== "interface" ? [] :
+        Object.keys(includesStatements)
+          .filter(key => key.startsWith(`${name} includes `))
+          .map(key => dfns[includesStatements[key].idl.includes]?.filter(({idl}) => idl.type === 'interface mixin'))
+          .filter(mixins => !!mixins && mixins.length > 0)
+          .flat();
+      // Compare members of partials, mixins and main dfn separately to be able
+      // to report more fine-grained anomalies
+      for (const partial of partials) {
+        // Check that the partial dfn itself does not define duplicate members
+        checkMembers(partial);
+
+        // Check partial members against the main dfn
+        checkMembers(partial, mainDfn);
+
+        // Check partial members against partials before it
+        for (const otherPartial of partials) {
+          if (otherPartial === partial) {
+            break;
+          }
+          checkMembers(partial, otherPartial);
+        }
+      }
+
+      // Note we don't need to compare mixins and partial mixins with other
+      // mixins and partial mixins because the loop already takes care of that
+      // when it goes through the mixin dfn as a main dfn.
+      // Also note that, in case of a duplicated member, we're going to blame
+      // the main (or partial) dfn, and not the mixin (or partial mixin), on
+      // the grounds that an interface decides to include a mixin, and not the
+      // other way round.
+      for (const mixin of mixins) {
+        // Check mixin members against the main dfn
+        checkMembers(mainDfn, mixin);
+
+        // Check mixin members against partials
+        for (const partial of partials) {
+          checkMembers(partial, mixin);
+        }
+      }
+    }
+  }
 
   return report;
 }
