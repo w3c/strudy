@@ -31,7 +31,6 @@ const WebIDL2 = require("webidl2");
 const getSpecs = list => [...new Set(list.map(({spec}) => spec))];
 const specName = spec => spec.shortname ?? spec.url;
 const dfnName = dfn => `${dfn.idl.partial ? 'partial ' : ''}${dfn.idl.type} "${dfn.idl.name}"`;
-const getExtAttr = (node, name) => node.extAttrs && node.extAttrs.find((attr) => attr.name === name);
 
 const possibleAnomalies = [
   "incompatiblePartialIdlExposure",
@@ -345,8 +344,8 @@ async function studyWebIdl(edResults, curatedResults) {
   }
 
   function checkMembers(target, source) {
-    const selfCheck = !source;
     source = source ?? target;
+    const selfCheck = source === target;
     const knownDuplicates = [];
     if (!target.idl.members || !source.idl.members) {
       return;
@@ -395,13 +394,6 @@ async function studyWebIdl(edResults, curatedResults) {
             recordAnomaly(specs, "overloaded", `"${describeMember(targetMember)}" in ${targetName} overloads an operation defined in ${sourceName}`);
           }
           break;
-        }
-
-        // Non-overlapping exposure sets are OK. Assume it's OK if either
-        // member has an [Exposed] extended attribute.
-        // TODO: check and compare actual Exposed values
-        if (getExtAttr(targetMember, 'Exposed') || getExtAttr(sourceMember, 'Exposed')) {
-          continue;
         }
 
         // A static operation that has the same identifier as a regular one is OK
@@ -661,7 +653,7 @@ async function studyWebIdl(edResults, curatedResults) {
         Object.keys(includesStatements)
           .filter(key => key.startsWith(`${name} includes `))
           .map(key => dfns[includesStatements[key].idl.includes]?.filter(({idl}) => idl.type === 'interface mixin'))
-          .filter(mixins => !!mixins && mixins.length > 0)
+          .filter(mixins => mixins?.length > 0)
           .flat();
       // Compare members of partials, mixins and main dfn separately to be able
       // to report more fine-grained anomalies
