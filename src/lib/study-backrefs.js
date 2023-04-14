@@ -236,18 +236,9 @@ const matchAnchor = (url, anchor) => link => {
   return link === (url + "#" + anchor) || link === (url + "#" + encodeURIComponent(anchor));
 };
 
-async function studyBackrefs(edResults, trResults = []) {
+function studyBackrefs(edResults, trResults = [], htmlFragments = {}) {
   trResults = trResults || [];
   const report = [];
-
-  // Donwload automatic map of multipages anchors in HTML spec
-  // FIXME: this makes the script network-dependent
-  let htmlFragments ;
-  try {
-    htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
-  } catch (err) {
-    console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec");
-  }
 
   const recordAnomaly = recordCategorizedAnomaly(report, "links", possibleAnomalies);
 

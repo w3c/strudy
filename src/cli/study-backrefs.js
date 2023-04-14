@@ -121,9 +121,17 @@ if (require.main === module) {
     trCrawlResultsPath = path.join(trCrawlResultsPath, 'index.json');
   }
 
+  // Donwload automatic map of multipages anchors in HTML spec
+  let htmlFragments = {};
+  try {
+    htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
+  } catch (err) {
+    console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec");
+  }
+
   // Analyze the crawl results
   loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath)
-    .then(crawl => studyBackrefs(crawl.ed, crawl.tr))
+    .then(crawl => studyBackrefs(crawl.ed, crawl.tr, htmlFragments))
     .then(reportToConsole)
     .catch(e => {
       console.error(e);

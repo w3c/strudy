@@ -113,11 +113,22 @@ if (require.main === module) {
     }
     const nolongerRelevantReports = new Set(existingReports);
 
+
+    // Donwload automatic map of multipages anchors in HTML spec
+    let htmlFragments = {};
+    try {
+      console.log("Downloading HTML spec fragments data…");
+      htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
+      console.log("- done");
+    } catch (err) {
+      console.log("- failed: could not fetch HTML fragments data, may report false positive broken links on HTML spec");
+    }
+
     console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`);
     const crawl = await loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath);
     console.log("- done");
     console.log("Running back references analysis…");
-    const results = await studyBackrefs(crawl.ed, crawl.tr);
+    const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments);
     console.log("- done");
     const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     const needsPush = {};
