@@ -6,7 +6,7 @@ const assert = require('assert').strict;
 const { studyWebIdl } = require('../src/lib/study-webidl');
 const { assertNbAnomalies, assertAnomaly } = require("./util");
 
-describe('The Web IDL analyser', async () => {
+describe('The Web IDL analyser', () => {
   const specUrl = 'https://www.w3.org/TR/spec';
   const specUrl2 = 'https://www.w3.org/TR/spec2';
 
@@ -23,8 +23,8 @@ describe('The Web IDL analyser', async () => {
     return studyWebIdl(crawlResult);
   }
 
-  it('reports no anomaly if IDL is valid', async () => {
-    const report = await analyzeIdl(`
+  it('reports no anomaly if IDL is valid', () => {
+    const report = analyzeIdl(`
 [Global=Window,Exposed=*]
 interface Valid {};
 `);
@@ -32,8 +32,8 @@ interface Valid {};
   });
 
 
-  it('reports invalid IDL', async () => {
-    const report = await analyzeIdl(`
+  it('reports invalid IDL', () => {
+    const report = analyzeIdl(`
 [Global=Window,Exposed=*]
 interface Invalid;
 `);
@@ -48,7 +48,7 @@ interface Invalid;
     });
   });
 
-  it('reports invalid IDL and uses fallback from curated', async () => {
+  it('reports invalid IDL and uses fallback from curated', () => {
     const crawlResult = toCrawlResult(`
 // IDL in first spec
 [Global=Window,Exposed=*]
@@ -62,18 +62,18 @@ interface Valid: Invalid {};
 [Global=Window,Exposed=*]
 interface Invalid{};
 `);
-    const report = await studyWebIdl(crawlResult, curatedResult);
+    const report = studyWebIdl(crawlResult, curatedResult);
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, { name: 'invalid' });
   });
 
 
-  it('forgets about previous results', async () => {
-    await analyzeIdl(`
+  it('forgets about previous results', () => {
+    analyzeIdl(`
 [Global=Window,Exposed=*]
 interface Invalid;
 `);
-    const report = await analyzeIdl(`
+    const report = analyzeIdl(`
 [Global=Window,Exposed=*]
 interface Valid {};
 `);
@@ -81,8 +81,8 @@ interface Valid {};
   });
 
 
-  it('detects missing [Exposed] extended attributes', async () => {
-    const report = await analyzeIdl(`
+  it('detects missing [Exposed] extended attributes', () => {
+    const report = analyzeIdl(`
 interface Unexposed {};
 `);
     assertNbAnomalies(report, 1);
@@ -93,8 +93,8 @@ interface Unexposed {};
   });
 
 
-  it('detects unknown [Exposed] extended attributes', async () => {
-    const report = await analyzeIdl(`
+  it('detects unknown [Exposed] extended attributes', () => {
+    const report = analyzeIdl(`
 [Exposed=Unknown]
 interface WhereIAm {};
 `);
@@ -105,8 +105,8 @@ interface WhereIAm {};
     });
   });
 
-  it('reports no anomaly for valid EventHandler attributes definitions', async () => {
-    const report = await analyzeIdl(`
+  it('reports no anomaly for valid EventHandler attributes definitions', () => {
+    const report = analyzeIdl(`
 [Exposed=*]
 interface Event {};
 [LegacyTreatNonObjectAsNull]
@@ -124,8 +124,8 @@ interface EventTarget {};
   });
 
 
-  it('detects unexpected EventHandler attributes', async () => {
-    const report = await analyzeIdl(`
+  it('detects unexpected EventHandler attributes', () => {
+    const report = analyzeIdl(`
 [Exposed=*]
 interface Event {};
 [LegacyTreatNonObjectAsNull]
@@ -145,8 +145,8 @@ interface Carlos {
   });
 
 
-  it('detects incompatible partial exposure issues', async () => {
-    const report = await analyzeIdl(`
+  it('detects incompatible partial exposure issues', () => {
+    const report = analyzeIdl(`
 [Global=Somewhere,Exposed=*]
 interface Somewhere {};
 
@@ -172,8 +172,8 @@ partial interface MyPlace {};
   });
 
 
-  it('detects incompatible partial exposure issues when "*" is used', async () => {
-    const report = await analyzeIdl(`
+  it('detects incompatible partial exposure issues when "*" is used', () => {
+    const report = analyzeIdl(`
 [Global=Somewhere,Exposed=Somewhere]
 interface Somewhere {};
 
@@ -190,8 +190,8 @@ partial interface Somewhere {};
   });
 
 
-  it('detects IDL names that are redefined across specs', async () => {
-    const report = await analyzeIdl(`
+  it('detects IDL names that are redefined across specs', () => {
+    const report = analyzeIdl(`
 // IDL in first spec
 dictionary GrandBob {
   required boolean complete;
@@ -211,8 +211,8 @@ dictionary GrandBob {
   });
 
 
-  it('detects IDL names that are redefined with different types across specs', async () => {
-    const report = await analyzeIdl(`
+  it('detects IDL names that are redefined with different types across specs', () => {
+    const report = analyzeIdl(`
 // IDL in first spec
 dictionary GrandBob {
   required boolean complete;
@@ -232,8 +232,8 @@ enum GrandBob {
   });
 
 
-  it('detects the lack of original definition for partials', async () => {
-    const report = await analyzeIdl(`
+  it('detects the lack of original definition for partials', () => {
+    const report = analyzeIdl(`
 partial interface MyPlace {};
 `);
     assertNbAnomalies(report, 1);
@@ -244,8 +244,8 @@ partial interface MyPlace {};
   });
 
 
-  it('alerts about single enum values', async () => {
-    const report = await analyzeIdl(`
+  it('alerts about single enum values', () => {
+    const report = analyzeIdl(`
 enum SingleValue {
   "single"
 };
@@ -258,8 +258,8 @@ enum SingleValue {
   });
 
 
-  it('alerts when enum values do not follow casing conventions', async () => {
-    const report = await analyzeIdl(`
+  it('alerts when enum values do not follow casing conventions', () => {
+    const report = analyzeIdl(`
 enum WrongCase {
   "good",
   "NotGood",
@@ -279,8 +279,8 @@ enum WrongCase {
   });
 
 
-  it('alerts on redefined includes statements', async () => {
-    const report = await analyzeIdl(`
+  it('alerts on redefined includes statements', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*] interface MyHome {};
 interface mixin MyRoom {};
 interface mixin MyLivingRoom {};
@@ -297,8 +297,8 @@ MyHome includes MyRoom;
   });
 
 
-  it('checks existence of target and mixin in includes statements', async () => {
-    const report = await analyzeIdl(`
+  it('checks existence of target and mixin in includes statements', () => {
+    const report = analyzeIdl(`
 MyHome includes MyRoom;
 `);
     assertNbAnomalies(report, 2);
@@ -312,8 +312,8 @@ MyHome includes MyRoom;
     });
   });
 
-  it('checks kinds of target and mixin in includes statements', async () => {
-    const report = await analyzeIdl(`
+  it('checks kinds of target and mixin in includes statements', () => {
+    const report = analyzeIdl(`
 dictionary MyHome { required boolean door; };
 [Global=Home,Exposed=*] interface MyRoom {};
 
@@ -331,8 +331,8 @@ MyHome includes MyRoom;
   });
 
 
-  it('checks inheritance', async () => {
-    const report = await analyzeIdl(`
+  it('checks inheritance', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*] interface MyHome {};
 [Exposed=*] interface MyPalace : MyHome {};
 [Exposed=*] interface MyLivingRoom : MyRoom {};
@@ -350,8 +350,8 @@ dictionary MyShelf : MyHome { required boolean full; };
   });
 
 
-  it('reports unknown types', async () => {
-    const report = await analyzeIdl(`
+  it('reports unknown types', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*] interface MyHome {};
 [Exposed=*] interface MyRoom {
   attribute bool boolDoesNotExist;
@@ -380,8 +380,8 @@ dictionary MyShelf : MyHome { required boolean full; };
   });
 
 
-  it('reports wrong types', async () => {
-    const report = await analyzeIdl(`
+  it('reports wrong types', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*] interface MyHome {
   attribute MyNamespace space;
   attribute MyLivingRoom room;
@@ -413,8 +413,8 @@ interface mixin MyNamespaceMixin {};
   });
 
 
-  it('reports unknown extended attributes', async () => {
-    const report = await analyzeIdl(`
+  it('reports unknown extended attributes', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*] interface MyHome {};
 [Exposed=*,UnknownExtAttr] interface MyRoom {};
 [Exposed=*] interface MyLivingRoom {
@@ -442,8 +442,8 @@ interface mixin MyNamespaceMixin {};
   });
 
 
-  it('reports overloads across definitions (partial, same spec)', async () => {
-    const report = await analyzeIdl(`
+  it('reports overloads across definitions (partial, same spec)', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*]
 interface MyHome {
   undefined overload();
@@ -477,8 +477,8 @@ partial interface MyPartialHome {
   });
 
 
-  it('reports overloads across definitions (partial, different specs)', async () => {
-     const report = await analyzeIdl(`
+  it('reports overloads across definitions (partial, different specs)', () => {
+     const report = analyzeIdl(`
 // IDL in first spec
 [Global=Home,Exposed=*]
 interface MyHome {
@@ -519,8 +519,8 @@ partial interface MyPartialHome {
   });
 
 
-  it('reports overloads across definitions (mixin, same spec)', async () => {
-    const report = await analyzeIdl(`
+  it('reports overloads across definitions (mixin, same spec)', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*]
 interface MyHome {
   undefined overload();
@@ -551,8 +551,8 @@ partial interface mixin MyPartialRoom {
   });
 
 
-  it('reports overloads across definitions (mixin, different specs)', async () => {
-     const report = await analyzeIdl(`
+  it('reports overloads across definitions (mixin, different specs)', () => {
+     const report = analyzeIdl(`
 // IDL in first spec
 [Global=Home,Exposed=*]
 interface MyHome {
@@ -604,8 +604,8 @@ partial interface mixin MyPartialRoom {
   });
 
 
-  it('reports overloads across definitions (partial and mixin, same spec)', async () => {
-    const report = await analyzeIdl(`
+  it('reports overloads across definitions (partial and mixin, same spec)', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*]
 interface MyHome {};
 MyHome includes MyRoom;
@@ -638,8 +638,8 @@ partial interface mixin MyRoom {
   });
 
 
-  it('reports overloads across definitions (partial and mixin, different specs)', async () => {
-    const report = await analyzeIdl(`
+  it('reports overloads across definitions (partial and mixin, different specs)', () => {
+    const report = analyzeIdl(`
 // IDL in first spec
 [Global=Home,Exposed=*]
 interface MyHome {};
@@ -679,8 +679,8 @@ partial interface mixin MyRoom {
   });
 
 
-  it('reports redefined members (same spec)', async () => {
-    const report = await analyzeIdl(`
+  it('reports redefined members (same spec)', () => {
+    const report = analyzeIdl(`
 [Global=Home,Exposed=*]
 interface MyHome {
   undefined dejaVu();
@@ -716,8 +716,8 @@ interface mixin MyRoom {
   });
 
 
-  it('reports redefined members (different specs)', async () => {
-    const report = await analyzeIdl(`
+  it('reports redefined members (different specs)', () => {
+    const report = analyzeIdl(`
 // IDL in first spec
 [Global=Home,Exposed=*]
 interface MyHome {
