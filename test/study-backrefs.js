@@ -49,8 +49,8 @@ const populateSpec = (url, ids, links, dfns) => {
 
 function toCrawlResults(ids, links, trIds = ids) {
   return { ed: [ populateSpec(specEdUrl, toFullIds(specEdUrl, ids), []),
-		 populateSpec(specEdUrl2, [], toLinks(specEdUrl, links)) ],
-	   tr: [ populateSpec(specEdUrl, toFullIds(specEdUrl, trIds), [])] };
+                 populateSpec(specEdUrl2, [], toLinks(specEdUrl, links)) ],
+           tr: [ populateSpec(specEdUrl, toFullIds(specEdUrl, trIds), [])] };
 }
 
 describe('The links analyser', () => {

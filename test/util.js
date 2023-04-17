@@ -2,13 +2,13 @@ const assert = require('assert').strict;
 
 function assertNbAnomalies(report, length) {
   assert.deepEqual(report.length, length,
-		   `Expected ${length} anomalies but got ${report.length}. Full report received:\n` +
-		   JSON.stringify(report, null, 2));
+                   `Expected ${length} anomalies but got ${report.length}. Full report received:\n` +
+                   JSON.stringify(report, null, 2));
 }
 
 function assertAnomaly(report, idx, value) {
   const msg = `Mismatch for anomaly at index ${idx}. Full anomaly received:\n` +
-	JSON.stringify(report[idx], null, 2);
+        JSON.stringify(report[idx], null, 2);
   function assertMatch(actual, expected) {
     if (Array.isArray(expected)) {
       assert(Array.isArray(actual), msg);
