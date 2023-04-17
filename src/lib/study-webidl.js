@@ -192,7 +192,7 @@ function describeMember(member) {
 }
 
 
-async function studyWebIdl(edResults, curatedResults) {
+function studyWebIdl(edResults, curatedResults) {
   const report = [];              // List of anomalies to report
   const dfns = {};                // Index of IDL definitions (save includes)
   const includesStatements = {};  // Index of "includes" statements
