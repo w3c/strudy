@@ -25,7 +25,21 @@ async function loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath) {
   };
 }
 
+function recordCategorizedAnomaly(report, category, possibleAnomalies) {
+  return function recordAnomaly(specs, name, message) {
+    if (!specs) {
+      throw new Error(`Cannot record an anomaly without also recording an offending spec`);
+    }
+    specs = Array.isArray(specs) ? specs : [specs];
+    specs = [...new Set(specs)];
+    if (!possibleAnomalies.includes(name)) {
+      throw new Error(`Cannot record an anomaly with name "${name}"`);
+    }
+    report.push({ category, name, message, specs });
+  };
+}
+
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports = { loadCrawlResults };
+module.exports = { loadCrawlResults, recordCategorizedAnomaly };

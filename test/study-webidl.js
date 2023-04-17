@@ -4,6 +4,7 @@
 
 const assert = require('assert').strict;
 const { studyWebIdl } = require('../src/lib/study-webidl');
+const { assertNbAnomalies, assertAnomaly } = require("./util");
 
 describe('The Web IDL analyser', async () => {
   const specUrl = 'https://www.w3.org/TR/spec';
@@ -21,36 +22,6 @@ describe('The Web IDL analyser', async () => {
     const crawlResult = toCrawlResult(idl, idlSpec2);
     return studyWebIdl(crawlResult);
   }
-
-  function assertNbAnomalies(report, length) {
-    assert.deepEqual(report.length, length,
-      `Expected ${length} anomalies but got ${report.length}. Full report received:\n` +
-      JSON.stringify(report, null, 2));
-  }
-
-  function assertAnomaly(report, idx, value) {
-    const msg = `Mismatch for anomaly at index ${idx}. Full anomaly received:\n` +
-      JSON.stringify(report[idx], null, 2);
-    function assertMatch(actual, expected) {
-      if (Array.isArray(expected)) {
-        assert(Array.isArray(actual), msg);
-        assert.deepEqual(actual.length, expected.length, msg);
-        for (let i=0; i<expected.length; i++) {
-          assertMatch(actual[i], expected[i]);
-        }
-      }
-      else if (typeof expected === 'object') {
-        for (const prop in expected) {
-          assertMatch(actual[prop], expected[prop]);
-        }
-      }
-      else {
-        assert.deepEqual(actual, expected, msg);
-      }
-    }
-    assertMatch(report[idx], value);
-  }
-
 
   it('reports no anomaly if IDL is valid', async () => {
     const report = await analyzeIdl(`

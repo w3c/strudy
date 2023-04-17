@@ -1,4 +1,17 @@
 const fetch = require("node-fetch");
+const { recordCategorizedAnomaly } = require("./util");
+
+const possibleAnomalies = [
+  "brokenLinks",
+  "datedUrls",
+  "evolvingLinks",
+  "frailLinks",
+  "nonCanonicalRefs",
+  "notDfn",
+  "notExported",
+  "outdatedSpecs",
+  "unknownSpecs"
+];
 
 /**
  * The backrefs analyzer only checks links to other specs. This function returns
@@ -223,49 +236,20 @@ const matchAnchor = (url, anchor) => link => {
   return link === (url + "#" + anchor) || link === (url + "#" + encodeURIComponent(anchor));
 };
 
-async function studyBackrefs(edResults, trResults = []) {
+function studyBackrefs(edResults, trResults = [], htmlFragments = {}) {
   trResults = trResults || [];
-  const report = {};
+  const report = [];
 
-  // Donwload automatic map of multipages anchors in HTML spec
-  // FIXME: this makes the script network-dependent
-  let htmlFragments ;
-  try {
-    htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
-  } catch (err) {
-    console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec");
-  }
-
-  function recordAnomaly(spec, anomalyType, link) {
-    if (!report[spec.url]) {
-      report[spec.url] = {
-        title: spec.title,
-	crawled: spec.crawled,
-	shortname: spec.shortname,
-	repo: spec.nightly.repository,
-        notExported: [],
-        notDfn: [],
-        brokenLinks: [],
-    	frailLinks: [],
-	nonCanonicalRefs: [],
-        evolvingLinks: [],
-        outdatedSpecs: [],
-        unknownSpecs: [],
-        datedUrls: [],
-      	crawlError: [],
-      };
-    }
-    report[spec.url][anomalyType].push(link);
-  }
+  const recordAnomaly = recordCategorizedAnomaly(report, "links", possibleAnomalies);
 
   edResults.forEach(spec => {
     Object.keys(spec.links || {})
       .filter(matchSpecUrl)
       .forEach(link => {
         let shortname;
-	if (spec.links[link].specShortname) {
-	  shortname = spec.links[link].specShortname;
-	} else {
+        if (spec.links[link].specShortname) {
+          shortname = spec.links[link].specShortname;
+        } else {
           let nakedLink = link;
           if (nakedLink.endsWith(".html")) {
             nakedLink = nakedLink.replace(/\/(Overview|overview|index)\.html$/, '/');
@@ -308,7 +292,7 @@ async function studyBackrefs(edResults, trResults = []) {
               return;
             }
           }
-	}
+        }
 
         if ((link.match(/w3\.org/) || link.match(/w3c\.github\.io/))  && shortNamesOfTransferedSpecs[shortname]) {
           // The specification should no longer be referenced.
@@ -318,20 +302,20 @@ async function studyBackrefs(edResults, trResults = []) {
           recordAnomaly(spec, "outdatedSpecs", link);
           return;
         }
-	// Links to WHATWG commit snapshots
-	if (link.match(/spec\.whatwg\.org/) && link.match(/commit-snapshots/)) {
-	  recordAnomaly(spec, "outdatedSpecs", link);
+        // Links to WHATWG commit snapshots
+        if (link.match(/spec\.whatwg\.org/) && link.match(/commit-snapshots/)) {
+          recordAnomaly(spec, "outdatedSpecs", link);
           return;
         }
 
-	if (link.match(/heycam\.github\.io/)) {
-	  recordAnomaly(spec, "nonCanonicalRefs", link);
+        if (link.match(/heycam\.github\.io/)) {
+          recordAnomaly(spec, "nonCanonicalRefs", link);
           shortname = "webidl";
         }
-	if (outdatedShortnames[shortname]) {
-	  shortname = outdatedShortnames[shortname];
-	  recordAnomaly(spec, "nonCanonicalRefs", link);
-	}
+        if (outdatedShortnames[shortname]) {
+          shortname = outdatedShortnames[shortname];
+          recordAnomaly(spec, "nonCanonicalRefs", link);
+        }
 
         // At this point, we managed to associate the link with a shortname,
         // let's check whether the shortname matches a spec in the crawl,
@@ -346,11 +330,11 @@ async function studyBackrefs(edResults, trResults = []) {
           }
           return;
         }
-	if (sourceSpec.error) {
-	  // no point in reporting an error on failed crawls
-	  recordAnomaly(spec, "crawlError", link);
-	  return;
-	}
+        if (sourceSpec.error) {
+          // no point in reporting an error on failed crawls
+          recordAnomaly(spec, "crawlError", link);
+          return;
+        }
 
         // Self-references might be broken because of ED vs TR, ignore that
         if (shortname === spec.shortname || shortname === spec.series.shortname) {
@@ -371,9 +355,9 @@ async function studyBackrefs(edResults, trResults = []) {
         // Check anchors
         const anchors = spec.links[link].anchors || [];
         for (let anchor of anchors) {
-	  const baseLink = (sourceSpec.nightly.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly.url;
-	  const matchFullNightlyLink = matchAnchor(baseLink, anchor);
-	  const matchFullReleaseLink = matchAnchor((sourceSpec.release || sourceSpec.nightly).url, anchor);
+          const baseLink = (sourceSpec.nightly.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly.url;
+          const matchFullNightlyLink = matchAnchor(baseLink, anchor);
+          const matchFullReleaseLink = matchAnchor((sourceSpec.release || sourceSpec.nightly).url, anchor);
           const isKnownId = ids.find(matchFullNightlyLink);
           const heading = headings.find(h => matchFullNightlyLink(h.href));
           const dfn = dfns.find(d => matchFullNightlyLink(d.href));
@@ -381,27 +365,27 @@ async function studyBackrefs(edResults, trResults = []) {
             if ((trSourceSpec.ids || []).find(matchFullReleaseLink) && link.match(/w3\.org\/TR\//)) {
               recordAnomaly(spec, "evolvingLinks", link + "#" + anchor);
             } else {
-	      if (link.startsWith("https://html.spec.whatwg.org/C") || link.startsWith("http://html.spec.whatwg.org/C")) {
-		recordAnomaly(spec, "nonCanonicalRefs", link);
-		link = link.replace("http:", "https:").replace("https://html.spec.whatwg.org/C", "https://html.spec.whatwg.org/multipage");
-	      }
-	      // Links to single-page version of HTML spec
-	      if (link === "https://html.spec.whatwg.org/"
-		  // is there an equivalent id in the multipage spec?
-		  && ids.find(i => i.startsWith("https://html.spec.whatwg.org/multipage/") && i.endsWith("#" + anchor) || i.endsWith("#" + encodeURIComponent(anchor)))) {
-		    // Should we keep track of those? ignoring for now
-	      } else if (link.startsWith("https://html.spec.whatwg.org/multipage") && htmlFragments
-			 && htmlFragments[anchor]
-			 && ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`,anchor))) {
-		// Deal with anchors that are JS-redirected from
-		// the multipage version of HTML
-		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
-	      } else if (anchor.startsWith(':~:text=')) {
-		// links using text fragments are inherently fragile
-		recordAnomaly(spec, "frailLinks", link + "#" + anchor);
-	      } else {
-		recordAnomaly(spec, "brokenLinks", link + "#" + anchor);
-	      }
+              if (link.startsWith("https://html.spec.whatwg.org/C") || link.startsWith("http://html.spec.whatwg.org/C")) {
+                recordAnomaly(spec, "nonCanonicalRefs", link);
+                link = link.replace("http:", "https:").replace("https://html.spec.whatwg.org/C", "https://html.spec.whatwg.org/multipage");
+              }
+              // Links to single-page version of HTML spec
+              if (link === "https://html.spec.whatwg.org/"
+                  // is there an equivalent id in the multipage spec?
+                  && ids.find(i => i.startsWith("https://html.spec.whatwg.org/multipage/") && i.endsWith("#" + anchor) || i.endsWith("#" + encodeURIComponent(anchor)))) {
+                    // Should we keep track of those? ignoring for now
+              } else if (link.startsWith("https://html.spec.whatwg.org/multipage") && htmlFragments
+                         && htmlFragments[anchor]
+                         && ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`,anchor))) {
+                // Deal with anchors that are JS-redirected from
+                // the multipage version of HTML
+                recordAnomaly(spec, "frailLinks", link + "#" + anchor);
+              } else if (anchor.startsWith(':~:text=')) {
+                // links using text fragments are inherently fragile
+                recordAnomaly(spec, "frailLinks", link + "#" + anchor);
+              } else {
+                recordAnomaly(spec, "brokenLinks", link + "#" + anchor);
+              }
             }
           } else if (!heading && !dfn) {
             recordAnomaly(spec, "notDfn", link + "#" + anchor);
