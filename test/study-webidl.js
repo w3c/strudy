@@ -1,24 +1,25 @@
 /**
  * Tests the Web IDL analysis library.
+ *
  */
+/* global describe, it */
 
-const assert = require('assert').strict;
 const { studyWebIdl } = require('../src/lib/study-webidl');
-const { assertNbAnomalies, assertAnomaly } = require("./util");
+const { assertNbAnomalies, assertAnomaly } = require('./util');
 
 describe('The Web IDL analyser', () => {
   const specUrl = 'https://www.w3.org/TR/spec';
   const specUrl2 = 'https://www.w3.org/TR/spec2';
 
-  function toCrawlResult(idl, idlSpec2) {
-    const crawlResult = [ { url: specUrl, idl } ];
+  function toCrawlResult (idl, idlSpec2) {
+    const crawlResult = [{ url: specUrl, idl }];
     if (idlSpec2) {
       crawlResult.push({ url: specUrl2, idl: idlSpec2 });
     }
     return crawlResult;
   }
 
-  function analyzeIdl(idl, idlSpec2) {
+  function analyzeIdl (idl, idlSpec2) {
     const crawlResult = toCrawlResult(idl, idlSpec2);
     return studyWebIdl(crawlResult);
   }
@@ -30,7 +31,6 @@ interface Valid {};
 `);
     assertNbAnomalies(report, 0);
   });
-
 
   it('reports invalid IDL', () => {
     const report = analyzeIdl(`
@@ -44,7 +44,7 @@ interface Invalid;
       message: `Syntax error at line 3, since \`interface Invalid\`:
 interface Invalid;
                  ^ Bodyless interface`,
-      specs: [ { url: specUrl }]
+      specs: [{ url: specUrl }]
     });
   });
 
@@ -67,7 +67,6 @@ interface Invalid{};
     assertAnomaly(report, 0, { name: 'invalid' });
   });
 
-
   it('forgets about previous results', () => {
     analyzeIdl(`
 [Global=Window,Exposed=*]
@@ -80,7 +79,6 @@ interface Valid {};
     assertNbAnomalies(report, 0);
   });
 
-
   it('detects missing [Exposed] extended attributes', () => {
     const report = analyzeIdl(`
 interface Unexposed {};
@@ -91,7 +89,6 @@ interface Unexposed {};
       message: 'The interface "Unexposed" has no [Exposed] extended attribute'
     });
   });
-
 
   it('detects unknown [Exposed] extended attributes', () => {
     const report = analyzeIdl(`
@@ -123,7 +120,6 @@ interface EventTarget {};
     assertNbAnomalies(report, 0);
   });
 
-
   it('detects unexpected EventHandler attributes', () => {
     const report = analyzeIdl(`
 [Exposed=*]
@@ -143,7 +139,6 @@ interface Carlos {
       message: 'The interface "Carlos" defines an event handler "onbigbisous" but does not inherit from EventTarget'
     });
   });
-
 
   it('detects incompatible partial exposure issues', () => {
     const report = analyzeIdl(`
@@ -171,7 +166,6 @@ partial interface MyPlace {};
     });
   });
 
-
   it('detects incompatible partial exposure issues when "*" is used', () => {
     const report = analyzeIdl(`
 [Global=Somewhere,Exposed=Somewhere]
@@ -189,7 +183,6 @@ partial interface Somewhere {};
     });
   });
 
-
   it('detects IDL names that are redefined across specs', () => {
     const report = analyzeIdl(`
 // IDL in first spec
@@ -206,10 +199,9 @@ dictionary GrandBob {
     assertAnomaly(report, 0, {
       name: 'redefined',
       message: `"GrandBob" is defined as a non-partial dictionary mutiple times in ${specUrl}, ${specUrl2}`,
-      specs: [ { url: specUrl }, { url: specUrl2 }]
+      specs: [{ url: specUrl }, { url: specUrl2 }]
     });
   });
-
 
   it('detects IDL names that are redefined with different types across specs', () => {
     const report = analyzeIdl(`
@@ -227,10 +219,9 @@ enum GrandBob {
     assertAnomaly(report, 0, {
       name: 'redefinedWithDifferentTypes',
       message: `"GrandBob" is defined multiple times with different types (dictionary, enum) in ${specUrl}, ${specUrl2}`,
-      specs: [ { url: specUrl }, { url: specUrl2 }]
+      specs: [{ url: specUrl }, { url: specUrl2 }]
     });
   });
-
 
   it('detects the lack of original definition for partials', () => {
     const report = analyzeIdl(`
@@ -243,7 +234,6 @@ partial interface MyPlace {};
     });
   });
 
-
   it('alerts about single enum values', () => {
     const report = analyzeIdl(`
 enum SingleValue {
@@ -253,10 +243,9 @@ enum SingleValue {
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'singleEnumValue',
-      message: `The enum "SingleValue" has fewer than 2 possible values`
+      message: 'The enum "SingleValue" has fewer than 2 possible values'
     });
   });
-
 
   it('alerts when enum values do not follow casing conventions', () => {
     const report = analyzeIdl(`
@@ -270,14 +259,13 @@ enum WrongCase {
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'wrongCaseEnumValue',
-      message: `The value "NotGood" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)`
+      message: 'The value "NotGood" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)'
     });
     assertAnomaly(report, 1, {
       name: 'wrongCaseEnumValue',
-      message: `The value "not_good" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)`
+      message: 'The value "not_good" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)'
     });
   });
-
 
   it('alerts on redefined includes statements', () => {
     const report = analyzeIdl(`
@@ -296,7 +284,6 @@ MyHome includes MyRoom;
     });
   });
 
-
   it('checks existence of target and mixin in includes statements', () => {
     const report = analyzeIdl(`
 MyHome includes MyRoom;
@@ -304,11 +291,11 @@ MyHome includes MyRoom;
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'unknownType',
-      message: `Target "MyHome" in includes statement "MyHome includes MyRoom" is not defined anywhere`
+      message: 'Target "MyHome" in includes statement "MyHome includes MyRoom" is not defined anywhere'
     });
     assertAnomaly(report, 1, {
       name: 'unknownType',
-      message: `Mixin "MyRoom" in includes statement "MyHome includes MyRoom" is not defined anywhere`
+      message: 'Mixin "MyRoom" in includes statement "MyHome includes MyRoom" is not defined anywhere'
     });
   });
 
@@ -322,14 +309,13 @@ MyHome includes MyRoom;
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'wrongKind',
-      message: `Target "MyHome" in includes statement "MyHome includes MyRoom" must be of kind "interface"`
+      message: 'Target "MyHome" in includes statement "MyHome includes MyRoom" must be of kind "interface"'
     });
     assertAnomaly(report, 1, {
       name: 'wrongKind',
-      message: `Mixin "MyRoom" in includes statement "MyHome includes MyRoom" must be of kind "interface mixin"`
+      message: 'Mixin "MyRoom" in includes statement "MyHome includes MyRoom" must be of kind "interface mixin"'
     });
   });
-
 
   it('checks inheritance', () => {
     const report = analyzeIdl(`
@@ -341,14 +327,13 @@ dictionary MyShelf : MyHome { required boolean full; };
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'unknownType',
-      message: `"MyLivingRoom" inherits from "MyRoom" which is not defined anywhere`
+      message: '"MyLivingRoom" inherits from "MyRoom" which is not defined anywhere'
     });
     assertAnomaly(report, 1, {
       name: 'wrongKind',
-      message: `"MyShelf" is of kind "dictionary" but inherits from "MyHome" which is of kind "interface"`
+      message: '"MyShelf" is of kind "dictionary" but inherits from "MyHome" which is of kind "interface"'
     });
   });
-
 
   it('reports unknown types', () => {
     const report = analyzeIdl(`
@@ -363,22 +348,21 @@ dictionary MyShelf : MyHome { required boolean full; };
     assertNbAnomalies(report, 4);
     assertAnomaly(report, 0, {
       name: 'unknownType',
-      message: `Unknown type "bool" used in definition of "MyRoom"`
+      message: 'Unknown type "bool" used in definition of "MyRoom"'
     });
     assertAnomaly(report, 1, {
       name: 'unknownType',
-      message: `Unknown type "MyBed" used in definition of "MyRoom"`
+      message: 'Unknown type "MyBed" used in definition of "MyRoom"'
     });
     assertAnomaly(report, 2, {
       name: 'unknownType',
-      message: `Unknown type "MyUnknownType" used in definition of "MyRoom"`
+      message: 'Unknown type "MyUnknownType" used in definition of "MyRoom"'
     });
     assertAnomaly(report, 3, {
       name: 'unknownType',
-      message: `Unknown type "UnknownInnerType" used in definition of "MyRoom"`
+      message: 'Unknown type "UnknownInnerType" used in definition of "MyRoom"'
     });
   });
-
 
   it('reports wrong types', () => {
     const report = analyzeIdl(`
@@ -400,18 +384,17 @@ interface mixin MyNamespaceMixin {};
     });
     assertAnomaly(report, 1, {
       name: 'wrongType',
-      message: `Namespace "MyNamespace" cannot be used as a type in definition of "MyHome"`
+      message: 'Namespace "MyNamespace" cannot be used as a type in definition of "MyHome"'
     });
     assertAnomaly(report, 2, {
       name: 'wrongType',
-      message: `Interface mixin "MyLivingRoom" cannot be used as a type in definition of "MyHome"`
+      message: 'Interface mixin "MyLivingRoom" cannot be used as a type in definition of "MyHome"'
     });
     assertAnomaly(report, 3, {
       name: 'wrongType',
-      message: `Name "MyNamespaceMixin" exists but is not a type and cannot be used in definition of "MyHome"`
+      message: 'Name "MyNamespaceMixin" exists but is not a type and cannot be used in definition of "MyHome"'
     });
   });
-
 
   it('reports unknown extended attributes', () => {
     const report = analyzeIdl(`
@@ -429,18 +412,17 @@ interface mixin MyNamespaceMixin {};
     assertNbAnomalies(report, 3);
     assertAnomaly(report, 0, {
       name: 'unknownExtAttr',
-      message: `Unknown extended attribute "UnknownExtAttr" used in definition of "MyRoom"`
+      message: 'Unknown extended attribute "UnknownExtAttr" used in definition of "MyRoom"'
     });
     assertAnomaly(report, 1, {
       name: 'unknownExtAttr',
-      message: `Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyLivingRoom"`
+      message: 'Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyLivingRoom"'
     });
     assertAnomaly(report, 2, {
       name: 'unknownExtAttr',
-      message: `Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyBedRoom"`
+      message: 'Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyBedRoom"'
     });
   });
-
 
   it('reports overloads across definitions (partial, same spec)', () => {
     const report = analyzeIdl(`
@@ -467,18 +449,17 @@ partial interface MyPartialHome {
 `);
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
-    name: 'overloaded',
-    message: '"operation overload" in partial interface "MyHome" overloads an operation defined in interface "MyHome"'
-  });
+      name: 'overloaded',
+      message: '"operation overload" in partial interface "MyHome" overloads an operation defined in interface "MyHome"'
+    });
     assertAnomaly(report, 1, {
       name: 'overloaded',
       message: '"operation overload" in partial interface "MyPartialHome" overloads an operation defined in another partial interface "MyPartialHome"'
     });
   });
 
-
   it('reports overloads across definitions (partial, different specs)', () => {
-     const report = analyzeIdl(`
+    const report = analyzeIdl(`
 // IDL in first spec
 [Global=Home,Exposed=*]
 interface MyHome {
@@ -506,7 +487,7 @@ partial interface MyPartialHome {
     assertAnomaly(report, 0, {
       name: 'overloaded',
       message: `"operation overload" in partial interface "MyHome" overloads an operation defined in interface "MyHome" (in ${specUrl})`,
-      specs: [ { url: specUrl2 }]
+      specs: [{ url: specUrl2 }]
     });
 
     // No way to know which spec to blame for MyPartialHome overloads, both
@@ -514,10 +495,9 @@ partial interface MyPartialHome {
     assertAnomaly(report, 1, {
       name: 'overloaded',
       message: `"operation overload" in partial interface "MyPartialHome" (in ${specUrl2}) overloads an operation defined in another partial interface "MyPartialHome" (in ${specUrl})`,
-      specs: [ { url: specUrl2 }, { url: specUrl }]
+      specs: [{ url: specUrl2 }, { url: specUrl }]
     });
   });
-
 
   it('reports overloads across definitions (mixin, same spec)', () => {
     const report = analyzeIdl(`
@@ -541,18 +521,17 @@ partial interface mixin MyPartialRoom {
 `);
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
-    name: 'overloaded',
-    message: '"operation overload" in interface "MyHome" overloads an operation defined in interface mixin "MyRoom"'
-  });
+      name: 'overloaded',
+      message: '"operation overload" in interface "MyHome" overloads an operation defined in interface mixin "MyRoom"'
+    });
     assertAnomaly(report, 1, {
       name: 'overloaded',
       message: '"operation overload" in partial interface mixin "MyPartialRoom" overloads an operation defined in interface mixin "MyPartialRoom"'
     });
   });
 
-
   it('reports overloads across definitions (mixin, different specs)', () => {
-     const report = analyzeIdl(`
+    const report = analyzeIdl(`
 // IDL in first spec
 [Global=Home,Exposed=*]
 interface MyHome {
@@ -581,28 +560,27 @@ partial interface mixin MyPartialRoom {
     assertAnomaly(report, 0, {
       name: 'overloaded',
       message: `"operation overload" in interface "MyHome" overloads an operation defined in interface mixin "MyRoom" (in ${specUrl2})`,
-      specs: [ { url: specUrl }]
+      specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 1, {
       name: 'overloaded',
       message: '"operation overload" in partial interface mixin "MyPartialRoom" overloads an operation defined in interface mixin "MyPartialRoom"',
-      specs: [ { url: specUrl }]
+      specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 2, {
       name: 'overloaded',
       message: `"operation overload" in partial interface mixin "MyPartialRoom" overloads an operation defined in interface mixin "MyPartialRoom" (in ${specUrl})`,
-      specs: [ { url: specUrl2 }]
+      specs: [{ url: specUrl2 }]
     });
 
     assertAnomaly(report, 3, {
       name: 'overloaded',
       message: `"operation overload" in partial interface mixin "MyPartialRoom" (in ${specUrl2}) overloads an operation defined in another partial interface mixin "MyPartialRoom" (in ${specUrl})`,
-      specs: [ { url: specUrl2 }, { url: specUrl }]
+      specs: [{ url: specUrl2 }, { url: specUrl }]
     });
   });
-
 
   it('reports overloads across definitions (partial and mixin, same spec)', () => {
     const report = analyzeIdl(`
@@ -624,9 +602,9 @@ partial interface mixin MyRoom {
 `);
     assertNbAnomalies(report, 3);
     assertAnomaly(report, 0, {
-    name: 'overloaded',
-    message: '"operation overload" in partial interface "MyHome" overloads an operation defined in interface mixin "MyRoom"'
-  });
+      name: 'overloaded',
+      message: '"operation overload" in partial interface "MyHome" overloads an operation defined in interface mixin "MyRoom"'
+    });
     assertAnomaly(report, 1, {
       name: 'overloaded',
       message: '"operation overload" in partial interface "MyHome" overloads an operation defined in partial interface mixin "MyRoom"'
@@ -636,7 +614,6 @@ partial interface mixin MyRoom {
       message: '"operation overload" in partial interface mixin "MyRoom" overloads an operation defined in interface mixin "MyRoom"'
     });
   });
-
 
   it('reports overloads across definitions (partial and mixin, different specs)', () => {
     const report = analyzeIdl(`
@@ -662,22 +639,21 @@ partial interface mixin MyRoom {
     assertAnomaly(report, 0, {
       name: 'overloaded',
       message: `"operation overload" in partial interface "MyHome" overloads an operation defined in interface mixin "MyRoom" (in ${specUrl2})`,
-      specs: [ { url: specUrl }]
+      specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 1, {
       name: 'overloaded',
       message: `"operation overload" in partial interface "MyHome" overloads an operation defined in partial interface mixin "MyRoom" (in ${specUrl2})`,
-      specs: [ { url: specUrl }]
+      specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 2, {
       name: 'overloaded',
       message: '"operation overload" in partial interface mixin "MyRoom" overloads an operation defined in interface mixin "MyRoom"',
-      specs: [ { url: specUrl2 }]
+      specs: [{ url: specUrl2 }]
     });
   });
-
 
   it('reports redefined members (same spec)', () => {
     const report = analyzeIdl(`
@@ -698,9 +674,9 @@ interface mixin MyRoom {
 `);
     assertNbAnomalies(report, 4);
     assertAnomaly(report, 0, {
-    name: 'redefinedMember',
-    message: '"dejaVu" in interface "MyHome" is defined more than once'
-  });
+      name: 'redefinedMember',
+      message: '"dejaVu" in interface "MyHome" is defined more than once'
+    });
     assertAnomaly(report, 1, {
       name: 'redefinedMember',
       message: '"dejaVu" in partial interface "MyHome" duplicates a member defined in interface "MyHome"'
@@ -714,7 +690,6 @@ interface mixin MyRoom {
       message: '"dejaVu" in partial interface "MyHome" duplicates a member defined in interface mixin "MyRoom"'
     });
   });
-
 
   it('reports redefined members (different specs)', () => {
     const report = analyzeIdl(`
@@ -738,19 +713,19 @@ interface mixin MyRoom {
     assertAnomaly(report, 0, {
       name: 'redefinedMember',
       message: `"dejaVu" in partial interface "MyHome" duplicates a member defined in interface "MyHome" (in ${specUrl})`,
-      specs: [ { url: specUrl2 }]
+      specs: [{ url: specUrl2 }]
     });
 
     assertAnomaly(report, 1, {
-    name: 'redefinedMember',
-    message: `"dejaVu" in interface "MyHome" duplicates a member defined in interface mixin "MyRoom" (in ${specUrl2})`,
-    specs: [ { url: specUrl }]
-  });
+      name: 'redefinedMember',
+      message: `"dejaVu" in interface "MyHome" duplicates a member defined in interface mixin "MyRoom" (in ${specUrl2})`,
+      specs: [{ url: specUrl }]
+    });
 
     assertAnomaly(report, 2, {
       name: 'redefinedMember',
       message: '"dejaVu" in partial interface "MyHome" duplicates a member defined in interface mixin "MyRoom"',
-      specs: [ { url: specUrl2 }]
+      specs: [{ url: specUrl2 }]
     });
   });
 });
