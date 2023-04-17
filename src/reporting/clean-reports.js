@@ -4,28 +4,28 @@
  */
 
 const core = require('@actions/core');
-const Octokit = require("../lib/octokit");
-const fs = require("fs");
-const path = require("path");
+const Octokit = require('../lib/octokit');
+const fs = require('fs');
+const path = require('path');
 const matter = require('gray-matter');
 
 /**
  * Check GitHub issues and PR referenced by patch files and drop patch files
  * that only reference closed issues and PR.
- * 
+ *
  * @function
  * @return {String} A GitHub flavored markdown string that describes what
  *   patches got dropped and why. To be used in a possible PR. Returns an
  *   empty string when there are no patches to drop.
  */
-async function dropReportsWhenPossible() {
-  const rootDir = path.join(__dirname, "../../issues");
+async function dropReportsWhenPossible () {
+  const rootDir = path.join(__dirname, '../../issues');
 
-  console.log("Gather reports files");
+  console.log('Gather reports files');
   let reports = [];
   const files = fs.readdirSync(rootDir);
   for (const file of files) {
-    if (file.endsWith(".md")) {
+    if (file.endsWith('.md')) {
       const report = path.join(rootDir, file);
       console.log(`- add "${report}"`);
       reports.push({ name: report });
@@ -33,12 +33,12 @@ async function dropReportsWhenPossible() {
   }
 
   console.log();
-  console.log("Extract list of issues");
-  const issueUrl = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/(issues|pull)\/(\d+)$/;
+  console.log('Extract list of issues');
+  const issueUrl = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)$/;
   for (const report of reports) {
     let contents;
     try {
-      contents = matter(await fs.promises.readFile(report.name, "utf-8"));
+      contents = matter(await fs.promises.readFile(report.name, 'utf-8'));
     } catch (e) {
       console.error(`- "${report.name}" has invalid YAML`);
       continue;
@@ -60,20 +60,20 @@ async function dropReportsWhenPossible() {
   reports = reports.filter(report => report.issue);
 
   console.log();
-  console.log("Check status of GitHub issues/PR");
-  for (const {issue} of reports) {
+  console.log('Check status of GitHub issues/PR');
+  for (const { issue } of reports) {
     const response = await octokit.issues.get({
       owner: issue.owner,
       repo: issue.repo,
       issue_number: issue.number
     });
-    issue.state = response?.data?.state ?? "unknown";
+    issue.state = response?.data?.state ?? 'unknown';
     console.log(`- [${issue.state}] ${issue.url}`);
   }
 
   console.log();
-  console.log("Drop reports when possible");
-  reports = reports.filter(report => report.issue.state === "closed");
+  console.log('Drop reports when possible');
+  reports = reports.filter(report => report.issue.state === 'closed');
   if (reports.length > 0) {
     const res = [];
     for (const report of reports) {
@@ -81,43 +81,40 @@ async function dropReportsWhenPossible() {
       fs.unlinkSync(report.name);
       res.push(`- \`${report.name}\` was linked to now closed: [${report.issue.owner}/${report.issue.repo}#${report.issue.number}](${report.issue.url})`);
     }
-    return res.join("\n");
-  }
-  else {
-    console.log("- No report to drop at this time");
-    return "";
+    return res.join('\n');
+  } else {
+    console.log('- No report to drop at this time');
+    return '';
   }
 }
-
 
 /*******************************************************************************
 Retrieve GH_TOKEN from environment, prepare Octokit and kick things off
 *******************************************************************************/
 const GH_TOKEN = (() => {
   try {
-    return require("../config.json").GH_TOKEN;
+    return require('../config.json').GH_TOKEN;
   } catch {
     return process.env.GH_TOKEN;
   }
 })();
 if (!GH_TOKEN) {
-  console.error("GH_TOKEN must be set to some personal access token as an env variable or in a config.json file");
+  console.error('GH_TOKEN must be set to some personal access token as an env variable or in a config.json file');
   process.exit(1);
 }
 
 const octokit = new Octokit({
-  auth: GH_TOKEN,
-  //log: console
+  auth: GH_TOKEN
+  // log: console
 });
-
 
 dropReportsWhenPossible()
   .then(res => {
-    core.exportVariable("dropped_reports", res);
+    core.exportVariable('dropped_reports', res);
     console.log();
-    console.log("Set dropped_reports env variable");
+    console.log('Set dropped_reports env variable');
     console.log(res);
-    console.log("== The end ==");
+    console.log('== The end ==');
   })
   .catch(err => {
     console.error(err);
