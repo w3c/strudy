@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/sparql-entailment'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-entailment/issues/18'
 Title: Broken references in SPARQL 1.2 Entailment Regimes
 ---
 
