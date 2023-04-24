@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/webvtt'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webvtt/issues/514'
 Title: 'Broken references in WebVTT: The Web Video Text Tracks Format'
 ---
 
