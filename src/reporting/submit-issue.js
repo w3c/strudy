@@ -10,7 +10,7 @@ const Octokit = require('../lib/octokit');
 
 const GH_TOKEN = (() => {
   try {
-    return require('../config.json').GH_TOKEN;
+    return require('../../config.json').GH_TOKEN;
   } catch (err) {
     return process.env.GH_TOKEN;
   }
