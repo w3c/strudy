@@ -328,7 +328,6 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
         }
         if (sourceSpec.error) {
           // no point in reporting an error on failed crawls
-          recordAnomaly(spec, 'crawlError', link);
           return;
         }
 
