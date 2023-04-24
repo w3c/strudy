@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/gpuweb/gpuweb'
-Tracked: N/A
+Tracked: 'https://github.com/gpuweb/gpuweb/issues/4066'
 Title: '[webgpu] Broken references in WebGPU'
 ---
 
