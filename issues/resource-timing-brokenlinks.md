@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/resource-timing'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/resource-timing/issues/376'
 Title: Broken references in Resource Timing
 ---
 
