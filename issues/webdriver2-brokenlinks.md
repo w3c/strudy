@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/webdriver'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webdriver/issues/1735'
 Title: Broken references in WebDriver
 ---
 
