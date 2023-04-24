@@ -6,10 +6,8 @@ Title: Broken references in WebDriver
 
 While crawling [WebDriver](https://w3c.github.io/webdriver/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://drafts.csswg.org/css-box/#visibility-prop
-* [ ] https://html.spec.whatwg.org/#checkbox-state-%28type=checkbox%29
 * [ ] https://html.spec.whatwg.org/#joint-session-history
 * [ ] https://html.spec.whatwg.org/#nested-navigable
-* [ ] https://html.spec.whatwg.org/#radio-button-state-%28type=radio%29
 * [ ] https://html.spec.whatwg.org/#concept-output-mode
 * [ ] https://html.spec.whatwg.org/multipage/dom.html#an-overridden-reload
 
