@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/secure-payment-confirmation'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/secure-payment-confirmation/issues/240'
 Title: Broken references in Secure Payment Confirmation
 ---
 
