@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/aria'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/aria/issues/1923'
 Title: Broken references in Accessible Rich Internet Applications (WAI-ARIA) 1.3
 ---
 
