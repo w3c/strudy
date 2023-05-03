@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/miniapp-manifest'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/miniapp-manifest/issues/65'
 Title: Broken references in MiniApp Manifest
 ---
 
