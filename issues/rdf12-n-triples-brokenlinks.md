@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/rdf-n-triples'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-n-triples/issues/24'
 Title: Broken references in RDF 1.2 N-Triples
 ---
 
