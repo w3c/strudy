@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/sparql-results-xml'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-results-xml/issues/25'
 Title: Broken references in SPARQL 1.2 Query Results XML Format
 ---
 
