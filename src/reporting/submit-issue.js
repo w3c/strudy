@@ -39,7 +39,7 @@ if (require.main === module) {
         process.exit(2);
       }
     } else {
-      issuesToSubmit = (await fs.readdir('issues')).filter(p => p.endsWith('.md'));
+      issuesToSubmit = (await fs.readdir('issues')).filter(p => p.endsWith('.md')).map(p => 'issues/' + p);
     }
     let needsCommit = false;
     for (const filename of issuesToSubmit) {
