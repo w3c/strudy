@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/rdf-xml'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-xml/issues/30'
 Title: Broken references in RDF 1.2 XML Syntax
 ---
 

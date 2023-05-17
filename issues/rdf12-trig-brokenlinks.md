@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/rdf-trig'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-trig/issues/21'
 Title: Broken references in RDF 1.2 TriG
 ---
 
