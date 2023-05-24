@@ -29,7 +29,7 @@ The analysis code was initially part of [Reffy](https://github.com/w3c/reffy).
 
 ### Pre-requisites
 
-To install Strudy, you need [Node.js](https://nodejs.org/en/) 14 or greater.
+To install Strudy, you need [Node.js](https://nodejs.org/en/) 18 or greater.
 
 You will also need to install [Pandoc](http://pandoc.org/) if you want to generate HTML reports.
 
