@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/rdf-turtle'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-turtle/issues/28'
 Title: Broken references in RDF 1.2 Turtle
 ---
 
