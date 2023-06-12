@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/compute-pressure'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/compute-pressure/issues/220'
 Title: Broken references in Compute Pressure Level 1
 ---
 
