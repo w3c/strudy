@@ -72,6 +72,7 @@ const basicTypes = new Set([
   'long', // https://webidl.spec.whatwg.org/#idl-long
   'object', // https://webidl.spec.whatwg.org/#idl-object
   'octet', // https://webidl.spec.whatwg.org/#idl-octet
+  'SharedArrayBuffer', // https://webidl.spec.whatwg.org/#idl-SharedArrayBuffer
   'short', // https://webidl.spec.whatwg.org/#idl-short
   'symbol', // https://webidl.spec.whatwg.org/#idl-symbol
   'BigUint64Array', // https://webidl.spec.whatwg.org/#idl-BigUint64Array
