@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/csswg-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/8994'
 Title: '[css-transitions-2] Broken references in CSS Transitions Level 2'
 ---
 
