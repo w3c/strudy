@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/turtledove'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/turtledove/issues/697'
 Title: Broken references in Protected Audience (formerly FLEDGE)
 ---
 
