@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/pub-manifest'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/pub-manifest/issues/255'
 Title: Broken references in Publication Manifest
 ---
 

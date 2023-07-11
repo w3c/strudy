@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/wpub-ann'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/wpub-ann/issues/47'
 Title: Broken references in Web Annotation Extensions for Web Publications
 ---
 
