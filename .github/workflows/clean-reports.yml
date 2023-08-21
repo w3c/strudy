@@ -18,7 +18,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install
+        npm ci
 
     - name: Drop reports locally when related issues/PR are closed
       run: node src/reporting/clean-reports.js
