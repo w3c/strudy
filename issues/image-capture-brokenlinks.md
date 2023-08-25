@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mediacapture-image'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediacapture-image/issues/302'
 Title: Broken references in MediaStream Image Capture
 ---
 
