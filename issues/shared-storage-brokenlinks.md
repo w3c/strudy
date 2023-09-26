@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/shared-storage'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/shared-storage/issues/119'
 Title: Broken references in Shared Storage API
 ---
 
