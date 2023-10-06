@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/tc39/proposal-import-attributes'
-Tracked: N/A
+Tracked: https://github.com/tc39/proposal-import-attributes/issues/128
 Title: Broken references in Import Attributes
 ---
 
