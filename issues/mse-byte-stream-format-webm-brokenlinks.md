@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mse-byte-stream-format-webm'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mse-byte-stream-format-webm/issues/3'
 Title: Broken references in WebM Byte Stream Format
 ---
 

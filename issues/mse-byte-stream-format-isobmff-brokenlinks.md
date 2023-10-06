@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mse-byte-stream-format-isobmff'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mse-byte-stream-format-isobmff/issues/10'
 Title: Broken references in ISO BMFF Byte Stream Format
 ---
 
