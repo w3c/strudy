@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/magnetometer'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/magnetometer/issues/65'
 Title: Broken references in Magnetometer
 ---
 

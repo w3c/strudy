@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/geolocation-sensor'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/geolocation-sensor/issues/55'
 Title: Broken references in Geolocation Sensor
 ---
 

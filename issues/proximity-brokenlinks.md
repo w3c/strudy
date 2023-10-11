@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/proximity'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/proximity/issues/56'
 Title: Broken references in Proximity Sensor
 ---
 

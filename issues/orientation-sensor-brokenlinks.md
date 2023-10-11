@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/orientation-sensor'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/orientation-sensor/issues/77'
 Title: Broken references in Orientation Sensor
 ---
 

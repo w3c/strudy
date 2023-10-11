@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/gyroscope'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/gyroscope/issues/51'
 Title: Broken references in Gyroscope
 ---
 

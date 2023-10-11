@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/ambient-light'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/ambient-light/issues/86'
 Title: Broken references in Ambient Light Sensor
 ---
 
