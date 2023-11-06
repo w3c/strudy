@@ -7,18 +7,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Setup node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: 18
     - name: Checkout strudy
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: strudy
     - name: Install dependencies
       run: npm ci
       working-directory: strudy
     - name: Checkout webref
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: w3c/webref
         path: webref
