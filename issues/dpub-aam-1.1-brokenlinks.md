@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/dpub-aam'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/dpub-aam/issues/35'
 Title: Broken references in Digital Publishing Accessibility API Mappings 1.1
 ---
 

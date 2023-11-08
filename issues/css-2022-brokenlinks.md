@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/csswg-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/9568'
 Title: '[css-2022] Broken references in CSS Snapshot 2022'
 ---
 

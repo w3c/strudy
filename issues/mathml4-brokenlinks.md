@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mathml'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mathml/issues/479'
 Title: Broken references in Mathematical Markup Language (MathML) Version 4.0
 ---
 
