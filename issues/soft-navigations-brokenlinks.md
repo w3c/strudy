@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/soft-navigations'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/soft-navigations/issues/33'
 Title: Broken references in Soft Navigations
 ---
 
