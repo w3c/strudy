@@ -4,6 +4,7 @@
 */
 const { loadCrawlResults } = require('../lib/util');
 const { studyBackrefs } = require('../lib/study-backrefs');
+const { studyReferences } = require('../lib/study-refs');
 const path = require('path');
 const fs = require('fs').promises;
 const { execSync } = require('child_process');
@@ -50,6 +51,10 @@ function issueWrapper (spec, anomalies, anomalyType) {
       title = `Non-canonical references in ${spec.title}`;
       anomalyReport = 'the following links were detected as pointing to outdated URLs';
       break;
+    case 'discontinuedReferences':
+      title = `Normative references to discontinued specs in ${spec.title}`;
+      anomalyReport = 'the following normative referenced were detected as pointing to discontinued specifications';
+      break;
   }
   return {
     title: titlePrefix + title,
@@ -73,7 +78,7 @@ ${issueReport}
 }
 
 if (require.main === module) {
-  const knownAnomalyTypes = ['brokenLinks', 'outdatedSpecs', 'nonCanonicalRefs'];
+  const knownAnomalyTypes = ['brokenLinks', 'outdatedSpecs', 'nonCanonicalRefs', 'discontinuedReferences'];
 
   let edCrawlResultsPath = process.argv[2];
   let trCrawlResultsPath = process.argv[3];
@@ -128,8 +133,10 @@ if (require.main === module) {
     console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`);
     const crawl = await loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath);
     console.log('- done');
-    console.log('Running back references analysis…');
-    const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments);
+    console.log('Running references analysis…');
+    // TODO: if we're not running all the reports, this could run only the
+    // relevant study function
+    const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments).concat(studyReferences(crawl.ed));
     console.log('- done');
     const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     const needsPush = {};
@@ -143,6 +150,10 @@ if (require.main === module) {
         // if we don't know the repo, we can't file an issue
         if (!spec.nightly.repository) {
           console.log(`No known repo for ${spec.title}, skipping`);
+          continue;
+        }
+        if (spec.standing === "discontinued") {
+          console.log(`${spec.title} is discontinued, skipping`);
           continue;
         }
         const issueMoniker = `${spec.shortname}-${anomalyType.toLowerCase()}`;
