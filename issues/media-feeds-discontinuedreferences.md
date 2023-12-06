@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/media-feeds'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/media-feeds/issues/60'
 Title: Normative references to discontinued specs in Media Feeds
 ---
 

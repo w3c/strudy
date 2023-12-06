@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/json-ld-syntax'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/json-ld-syntax/issues/423'
 Title: Normative references to discontinued specs in JSON-LD 1.1
 ---
 

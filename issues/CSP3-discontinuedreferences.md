@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/webappsec-csp'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-csp/issues/629'
 Title: Normative references to discontinued specs in Content Security Policy Level 3
 ---
 

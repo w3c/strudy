@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/savedata'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/savedata/issues/13'
 Title: Normative references to discontinued specs in Save Data API
 ---
 

@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/webappsec-clear-site-data'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-clear-site-data/issues/79'
 Title: Normative references to discontinued specs in Clear Site Data
 ---
 

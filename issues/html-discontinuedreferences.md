@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/whatwg/html'
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/html/issues/9981'
 Title: Normative references to discontinued specs in HTML Standard
 ---
 

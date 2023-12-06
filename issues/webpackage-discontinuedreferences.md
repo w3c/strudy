@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/webpackage'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/webpackage/issues/885'
 Title: Normative references to discontinued specs in Loading Signed Exchanges
 ---
 

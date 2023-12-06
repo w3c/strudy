@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/webappsec-change-password-url'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-change-password-url/issues/42'
 Title: >-
   Normative references to discontinued specs in A Well-Known URL for Changing
   Passwords

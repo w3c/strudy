@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/privacycg/nav-tracking-mitigations'
-Tracked: N/A
+Tracked: 'https://github.com/privacycg/nav-tracking-mitigations/issues/67'
 Title: >-
   Normative references to discontinued specs in Navigational-Tracking
   Mitigations

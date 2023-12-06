@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/netinfo'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/netinfo/issues/97'
 Title: Normative references to discontinued specs in Network Information API
 ---
 

@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/epub-specs'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/epub-specs/issues/2596'
 Title: >-
   [epub-rs-33] Normative references to discontinued specs in EPUB Reading
   Systems 3.3
