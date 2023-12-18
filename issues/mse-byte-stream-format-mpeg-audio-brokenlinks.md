@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mse-byte-stream-format-mpeg-audio'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mse-byte-stream-format-mpeg-audio/issues/5'
 Title: Broken references in MPEG Audio Byte Stream Format
 ---
 

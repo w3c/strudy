@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mse-byte-stream-format-mp2t'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mse-byte-stream-format-mp2t/issues/5'
 Title: Broken references in MPEG-2 TS Byte Stream Format
 ---
 
