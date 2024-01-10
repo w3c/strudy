@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/permissions'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/permissions/issues/433'
 Title: Broken references in Permissions
 ---
 

@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/permissions-registry'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/permissions-registry/issues/25'
 Title: Broken references in Permissions Registry
 ---
 
