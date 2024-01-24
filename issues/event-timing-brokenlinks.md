@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/event-timing'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/event-timing/issues/137'
 Title: Broken references in Event Timing API
 ---
 

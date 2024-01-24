@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mediacapture-automation'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediacapture-automation/issues/4'
 Title: Broken references in Media Capture Automation
 ---
 
