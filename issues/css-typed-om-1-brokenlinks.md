@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/css-houdini-drafts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/css-houdini-drafts/issues/1121'
 Title: '[css-typed-om-1] Broken references in CSS Typed OM Level 1'
 ---
 

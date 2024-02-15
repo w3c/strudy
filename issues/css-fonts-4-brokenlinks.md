@@ -1,7 +1,9 @@
 ---
 Repo: 'https://github.com/w3c/csswg-drafts'
-Tracked: N/A
-Title: '[css-fonts-4] [css-fonts-5] Broken references in CSS Fonts Module Level 4 and 5'
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/9965'
+Title: >-
+  [css-fonts-4] [css-fonts-5] Broken references in CSS Fonts Module Level 4 and
+  5
 ---
 
 While crawling [CSS Fonts Module Level 4](https://drafts.csswg.org/css-fonts-4/) and [CSS Fonts Module Level 5](https://drafts.csswg.org/css-fonts-5/) and , the following links to other specifications were detected as pointing to non-existing anchors:
