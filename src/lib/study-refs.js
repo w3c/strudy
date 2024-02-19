@@ -13,7 +13,7 @@ function studyReferences (edResults) {
 
       if (referencedSpec && referencedSpec.standing === "discontinued") {
 
-	const newSpecsLinks = edResults.filter(s => referencedSpec.obsoletedBy?.includes(s.shortname)).map(s => `[${s.shortname}](${s?.nightly.url || s.url})`);
+	const newSpecsLinks = edResults.filter(s => referencedSpec.obsoletedBy?.includes(s.shortname)).map(s => `[${s.shortname}](${s?.nightly?.url || s.url})`);
 	recordAnomaly(spec, 'discontinuedReferences', `[${ref.name}](${ref.url}) ${newSpecsLinks.length ? `has been obsoleted by ${newSpecsLinks}` : `is discontinued, no known replacement reference`}`);
       }
     });

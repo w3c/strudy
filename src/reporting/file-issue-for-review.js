@@ -148,7 +148,7 @@ if (require.main === module) {
         const spec = specAnomalies[0].specs[0];
         console.log(`Compiling ${anomalyType} report for ${spec.title}…`);
         // if we don't know the repo, we can't file an issue
-        if (!spec.nightly.repository) {
+        if (!spec.nightly?.repository) {
           console.log(`No known repo for ${spec.title}, skipping`);
           continue;
         }
