@@ -275,7 +275,7 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
           shortname = (edResults.find(r =>
             r.url === nakedLink ||
               (r.release && r.release.url === nakedLink) ||
-              r.nightly.url === nakedLink ||
+              (r.nightly && r.nightly.url === nakedLink) ||
               (r.series && nakedLink === `https://www.w3.org/TR/${r.series.shortname}/`)) || {}).shortname;
 
           // If it does not match any known URL, try to compute a shortname out of
@@ -350,7 +350,7 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
         // Check anchors
         const anchors = spec.links[link].anchors || [];
         for (const anchor of anchors) {
-          const baseLink = (sourceSpec.nightly.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly.url;
+          const baseLink = (sourceSpec.nightly?.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly?.url;
           const matchFullNightlyLink = matchAnchor(baseLink, anchor);
           const matchFullReleaseLink = matchAnchor((sourceSpec.release || sourceSpec.nightly).url, anchor);
           const isKnownId = ids.find(matchFullNightlyLink);
