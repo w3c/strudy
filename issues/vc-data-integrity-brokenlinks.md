@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/vc-data-integrity'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-data-integrity/issues/249'
 Title: Broken references in Verifiable Credential Data Integrity 1.0
 ---
 
