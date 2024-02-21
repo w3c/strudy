@@ -9,7 +9,7 @@ function studyReferences (edResults) {
   const recordAnomaly = recordCategorizedAnomaly(report, 'refs', possibleAnomalies);
   edResults.forEach(spec => {
     (spec.refs?.normative || []).forEach(ref => {
-      const referencedSpec = edResults.find(s => s.url === ref.url || s?.nightly.url === ref.url || s?.nightly?.alternateUrls?.includes(ref.url));
+      const referencedSpec = edResults.find(s => s.url === ref.url || s?.nightly?.url === ref.url || s?.nightly?.alternateUrls?.includes(ref.url));
 
       if (referencedSpec && referencedSpec.standing === "discontinued") {
 
