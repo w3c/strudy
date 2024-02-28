@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/sensors'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sensors/issues/486'
 Title: Broken references in Generic Sensor API
 ---
 
