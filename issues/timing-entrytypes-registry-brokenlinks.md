@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/timing-entrytypes-registry'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/timing-entrytypes-registry/issues/17'
 Title: Broken references in Timing Entry Names Registry
 ---
 
