@@ -272,7 +272,7 @@ function studyCrawlResults(results, options = {}) {
         // Links to external specifications within the body of the spec
         // that do not have a corresponding entry in the references
         // (all links to external specs should have a companion ref)
-        missingLinkRef: Object.keys(spec.links)
+        missingLinkRef: Object.keys(spec.links.rawlinks || {})
           .filter(matchSpecUrl)
           .filter(l => {
             // Filter out "good" and "inconsistent" references
@@ -293,7 +293,7 @@ function studyCrawlResults(results, options = {}) {
         // which the reference uses a different URL, e.g. because the
         // link targets the Editor's Draft, whereas the reference
         // targets the latest published version
-        inconsistentRef: Object.keys(spec.links)
+        inconsistentRef: Object.keys(spec.links.rawlinks || {})
           .filter(matchSpecUrl)
           .map(l => {
             const canonSimple = canonicalizeUrl(l);
