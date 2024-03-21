@@ -240,12 +240,12 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
   const recordAnomaly = recordCategorizedAnomaly(report, 'links', possibleAnomalies);
 
   edResults.forEach(spec => {
-    Object.keys(spec.links || {})
+    Object.keys(spec.links?.rawlinks || {})
       .filter(matchSpecUrl)
       .forEach(link => {
         let shortname;
-        if (spec.links[link].specShortname) {
-          shortname = spec.links[link].specShortname;
+        if (spec.links.rawlinks[link].specShortname) {
+          shortname = spec.links.rawlinks[link].specShortname;
         } else {
           let nakedLink = link;
           if (nakedLink.endsWith('.html')) {
@@ -348,7 +348,7 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
         const ids = sourceSpec.ids || [];
 
         // Check anchors
-        const anchors = spec.links[link].anchors || [];
+        const anchors = spec.links.rawlinks[link].anchors || [];
         for (const anchor of anchors) {
           const baseLink = (sourceSpec.nightly?.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly?.url;
           const matchFullNightlyLink = matchAnchor(baseLink, anchor);
