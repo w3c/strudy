@@ -33,7 +33,7 @@ const populateSpec = (url, ids, links, dfns) => {
   return {
     url: toTr(url),
     ids,
-    links,
+    links: { rawlinks: links},
     dfns,
     nightly: {
       url
