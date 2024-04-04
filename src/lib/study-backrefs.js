@@ -276,7 +276,7 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
             r.url === nakedLink ||
               (r.release && r.release.url === nakedLink) ||
               (r.nightly && r.nightly.url === nakedLink) ||
-              (r.series && nakedLink === `https://www.w3.org/TR/${r.series.shortname}/`)) || {}).shortname;
+              (r.series && nakedLink === `https://www.w3.org/TR/${r.series.shortname}/`) && r.series.currentSpecification === r.shortname) || {}).shortname;
 
           // If it does not match any known URL, try to compute a shortname out of
           // it directly.
