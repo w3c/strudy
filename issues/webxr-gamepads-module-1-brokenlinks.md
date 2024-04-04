@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/immersive-web/webxr-gamepads-module'
-Tracked: N/A
+Tracked: 'https://github.com/immersive-web/webxr-gamepads-module/issues/59'
 Title: Broken references in WebXR Gamepads Module - Level 1
 ---
 

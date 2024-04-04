@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/fenced-frame'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/fenced-frame/issues/147'
 Title: Broken references in Fenced Frame
 ---
 
