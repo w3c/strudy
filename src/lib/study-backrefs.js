@@ -368,7 +368,7 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
               if (link === 'https://html.spec.whatwg.org/' &&
                   // is there an equivalent id in the multipage spec?
                   ids.find(i => i.startsWith('https://html.spec.whatwg.org/multipage/') &&
-                    (i.endsWith('#' + anchor) || i.endsWith('#' + decodeURIComponent(anchor))))) {
+                    (i.endsWith('#' + anchor) || i.endsWith('#' + decodeURIComponent(anchor)) || i.endsWith('#' + encodeURIComponent(anchor))))) {
                 // Should we keep track of those? ignoring for now
               } else if (link.startsWith('https://html.spec.whatwg.org/multipage') && htmlFragments &&
                          htmlFragments[anchor] &&
