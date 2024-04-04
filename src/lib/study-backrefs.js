@@ -248,6 +248,12 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
           shortname = spec.links.rawlinks[link].specShortname;
         } else {
           let nakedLink = link;
+
+	  // Ignoring links to PDF specs
+	  if (nakedLink.endsWith('.pdf')) {
+	    return;
+	  }
+
           if (nakedLink.endsWith('.html')) {
             nakedLink = nakedLink.replace(/\/(Overview|overview|index)\.html$/, '/');
           }
