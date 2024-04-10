@@ -32,6 +32,53 @@ interface Valid {};
     assertNbAnomalies(report, 0);
   });
 
+  it('knows about basic IDL type', () => {
+    const report = analyzeIdl(`
+[Global=Window,Exposed=*]
+interface ValidBasicTypes {
+  attribute any test1;
+  attribute ArrayBuffer test2;
+  attribute bigint test3;
+  attribute boolean test4;
+  attribute byte test5;
+  attribute ByteString test6;
+  attribute DataView test7;
+  attribute DOMString test8;
+  attribute double test9;
+  attribute float test10;
+  attribute Float16Array test11;
+  attribute Float32Array test12;
+  attribute Float64Array test13;
+  attribute Int16Array test14;
+  attribute Int32Array test15;
+  attribute Int8Array test16;
+  attribute long long test17;
+  attribute long test18;
+  attribute object test19;
+  attribute octet test20;
+  attribute SharedArrayBuffer test21;
+  attribute short test22;
+  attribute symbol test23;
+  attribute BigUint64Array test24;
+  attribute BigInt64Array test25;
+  attribute Uint16Array test26;
+  attribute Uint32Array test27;
+  attribute Uint8Array test28;
+  attribute Uint8ClampedArray test29;
+  attribute unrestricted double test30;
+  attribute unrestricted float test31;
+  attribute unsigned long long test32;
+  attribute unsigned long test33;
+  attribute unsigned short test34;
+  attribute USVString test35;
+  attribute undefined test36;
+  attribute CSSOMString test37;
+  attribute WindowProxy test38;
+};
+`);
+    assertNbAnomalies(report, 0);
+  });
+
   it('reports invalid IDL', () => {
     const report = analyzeIdl(`
 [Global=Window,Exposed=*]
