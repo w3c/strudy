@@ -233,13 +233,14 @@ const matchAnchor = (url, anchor) => link => {
   return link === (url + '#' + anchor) || link === (url + '#' + encodeURIComponent(anchor));
 };
 
-function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
+function studyBackrefs (edResults, trResults = [], htmlFragments = {}, shortnameFilter) {
   trResults = trResults || [];
   const report = [];
 
   const recordAnomaly = recordCategorizedAnomaly(report, 'links', possibleAnomalies);
 
   edResults.forEach(spec => {
+    if (shortnameFilter && spec.shortname !== shortnameFilter) return;
     Object.keys(spec.links?.rawlinks || {})
       .filter(matchSpecUrl)
       .forEach(link => {
@@ -257,7 +258,7 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
           if (nakedLink.endsWith('.html')) {
             nakedLink = nakedLink.replace(/\/(Overview|overview|index)\.html$/, '/');
           }
-          if (nakedLink[nakedLink.length - 1] !== '/') {
+          if (nakedLink[nakedLink.length - 1] !== '/' && !nakedLink.endsWith(".html")) {
             nakedLink += '/';
           }
 
@@ -404,3 +405,21 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}) {
 Export methods for use as module
 **************************************************/
 module.exports = { studyBackrefs };
+
+if (require.main === module) {
+  (async function() {
+    const { loadCrawlResults } = require('../lib/util');
+    const crawl = await loadCrawlResults(process.argv[2], process.argv[3]);
+    let htmlFragments = {};
+    try {
+      console.info('Downloading HTML spec fragments data…');
+      htmlFragments = await fetch('https://html.spec.whatwg.org/multipage/fragment-links.json').then(r => r.json());
+      console.info('- done');
+    } catch (err) {
+      console.error('- failed: could not fetch HTML fragments data, may report false positive broken links on HTML spec');
+    }
+
+    const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments, process.argv[4] ?? undefined);
+    console.log(results);
+  })();
+}
