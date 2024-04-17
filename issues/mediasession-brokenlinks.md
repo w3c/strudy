@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/mediasession'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediasession/issues/324'
 Title: Broken references in Media Session
 ---
 
