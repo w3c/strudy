@@ -237,168 +237,180 @@ function studyBackrefs (edResults, trResults = [], htmlFragments = {}, shortname
   trResults = trResults || [];
   const report = [];
 
-  const recordAnomaly = recordCategorizedAnomaly(report, 'links', possibleAnomalies);
-
   edResults.forEach(spec => {
     if (shortnameFilter && spec.shortname !== shortnameFilter) return;
-    Object.keys(spec.links?.rawlinks || {})
-      .filter(matchSpecUrl)
-      .forEach(link => {
-        let shortname;
-        if (spec.links.rawlinks[link].specShortname) {
-          shortname = spec.links.rawlinks[link].specShortname;
-        } else {
-          let nakedLink = link;
-
-	  // Ignoring links to PDF specs
-	  if (nakedLink.endsWith('.pdf')) {
-	    return;
-	  }
-
-          if (nakedLink.endsWith('.html')) {
-            nakedLink = nakedLink.replace(/\/(Overview|overview|index)\.html$/, '/');
-          }
-          if (nakedLink[nakedLink.length - 1] !== '/' && !nakedLink.endsWith(".html")) {
-            nakedLink += '/';
-          }
-
-          // Detect links to dated specs
-          const match = nakedLink.match(/www\.w3\.org\/TR\/[0-9]{4}\/([A-Z]+)-(.+)-[0-9]{8}\//);
-          if (match) {
-            // ED should not link to dated versions of the spec, unless it
-            // voluntarily links to previous versions of itself
-            if ((match[2] !== spec.shortname || outdatedShortnames[match[2]] === spec.shortname) && !['REC', 'NOTE'].includes(match[1])) {
-              recordAnomaly(spec, 'datedUrls', link);
-            }
-
-            // TODO: consider pursuing the analysis with the non-dated version,
-            // but note this may trigger some obscure broken fragment messages
-            // when a fragment exists in the dated version but no longer exists
-            // in the ED.
-            return;
-          }
-
-          // Check whether the naked link matches any known URL in the crawl
-          shortname = (edResults.find(r =>
-            r.url === nakedLink ||
-              (r.release && r.release.url === nakedLink) ||
-              (r.nightly && r.nightly.url === nakedLink) ||
-              (r.series && nakedLink === `https://www.w3.org/TR/${r.series.shortname}/`) && r.series.currentSpecification === r.shortname) || {}).shortname;
-
-          // If it does not match any known URL, try to compute a shortname out of
-          // it directly.
-          if (!shortname) {
-            try {
-              shortname = computeShortname(nakedLink);
-            } catch (e) {
-              recordAnomaly(spec, 'unknownSpecs', link);
-              return;
-            }
-          }
-        }
-
-        if ((link.match(/w3\.org/) || link.match(/w3c\.github\.io/)) && shortNamesOfTransferedSpecs[shortname]) {
-          // The specification should no longer be referenced.
-          // In theory, we could still try to match the anchor against the
-          // right spec. In practice, these outdated specs are sufficiently
-          // outdated that it does not make a lot of sense to do so.
-          recordAnomaly(spec, 'outdatedSpecs', link);
-          return;
-        }
-        // Links to WHATWG commit snapshots
-        if (link.match(/spec\.whatwg\.org/) && link.match(/commit-snapshots/)) {
-          recordAnomaly(spec, 'outdatedSpecs', link);
-          return;
-        }
-
-        if (link.match(/heycam\.github\.io/)) {
-          recordAnomaly(spec, 'nonCanonicalRefs', link);
-          shortname = 'webidl';
-        }
-        if (outdatedShortnames[shortname]) {
-          shortname = outdatedShortnames[shortname];
-          recordAnomaly(spec, 'nonCanonicalRefs', link);
-        }
-
-        // At this point, we managed to associate the link with a shortname,
-        // let's check whether the shortname matches a spec in the crawl,
-        // matching the exact spec shortname if possible, or the series
-        // shortname otherwise (in which case we'll use the current spec)
-        const sourceSpec =
-          edResults.find(s => s.shortname === shortname) ||
-          edResults.find(s => s.series.shortname === shortname && s.series.currentSpecification === s.shortname);
-        if (!sourceSpec) {
-          if (!shortnameOfNonNormativeDocs.includes(shortname)) {
-            recordAnomaly(spec, 'unknownSpecs', link);
-          }
-          return;
-        }
-        if (sourceSpec.error) {
-          // no point in reporting an error on failed crawls
-          return;
-        }
-
-        // Self-references might be broken because of ED vs TR, ignore that
-        if (shortname === spec.shortname || shortname === spec.series.shortname) {
-          return;
-        }
-
-        // Look for a corresponding entry in the TR crawl, which we'll use to
-        // distinguish between broken links and "evolving" links (meaning links
-        // that exist in the TR version but no longer exist in the ED)
-        const trSourceSpec =
-          trResults.find(s => s.shortname === shortname) ||
-          trResults.find(s => s.series.shortname === shortname && s.series.currentSpecification === s.shortname) ||
-          {};
-        const headings = sourceSpec.headings || [];
-        const dfns = sourceSpec.dfns || [];
-        const ids = sourceSpec.ids || [];
-
-        // Check anchors
-        const anchors = spec.links.rawlinks[link].anchors || [];
-        for (const anchor of anchors) {
-          const baseLink = (sourceSpec.nightly?.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly?.url;
-          const matchFullNightlyLink = matchAnchor(baseLink, anchor);
-          const matchFullReleaseLink = matchAnchor((sourceSpec.release || sourceSpec.nightly).url, anchor);
-          const isKnownId = ids.find(matchFullNightlyLink);
-          const heading = headings.find(h => matchFullNightlyLink(h.href));
-          const dfn = dfns.find(d => matchFullNightlyLink(d.href));
-          if (!isKnownId) {
-            if ((trSourceSpec.ids || []).find(matchFullReleaseLink) && link.match(/w3\.org\/TR\//)) {
-              recordAnomaly(spec, 'evolvingLinks', link + '#' + anchor);
-            } else {
-              if (link.startsWith('https://html.spec.whatwg.org/C') || link.startsWith('http://html.spec.whatwg.org/C')) {
-                recordAnomaly(spec, 'nonCanonicalRefs', link);
-                link = link.replace('http:', 'https:').replace('https://html.spec.whatwg.org/C', 'https://html.spec.whatwg.org/multipage');
-              }
-              // Links to single-page version of HTML spec
-              if (link === 'https://html.spec.whatwg.org/' &&
-                  // is there an equivalent id in the multipage spec?
-                  ids.find(i => i.startsWith('https://html.spec.whatwg.org/multipage/') &&
-                    (i.endsWith('#' + anchor) || i.endsWith('#' + decodeURIComponent(anchor)) || i.endsWith('#' + encodeURIComponent(anchor))))) {
-                // Should we keep track of those? ignoring for now
-              } else if (link.startsWith('https://html.spec.whatwg.org/multipage') && htmlFragments &&
-                         htmlFragments[anchor] &&
-                         ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`, anchor))) {
-                // Deal with anchors that are JS-redirected from
-                // the multipage version of HTML
-                recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
-              } else if (anchor.startsWith(':~:text=')) {
-                // links using text fragments are inherently fragile
-                recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
-              } else {
-                recordAnomaly(spec, 'brokenLinks', link + '#' + anchor);
-              }
-            }
-          } else if (!heading && !dfn) {
-            recordAnomaly(spec, 'notDfn', link + '#' + anchor);
-          } else if (dfn && dfn.access !== 'public') {
-            recordAnomaly(spec, 'notExported', link + '#' + anchor);
-          }
-        }
-      });
+    studyLinks(spec, spec.links?.rawlinks, report, edResults, trResults, htmlFragments);
+    // given the current limitation of classification of links for bikeshed
+    // https://github.com/w3c/reffy/issues/1584
+    // we also check autolinks for bikeshed specs 
+    if (spec.generator === "bikeshed") {
+      studyLinks(spec, spec.links?.autolinks, report, edResults, trResults, htmlFragments);
+    }
   });
   return report;
+}
+
+function studyLinks(spec, links, report, edResults, trResults, htmlFragments) {
+  if (!links) return;
+
+  const recordAnomaly = recordCategorizedAnomaly(report, 'links', possibleAnomalies);
+
+  Object.keys(links)
+    .filter(matchSpecUrl)
+    .forEach(link => {
+      let shortname;
+      if (links[link].specShortname) {
+        shortname = links[link].specShortname;
+      } else {
+        let nakedLink = link;
+
+	// Ignoring links to PDF specs
+	if (nakedLink.endsWith('.pdf')) {
+	  return;
+	}
+
+        if (nakedLink.endsWith('.html')) {
+          nakedLink = nakedLink.replace(/\/(Overview|overview|index)\.html$/, '/');
+        }
+        if (nakedLink[nakedLink.length - 1] !== '/' && !nakedLink.endsWith(".html")) {
+          nakedLink += '/';
+        }
+
+        // Detect links to dated specs
+        const match = nakedLink.match(/www\.w3\.org\/TR\/[0-9]{4}\/([A-Z]+)-(.+)-[0-9]{8}\//);
+        if (match) {
+          // ED should not link to dated versions of the spec, unless it
+          // voluntarily links to previous versions of itself
+          if ((match[2] !== spec.shortname || outdatedShortnames[match[2]] === spec.shortname) && !['REC', 'NOTE'].includes(match[1])) {
+            recordAnomaly(spec, 'datedUrls', link);
+          }
+
+          // TODO: consider pursuing the analysis with the non-dated version,
+          // but note this may trigger some obscure broken fragment messages
+          // when a fragment exists in the dated version but no longer exists
+          // in the ED.
+          return;
+        }
+
+        // Check whether the naked link matches any known URL in the crawl
+        shortname = (edResults.find(r =>
+          r.url === nakedLink ||
+            (r.release && r.release.url === nakedLink) ||
+            (r.nightly && r.nightly.url === nakedLink) ||
+            (r.series && nakedLink === `https://www.w3.org/TR/${r.series.shortname}/`) && r.series.currentSpecification === r.shortname) || {}).shortname;
+
+        // If it does not match any known URL, try to compute a shortname out of
+        // it directly.
+        if (!shortname) {
+          try {
+            shortname = computeShortname(nakedLink);
+          } catch (e) {
+            recordAnomaly(spec, 'unknownSpecs', link);
+            return;
+          }
+        }
+      }
+
+      if ((link.match(/w3\.org/) || link.match(/w3c\.github\.io/)) && shortNamesOfTransferedSpecs[shortname]) {
+        // The specification should no longer be referenced.
+        // In theory, we could still try to match the anchor against the
+        // right spec. In practice, these outdated specs are sufficiently
+        // outdated that it does not make a lot of sense to do so.
+        recordAnomaly(spec, 'outdatedSpecs', link);
+        return;
+      }
+      // Links to WHATWG commit snapshots
+      if (link.match(/spec\.whatwg\.org/) && link.match(/commit-snapshots/)) {
+        recordAnomaly(spec, 'outdatedSpecs', link);
+        return;
+      }
+
+      if (link.match(/heycam\.github\.io/)) {
+        recordAnomaly(spec, 'nonCanonicalRefs', link);
+        shortname = 'webidl';
+      }
+      if (outdatedShortnames[shortname]) {
+        shortname = outdatedShortnames[shortname];
+        recordAnomaly(spec, 'nonCanonicalRefs', link);
+      }
+
+      // At this point, we managed to associate the link with a shortname,
+      // let's check whether the shortname matches a spec in the crawl,
+      // matching the exact spec shortname if possible, or the series
+      // shortname otherwise (in which case we'll use the current spec)
+      const sourceSpec =
+            edResults.find(s => s.shortname === shortname) ||
+            edResults.find(s => s.series.shortname === shortname && s.series.currentSpecification === s.shortname);
+      if (!sourceSpec) {
+        if (!shortnameOfNonNormativeDocs.includes(shortname)) {
+          recordAnomaly(spec, 'unknownSpecs', link);
+        }
+        return;
+      }
+      if (sourceSpec.error) {
+        // no point in reporting an error on failed crawls
+        return;
+      }
+
+      // Self-references might be broken because of ED vs TR, ignore that
+      if (shortname === spec.shortname || shortname === spec.series.shortname) {
+        return;
+      }
+
+      // Look for a corresponding entry in the TR crawl, which we'll use to
+      // distinguish between broken links and "evolving" links (meaning links
+      // that exist in the TR version but no longer exist in the ED)
+      const trSourceSpec =
+            trResults.find(s => s.shortname === shortname) ||
+            trResults.find(s => s.series.shortname === shortname && s.series.currentSpecification === s.shortname) ||
+            {};
+      const headings = sourceSpec.headings || [];
+      const dfns = sourceSpec.dfns || [];
+      const ids = sourceSpec.ids || [];
+
+      // Check anchors
+      const anchors = links[link].anchors || [];
+      for (const anchor of anchors) {
+        const baseLink = (sourceSpec.nightly?.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly?.url;
+        const matchFullNightlyLink = matchAnchor(baseLink, anchor);
+        const matchFullReleaseLink = matchAnchor((sourceSpec.release || sourceSpec.nightly).url, anchor);
+        const isKnownId = ids.find(matchFullNightlyLink);
+        const heading = headings.find(h => matchFullNightlyLink(h.href));
+        const dfn = dfns.find(d => matchFullNightlyLink(d.href));
+        if (!isKnownId) {
+          if ((trSourceSpec.ids || []).find(matchFullReleaseLink) && link.match(/w3\.org\/TR\//)) {
+            recordAnomaly(spec, 'evolvingLinks', link + '#' + anchor);
+          } else {
+            if (link.startsWith('https://html.spec.whatwg.org/C') || link.startsWith('http://html.spec.whatwg.org/C')) {
+              recordAnomaly(spec, 'nonCanonicalRefs', link);
+              link = link.replace('http:', 'https:').replace('https://html.spec.whatwg.org/C', 'https://html.spec.whatwg.org/multipage');
+            }
+            // Links to single-page version of HTML spec
+            if (link === 'https://html.spec.whatwg.org/' &&
+                // is there an equivalent id in the multipage spec?
+                ids.find(i => i.startsWith('https://html.spec.whatwg.org/multipage/') &&
+			 (i.endsWith('#' + anchor) || i.endsWith('#' + decodeURIComponent(anchor)) || i.endsWith('#' + encodeURIComponent(anchor))))) {
+              // Should we keep track of those? ignoring for now
+            } else if (link.startsWith('https://html.spec.whatwg.org/multipage') && htmlFragments &&
+                       htmlFragments[anchor] &&
+                       ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`, anchor))) {
+              // Deal with anchors that are JS-redirected from
+              // the multipage version of HTML
+              recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
+            } else if (anchor.startsWith(':~:text=')) {
+              // links using text fragments are inherently fragile
+              recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
+            } else {
+              recordAnomaly(spec, 'brokenLinks', link + '#' + anchor);
+            }
+          }
+        } else if (!heading && !dfn) {
+          recordAnomaly(spec, 'notDfn', link + '#' + anchor);
+        } else if (dfn && dfn.access !== 'public') {
+          recordAnomaly(spec, 'notExported', link + '#' + anchor);
+        }
+      }
+    });
 }
 
 /**************************************************
