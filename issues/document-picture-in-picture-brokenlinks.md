@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/document-picture-in-picture'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/document-picture-in-picture/issues/123'
 Title: Broken references in Document Picture-in-Picture Specification
 ---
 

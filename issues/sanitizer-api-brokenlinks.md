@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/sanitizer-api'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/sanitizer-api/issues/232'
 Title: Broken references in HTML Sanitizer API
 ---
 
