@@ -1,0 +1,29 @@
+name: Close potentially outdated report pull requests
+
+on:
+  schedule:
+    - cron: '30 4 * * *'
+  workflow_dispatch:
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Checkout strudy
+      uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        npm ci
+    - name: Checkout webref
+      uses: actions/checkout@v4
+      with:
+        repository: w3c/webref
+        path: webref
+    - name: Close pull requests if needed
+      run: node src/reporting/clean-pending-regeneration.js webref/ed/
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
