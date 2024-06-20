@@ -59,15 +59,15 @@ async function dropPendingReportsWhenPossible (edCrawlResultsPath) {
     if (lastModified.toJSON() > pr.created_at) {
       console.log(`PR ${pr.number} may no longer be relevant, closing it`);
       // if it is, delete the branch, and close the PR
-      const prData = await octokit.rest.pulls.get({
+      const {data: prData} = await octokit.rest.pulls.get({
 	owner,
 	repo,
 	pull_number: pr.number
       });
-      await octokit.rest.git.deleteRef({
+      await octokit.request('DELETE /repos/{owner}/{repo}/git/refs/heads/{ref}', {
 	owner,
 	repo,
-	ref: prData.head.ref
+	ref: `${prData.head.ref}`
       });
       await octokit.rest.issues.update({
 	owner,
