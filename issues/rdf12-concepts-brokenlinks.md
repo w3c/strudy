@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/rdf-concepts'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-concepts/issues/93'
 Title: Broken references in RDF 1.2 Concepts and Abstract Syntax
 ---
 
