@@ -39,6 +39,7 @@
     "@octokit/rest": "^20.0.1",
     "commander": "12.1.0",
     "gray-matter": "^4.0.3",
+    "jsdom": "^24.1.0",
     "node-fetch": "^2.6.5",
     "node-pandoc": "0.3.0",
     "reffy": "^16.0.0",
