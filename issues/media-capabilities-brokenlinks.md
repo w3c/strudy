@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/media-capabilities'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/media-capabilities/issues/224'
 Title: Broken references in Media Capabilities
 ---
 

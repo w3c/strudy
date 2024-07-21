@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WebBluetoothCG/web-bluetooth'
-Tracked: N/A
+Tracked: 'https://github.com/WebBluetoothCG/web-bluetooth/issues/628'
 Title: Broken references in Web Bluetooth
 ---
 
