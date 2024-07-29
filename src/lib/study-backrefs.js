@@ -1,4 +1,5 @@
-const { recordCategorizedAnomaly } = require('./util');
+import { loadCrawlResults, recordCategorizedAnomaly } from './util.js';
+import { fileURLToPath } from 'node:url';
 
 const possibleAnomalies = [
   'brokenLinks',
@@ -261,13 +262,14 @@ function studyLinks(spec, links, report, edResults, trResults, htmlFragments) {
       let shortname;
       if (links[link].specShortname) {
         shortname = links[link].specShortname;
-      } else {
+      }
+      else {
         let nakedLink = link;
 
-	// Ignoring links to PDF specs
-	if (nakedLink.endsWith('.pdf')) {
-	  return;
-	}
+        // Ignoring links to PDF specs
+        if (nakedLink.endsWith('.pdf')) {
+          return;
+        }
 
         if (nakedLink.endsWith('.html')) {
           nakedLink = nakedLink.replace(/\/(Overview|overview|index)\.html$/, '/');
@@ -380,7 +382,8 @@ function studyLinks(spec, links, report, edResults, trResults, htmlFragments) {
         if (!isKnownId) {
           if ((trSourceSpec.ids || []).find(matchFullReleaseLink) && link.match(/w3\.org\/TR\//)) {
             recordAnomaly(spec, 'evolvingLinks', link + '#' + anchor);
-          } else {
+          }
+          else {
             if (link.startsWith('https://html.spec.whatwg.org/C') || link.startsWith('http://html.spec.whatwg.org/C')) {
               recordAnomaly(spec, 'nonCanonicalRefs', link);
               link = link.replace('http:', 'https:').replace('https://html.spec.whatwg.org/C', 'https://html.spec.whatwg.org/multipage');
@@ -389,24 +392,29 @@ function studyLinks(spec, links, report, edResults, trResults, htmlFragments) {
             if (link === 'https://html.spec.whatwg.org/' &&
                 // is there an equivalent id in the multipage spec?
                 ids.find(i => i.startsWith('https://html.spec.whatwg.org/multipage/') &&
-			 (i.endsWith('#' + anchor) || i.endsWith('#' + decodeURIComponent(anchor)) || i.endsWith('#' + encodeURIComponent(anchor))))) {
+                (i.endsWith('#' + anchor) || i.endsWith('#' + decodeURIComponent(anchor)) || i.endsWith('#' + encodeURIComponent(anchor))))) {
               // Should we keep track of those? ignoring for now
-            } else if (link.startsWith('https://html.spec.whatwg.org/multipage') && htmlFragments &&
-                       htmlFragments[anchor] &&
-                       ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`, anchor))) {
+            }
+            else if (link.startsWith('https://html.spec.whatwg.org/multipage') && htmlFragments &&
+                htmlFragments[anchor] &&
+                ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`, anchor))) {
               // Deal with anchors that are JS-redirected from
               // the multipage version of HTML
               recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
-            } else if (anchor.startsWith(':~:text=')) {
+            }
+            else if (anchor.startsWith(':~:text=')) {
               // links using text fragments are inherently fragile
               recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
-            } else {
+            }
+            else {
               recordAnomaly(spec, 'brokenLinks', link + '#' + anchor);
             }
           }
-        } else if (!heading && !dfn) {
+        }
+        else if (!heading && !dfn) {
           recordAnomaly(spec, 'notDfn', link + '#' + anchor);
-        } else if (dfn && dfn.access !== 'public') {
+        }
+        else if (dfn && dfn.access !== 'public') {
           recordAnomaly(spec, 'notExported', link + '#' + anchor);
         }
       }
@@ -416,22 +424,19 @@ function studyLinks(spec, links, report, edResults, trResults, htmlFragments) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports = { studyBackrefs };
+export default studyBackrefs;
 
-if (require.main === module) {
-  (async function() {
-    const { loadCrawlResults } = require('../lib/util');
-    const crawl = await loadCrawlResults(process.argv[2], process.argv[3]);
-    let htmlFragments = {};
-    try {
-      console.info('Downloading HTML spec fragments data…');
-      htmlFragments = await fetch('https://html.spec.whatwg.org/multipage/fragment-links.json').then(r => r.json());
-      console.info('- done');
-    } catch (err) {
-      console.error('- failed: could not fetch HTML fragments data, may report false positive broken links on HTML spec');
-    }
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const crawl = await loadCrawlResults(process.argv[2], process.argv[3]);
+  let htmlFragments = {};
+  try {
+    console.info('Downloading HTML spec fragments data…');
+    htmlFragments = await fetch('https://html.spec.whatwg.org/multipage/fragment-links.json').then(r => r.json());
+    console.info('- done');
+  } catch (err) {
+    console.error('- failed: could not fetch HTML fragments data, may report false positive broken links on HTML spec');
+  }
 
-    const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments, process.argv[4] ?? undefined);
-    console.log(results);
-  })();
+  const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments, process.argv[4] ?? undefined);
+  console.log(results);
 }

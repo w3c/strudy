@@ -1,4 +1,5 @@
-const { recordCategorizedAnomaly } = require('./util');
+import { loadCrawlResults, recordCategorizedAnomaly } from './util.js';
+import { fileURLToPath } from 'node:url';
 
 const possibleAnomalies = [
   'discontinuedReferences'
@@ -21,13 +22,10 @@ function studyReferences (edResults) {
   return report;
 }
 
-module.exports = { studyReferences };
+export default studyReferences;
 
-if (require.main === module) {
-  (async function() {
-    const { loadCrawlResults } = require('../lib/util');
-    const crawl = await loadCrawlResults(process.argv[2]);
-    const results = studyReferences(crawl.ed);
-    console.log(results);
-  })();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const crawl = await loadCrawlResults(process.argv[2]);
+  const results = studyReferences(crawl.ed);
+  console.log(results);
 }

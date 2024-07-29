@@ -1,4 +1,4 @@
-const assert = require('assert').strict;
+import assert from 'node:assert/strict';
 
 function assertNbAnomalies (report, length) {
   assert.deepEqual(report.length, length,
@@ -30,4 +30,4 @@ function assertAnomaly (report, idx, value) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports = { assertNbAnomalies, assertAnomaly };
+export { assertNbAnomalies, assertAnomaly };

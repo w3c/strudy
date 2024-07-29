@@ -24,8 +24,8 @@
  * the crawl results parameter.
  */
 
-const { recordCategorizedAnomaly } = require('./util');
-const WebIDL2 = require('webidl2');
+import { recordCategorizedAnomaly } from './util.js';
+import * as WebIDL2 from 'webidl2';
 
 const getSpecs = list => [...new Set(list.map(({ spec }) => spec))];
 const specName = spec => spec.shortname ?? spec.url;
@@ -669,4 +669,4 @@ function studyWebIdl (edResults, curatedResults) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports = { studyWebIdl };
+export default studyWebIdl;

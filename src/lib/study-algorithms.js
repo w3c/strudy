@@ -1,5 +1,5 @@
-const { JSDOM } = require('jsdom');
-const { recordCategorizedAnomaly } = require('./util');
+import { JSDOM } from 'jsdom';
+import { recordCategorizedAnomaly } from './util.js';
 
 const possibleAnomalies = [
   'missingTaskForPromise',
@@ -153,4 +153,4 @@ function studyAlgorithms(edResults) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports = { studyAlgorithms };
+export default studyAlgorithms;

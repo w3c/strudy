@@ -3,11 +3,14 @@
  * a pull request to drop reports that have been addressed.
  */
 
-const core = require('@actions/core');
-const Octokit = require('../lib/octokit');
-const fs = require('fs');
-const path = require('path');
-const matter = require('gray-matter');
+import core from '@actions/core';
+import Octokit from '../lib/octokit.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from "node:url";
+import matter from 'gray-matter';
+
+const scriptPath = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Check GitHub issues and PR referenced by patch files and drop patch files
@@ -19,7 +22,7 @@ const matter = require('gray-matter');
  *   empty string when there are no patches to drop.
  */
 async function dropReportsWhenPossible () {
-  const rootDir = path.join(__dirname, '../../issues');
+  const rootDir = path.join(scriptPath, '../../issues');
 
   console.log('Gather reports files');
   let reports = [];
@@ -91,13 +94,8 @@ async function dropReportsWhenPossible () {
 /*******************************************************************************
 Retrieve GH_TOKEN from environment, prepare Octokit and kick things off
 *******************************************************************************/
-const GH_TOKEN = (() => {
-  try {
-    return require('../../config.json').GH_TOKEN;
-  } catch {
-    return process.env.GH_TOKEN;
-  }
-})();
+const config = await loadJSON("config.json");
+const GH_TOKEN = config?.GH_TOKEN ?? process.env.GH_TOKEN;
 if (!GH_TOKEN) {
   console.error('GH_TOKEN must be set to some personal access token as an env variable or in a config.json file');
   process.exit(1);

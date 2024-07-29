@@ -24,14 +24,13 @@
  * @module analyzer
  */
 
-const fs = require('fs');
-const path = require('path');
-const requireFromWorkingDirectory = require('./require-cwd');
-const { expandCrawlResult, isLatestLevelThatPasses } = require('reffy');
-const { studyBackrefs } = require('./study-backrefs');
-const checkMissingDefinitions = require('../cli/check-missing-dfns').checkSpecDefinitions;
-
-const {canonicalizeUrl, canonicalizesTo} = require("./canonicalize-url");
+import fs from 'node:fs';
+import path from 'node:path';
+import { expandCrawlResult, isLatestLevelThatPasses } from 'reffy';
+import studyBackrefs from './study-backrefs.js';
+import { checkSpecDefinitions } from '../cli/check-missing-dfns.js';
+import { canonicalizeUrl, canonicalizesTo } from "./canonicalize-url.js";
+import loadJSON from './load-json.js';
 
 const array_concat = (a,b) => a.concat(b);
 const uniqueFilter = (item, idx, arr) => arr.indexOf(item) === idx;
@@ -94,7 +93,7 @@ function filterSpecInfo(spec) {
  *   a "report" property with "interesting" properties, see code comments inline
  *   for details
  */
-function studyCrawlResults(results, options = {}) {
+async function studyCrawlResults(results, options = {}) {
   const knownIdlNames = results
     .map(r => r.idlparsed?.idlNames ? Object.keys(r.idlparsed.idlNames) : [], [])
     .reduce(array_concat)
@@ -143,7 +142,7 @@ function studyCrawlResults(results, options = {}) {
   const xrefsReport = studyBackrefs(sortedResults, options.trResults);
 
   const specsToInclude = options.include;
-  return sortedResults
+  return Promise.all(sortedResults
     .filter(spec => !specsToInclude ||
       (specsToInclude.length === 0) ||
       specsToInclude.some(toInclude =>
@@ -158,7 +157,7 @@ function studyCrawlResults(results, options = {}) {
         (toInclude.url && toInclude.url === spec.crawled) ||
         (toInclude.url && toInclude.url === spec.nightly?.url) ||
         (toInclude.html && toInclude.html === spec.html)))
-    .map(spec => {
+    .map(async spec => {
       spec.idlparsed = spec.idlparsed || {};
       spec.css = spec.css || {};
       spec.refs = spec.refs || {};
@@ -267,7 +266,7 @@ function studyCrawlResults(results, options = {}) {
 
         // CSS/IDL terms that do not have a corresponding dfn in the
         // specification
-        missingDfns: checkMissingDefinitions(spec),
+        missingDfns: await checkSpecDefinitions(spec),
 
         // Links to external specifications within the body of the spec
         // that do not have a corresponding entry in the references
@@ -368,13 +367,13 @@ function studyCrawlResults(results, options = {}) {
         report
       };
       return res;
-  });
+  }));
 }
 
 async function studyCrawl(crawlResults, options = {}) {
   if (typeof crawlResults === 'string') {
     const crawlResultsPath = crawlResults;
-    crawlResults = requireFromWorkingDirectory(crawlResults);
+    crawlResults = await loadJSON(crawlResults);
     crawlResults = await expandCrawlResult(crawlResults, path.dirname(crawlResultsPath));
   }
   else {
@@ -385,12 +384,12 @@ async function studyCrawl(crawlResults, options = {}) {
 
   if (typeof options.trResults === 'string') {
     const crawlResultsPath = options.trResults;
-    options.trResults = requireFromWorkingDirectory(options.trResults);
+    options.trResults = await loadJSON(options.trResults);
     options.trResults = await expandCrawlResult(options.trResults, path.dirname(crawlResultsPath));
     options.trResults = options.trResults.results;
   }
 
-  const results = studyCrawlResults(crawlResults.results, options);
+  const results = await studyCrawlResults(crawlResults.results, options);
 
   return {
     type: 'study',
@@ -410,4 +409,4 @@ async function studyCrawl(crawlResults, options = {}) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports.studyCrawl = studyCrawl;
+export default studyCrawl;

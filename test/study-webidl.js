@@ -4,8 +4,8 @@
  */
 /* global describe, it */
 
-const { studyWebIdl } = require('../src/lib/study-webidl');
-const { assertNbAnomalies, assertAnomaly } = require('./util');
+import studyWebIdl from '../src/lib/study-webidl.js';
+import { assertNbAnomalies, assertAnomaly } from './util.js';
 
 describe('The Web IDL analyser', () => {
   const specUrl = 'https://www.w3.org/TR/spec';

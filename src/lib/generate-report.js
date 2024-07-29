@@ -7,8 +7,7 @@
  * @module markdownGenerator
  */
 
-const requireFromWorkingDirectory = require('./require-cwd');
-const fetch = require('node-fetch');
+import loadJSON from './load-json.js';
 
 
 /**
@@ -975,13 +974,11 @@ async function generateReport(studyFile, options) {
     throw new Error('Required filename to reference crawl for diff missing');
   }
 
-  let study;
-  try {
-    study = typeof studyFile === 'string' ?
-      requireFromWorkingDirectory(studyFile) :
-      studyFile;
-  } catch (e) {
-    throw new Error('Impossible to read ' + studyFile + ': ' + e);
+  const study = typeof studyFile === 'string' ?
+    (await loadJSON(studyFile)) :
+    studyFile;
+  if (!study) {
+    throw new Error('Impossible to read ' + studyFile);
   }
 
   let refStudy = {};
@@ -997,10 +994,9 @@ async function generateReport(studyFile, options) {
       return generateDiffReport(study, refStudy, { onlyNew: options.onlyNew });
     }
     else {
-      try {
-        refStudy = requireFromWorkingDirectory(options.refStudyFile);
-      } catch (e) {
-        throw new Error('Impossible to read ' + options.refStudyFile + ': ' + e);
+      refStudy = await loadJSON(options.refStudyFile);
+      if (!refStudy) {
+        throw new Error('Impossible to read ' + options.refStudyFile);
       }
       return generateDiffReport(study, refStudy, { onlyNew: options.onlyNew });
     }
@@ -1021,4 +1017,4 @@ async function generateReport(studyFile, options) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports.generateReport = generateReport;
+export default generateReport;

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const { loadCrawlResults } = require('../lib/util');
-const { studyAlgorithms } = require('../lib/study-algorithms');
-const requireFromWorkingDirectory = require('../lib/require-cwd');
-const { expandCrawlResult } = require("reffy");
-const path = require("path");
+import { loadCrawlResults } from '../lib/util.js';
+import studyAlgorithms from '../lib/study-algorithms.js';
+import loadJSON from '../lib/load-json.js';
+import { expandCrawlResult } from 'reffy';
+import path from 'node:path';
 
 function reportToConsole(results) {
   const toreport = [];
@@ -35,12 +35,9 @@ async function main(crawlPath, anomalyType) {
     crawlPath = path.join(crawlPath, 'index.json');
   }
 
-  let crawl;
-  try {
-    crawl = requireFromWorkingDirectory(crawlPath);
-  }
-  catch(e) {
-    throw "Impossible to read " + crawlPath + ": " + e;
+  const crawl = await loadJSON(crawlPath);
+  if (!crawl) {
+    throw new Error("Impossible to read " + crawlPath);
   }
 
   const expanded = await expandCrawlResult(crawl, crawlPath.replace(/index\.json$/, ''), ['algorithms']);
@@ -49,18 +46,14 @@ async function main(crawlPath, anomalyType) {
 }
 
 /**************************************************
-Code run if the code is run as a stand-alone module
+Main loop
 **************************************************/
-if (require.main === module) {
-  const crawlPath = process.argv[2];
-  
-  if (!crawlPath) {
-    console.error('Web IDL analyzer must be called with a paths to crawl results as first parameter');
-    process.exit(2);
-  }
-
-  main(crawlPath).catch(e => {
-    console.error(e);
-    process.exit(3);
-  });
+const crawlPath = process.argv[2];
+if (!crawlPath) {
+  console.error('Web IDL analyzer must be called with a paths to crawl results as first parameter');
+  process.exit(2);
 }
+main(crawlPath).catch(e => {
+  console.error(e);
+  process.exit(3);
+});
