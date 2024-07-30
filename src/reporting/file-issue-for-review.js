@@ -7,7 +7,7 @@ import studyBackrefs from '../lib/study-backrefs.js';
 import studyReferences from '../lib/study-refs.js';
 import loadJSON from '../lib/load-json.js';
 import path from 'node:path';
-import fs from 'fs/promises';
+import fs from 'node:fs/promises';
 import { execSync } from 'node:child_process';
 import Octokit from '../lib/octokit.js';
 import matter from 'gray-matter';

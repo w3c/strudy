@@ -3,9 +3,9 @@
    Can also be called on a specific issue report (typicall when it gets merged in)
  */
 
-import fs from 'fs/promises';
+import fs from 'node:fs/promises';
 import matter from 'gray-matter';
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
 import Octokit from '../lib/octokit.js';
 import loadJSON from '../lib/load-json.js';
 
