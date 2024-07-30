@@ -3,8 +3,8 @@
  */
 /* global describe, it */
 
-const { studyReferences } = require('../src/lib/study-refs');
-const { assertNbAnomalies, assertAnomaly } = require('./util');
+import studyReferences from '../src/lib/study-refs.js';
+import { assertNbAnomalies, assertAnomaly } from './util.js';
 
 const specEdUrl = 'https://w3c.github.io/spec/';
 const specEdUrl2 = 'https://w3c.github.io/spec2/';

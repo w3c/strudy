@@ -4,12 +4,13 @@
  * since the PR was created.
  */
 
-const core = require('@actions/core');
-const Octokit = require('../lib/octokit');
-const fs = require('fs');
-const path = require('path');
-const matter = require('gray-matter');
-const { loadCrawlResults } = require('../lib/util');
+import core from '@actions/core';
+import Octokit from '../lib/octokit.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import matter from 'gray-matter';
+import { loadCrawlResults } from '../lib/util.js';
+import loadJSON from '../lib/load-json.js';
 
 const owner = 'w3c';
 const repo = 'strudy';
@@ -84,13 +85,8 @@ async function dropPendingReportsWhenPossible (edCrawlResultsPath) {
 /*******************************************************************************
 Retrieve GH_TOKEN from environment, prepare Octokit and kick things off
 *******************************************************************************/
-const GH_TOKEN = (() => {
-  try {
-    return require('../../config.json').GH_TOKEN;
-  } catch {
-    return process.env.GH_TOKEN;
-  }
-})();
+const config = await loadJSON("config.json");
+const GH_TOKEN = config?.GH_TOKEN ?? process.env.GH_TOKEN;
 if (!GH_TOKEN) {
   console.error('GH_TOKEN must be set to some personal access token as an env variable or in a config.json file');
   process.exit(1);

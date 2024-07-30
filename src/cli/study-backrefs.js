@@ -27,117 +27,101 @@
  * @module backrefs
  */
 
-const { loadCrawlResults } = require('../lib/util');
-const { studyBackrefs } = require('../lib/study-backrefs');
-const path = require("path");
-const fetch = require("node-fetch");
+import { loadCrawlResults } from '../lib/util.js';
+import studyBackrefs from '../lib/study-backrefs.js';
+import path from 'node:path';
 
 function reportToConsole(results) {
-  console.error(results);
-  let report = "";
-  Object.keys(results)
-    .sort((r1, r2) => results[r1].title.localeCompare(results[r2].title))
-    .forEach(s => {
-      const result = results[s];
-      report += `<details><summary><a href="${s}">${result.title}</a></summary>\n\n`;
-      if (result.brokenLinks.length) {
-        report += "Links to anchors that don't exist:\n"
-        result.brokenLinks.forEach(l => {
-          report += "* " + l + "\n";
-        })
-        report += "\n\n";
+  for (const anomaly of results) {
+    anomaly.specs = anomaly.specs.map(spec => {
+      return { shortname: spec.shortname, url: spec.url, title: spec.title };
+    });
+  }
+  const perSpec = {};
+  for (const anomaly of results) {
+    for (const spec of anomaly.specs) {
+      if (!perSpec[spec.url]) {
+        perSpec[spec.url] = { spec, anomalies: [] };
       }
-      if (result.evolvingLinks.length) {
-        report += "Links to anchors that no longer exist in the editor draft of the target spec:\n"
-        result.evolvingLinks.forEach(l => {
-          report += "* " + l + "\n";
-        })
-        report += "\n\n";
+      perSpec[spec.url].anomalies.push(anomaly);
+    }
+  }
+
+  const anomalyTypes = [
+    { name: 'brokenLinks', title: 'Links to anchors that do not exist' },
+    { name: 'evolvingLinks', title: 'Links to anchors that no longer exist in the editor draft of the target spec' },
+    { name: 'notDfn', title: 'Links to anchors that are not definitions or headings' },
+    { name: 'notExported', title: 'Links to definitions that are not exported' },
+    { name: 'datedUrls', title: 'Links to dated TR URLs' },
+    { name: 'outdatedSpecs', title: 'Links to specs that should no longer be referenced' },
+    { name: 'unknownSpecs', title: 'Links to documents that are not recognized as specs' }
+  ];
+  let report = '';
+  Object.keys(perSpec)
+    .sort((url1, url2) => perSpec[url1].spec.title.localeCompare(perSpec[url2].spec.title))
+    .forEach(url => {
+      const spec = perSpec[url].spec;
+      const anomalies = perSpec[url].anomalies;
+      report += `<details><summary><a href="${url}">${spec.title}</a></summary>\n\n`;
+      for (const type of anomalyTypes) {
+        const links = anomalies
+          .filter(anomaly => anomaly.name === type.name)
+          .map(anomaly => anomaly.message);
+        if (links.length > 0) {
+          report += `${type.title}:\n`;
+          for (const link of links) {
+            report += `* ${link}\n`;
+          }
+          report += '\n\n';
+        }
       }
-      if (result.notDfn.length) {
-        report += "Links to anchors that are not definitions or headings:\n"
-        result.notDfn.forEach(l => {
-          report += "* " + l + "\n";
-        })
-        report += "\n\n";
-      }
-      if (result.notExported.length) {
-        report += "Links to definitions that are not exported:\n"
-        result.notExported.forEach(l => {
-          report += "* " + l + "\n";
-        })
-        report += "\n\n";
-      }
-      if (result.datedUrls.length) {
-        report += "Links to dated TR URLs:\n"
-        result.datedUrls.forEach(l => {
-          report += "* " + l + "\n";
-        })
-        report += "\n\n";
-      }
-      if (result.outdatedSpecs.length) {
-        report += "Links to specs that should no longer be referenced:\n"
-        result.outdatedSpecs.forEach(l => {
-          report += "* " + l + "\n";
-        })
-        report += "\n\n";
-      }
-      if (result.unknownSpecs.length) {
-        report += "Links to things that look like specs but that aren't recognized as such in crawl data:\n"
-        result.unknownSpecs.forEach(l => {
-          report += "* " + l + "\n";
-        })
-        report += "\n\n";
-      }
-      report += "</details>\n";
+      report += '</details>\n';
     });
   console.log(report);
 }
 
 
 /**************************************************
-Code run if the code is run as a stand-alone module
+Main loop
 **************************************************/
-if (require.main === module) {
-  let edCrawlResultsPath = process.argv[2];
-  let trCrawlResultsPath = process.argv[3];
+let edCrawlResultsPath = process.argv[2];
+let trCrawlResultsPath = process.argv[3];
 
-  if (!edCrawlResultsPath) {
-    console.error('Backrefs analyzer must be called with a paths to crawl results as first parameter');
-    process.exit(2);
-  }
-
-  // If only one argument is provided, consider that it is the path to the
-  // root folder of a crawl results, with "ed" and "tr" subfolders
-  if (!trCrawlResultsPath) {
-    trCrawlResultsPath = path.join(edCrawlResultsPath, 'tr');
-    edCrawlResultsPath = path.join(edCrawlResultsPath, 'ed');
-  }
-
-  // Target the index file if needed
-  if (!edCrawlResultsPath.endsWith('index.json')) {
-    edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
-  }
-  if (!trCrawlResultsPath.endsWith('index.json')) {
-    trCrawlResultsPath = path.join(trCrawlResultsPath, 'index.json');
-  }
-
-  // Analyze the crawl results
-  loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath)
-    .then(async crawl => {
-      // Donwload automatic map of multipages anchors in HTML spec
-      let htmlFragments = {};
-      try {
-        htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
-      } catch (err) {
-        console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec", err);
-      }
-      return { crawl, htmlFragments };
-    })
-    .then(({ crawl, htmlFragments }) => studyBackrefs(crawl.ed, crawl.tr, htmlFragments))
-    .then(reportToConsole)
-    .catch(e => {
-      console.error(e);
-      process.exit(3);
-    });
+if (!edCrawlResultsPath) {
+  console.error('Backrefs analyzer must be called with a paths to crawl results as first parameter');
+  process.exit(2);
 }
+
+// If only one argument is provided, consider that it is the path to the
+// root folder of a crawl results, with "ed" and "tr" subfolders
+if (!trCrawlResultsPath) {
+  trCrawlResultsPath = path.join(edCrawlResultsPath, 'tr');
+  edCrawlResultsPath = path.join(edCrawlResultsPath, 'ed');
+}
+
+// Target the index file if needed
+if (!edCrawlResultsPath.endsWith('index.json')) {
+  edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
+}
+if (!trCrawlResultsPath.endsWith('index.json')) {
+  trCrawlResultsPath = path.join(trCrawlResultsPath, 'index.json');
+}
+
+// Analyze the crawl results
+loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath)
+  .then(async crawl => {
+    // Donwload automatic map of multipages anchors in HTML spec
+    let htmlFragments = {};
+    try {
+      htmlFragments = await fetch("https://html.spec.whatwg.org/multipage/fragment-links.json").then(r => r.json());
+    } catch (err) {
+      console.warn("Could not fetch HTML fragments data, may report false positive broken links on HTML spec", err);
+    }
+    return { crawl, htmlFragments };
+  })
+  .then(({ crawl, htmlFragments }) => studyBackrefs(crawl.ed, crawl.tr, htmlFragments))
+  .then(reportToConsole)
+  .catch(e => {
+    console.error(e);
+    process.exit(3);
+  });

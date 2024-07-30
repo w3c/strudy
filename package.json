@@ -28,6 +28,7 @@
   "engines": {
     "node": ">=18"
   },
+  "type": "module",
   "main": "index.js",
   "bin": "./strudy.js",
   "devDependencies": {
@@ -42,7 +43,7 @@
     "jsdom": "^24.1.1",
     "node-fetch": "^2.6.5",
     "node-pandoc": "0.3.0",
-    "reffy": "^16.0.0",
+    "reffy": "^17.1.1",
     "semver": "^7.3.5",
     "webidl2": "^24.2.2"
   },

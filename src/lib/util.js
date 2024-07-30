@@ -1,10 +1,10 @@
-const requireFromWorkingDirectory = require('../lib/require-cwd');
-const { expandCrawlResult } = require('reffy');
+import { expandCrawlResult } from 'reffy';
+import loadJSON from './load-json.js';
 
 async function loadCrawlResults (edCrawlResultsPath, trCrawlResultsPath) {
   let edCrawlResults, trCrawlResults;
   try {
-    edCrawlResults = requireFromWorkingDirectory(edCrawlResultsPath);
+    edCrawlResults = await loadJSON(edCrawlResultsPath);
   } catch (e) {
     throw new Error('Impossible to read ' + edCrawlResultsPath + ': ' + e);
   }
@@ -12,7 +12,7 @@ async function loadCrawlResults (edCrawlResultsPath, trCrawlResultsPath) {
 
   if (trCrawlResultsPath) {
     try {
-      trCrawlResults = requireFromWorkingDirectory(trCrawlResultsPath);
+      trCrawlResults = await loadJSON(trCrawlResultsPath);
     } catch (e) {
       throw new Error('Impossible to read ' + trCrawlResultsPath + ': ' + e);
     }
@@ -42,4 +42,4 @@ function recordCategorizedAnomaly (report, category, possibleAnomalies) {
 /**************************************************
 Export methods for use as module
 **************************************************/
-module.exports = { loadCrawlResults, recordCategorizedAnomaly };
+export { loadCrawlResults, recordCategorizedAnomaly };

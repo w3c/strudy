@@ -1,5 +1,8 @@
-module.exports = {
-  studyCrawl: require("./src/lib/study-crawl").studyCrawl,
-  studyWebIdl: require("./src/lib/study-webidl").studyWebIdl,
-  generateReport: require("./src/lib/generate-report").generateReport,
-};
+import studyCrawl from './src/lib/study-crawl.js';
+import studyWebIdl from './src/lib/study-webidl.js';
+import generateReport from './src/lib/generate-report.js';
+
+export { studyCrawl, studyWebIdl, generateReport };
+
+const strudy = { studyCrawl, studyWebIdl, generateReport };
+export default strudy;

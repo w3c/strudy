@@ -2,23 +2,18 @@
    creates a draft of an issue per spec and per anomaly type
    and submits as a pull request in this repo if no existing one matches
 */
-const { loadCrawlResults } = require('../lib/util');
-const { studyBackrefs } = require('../lib/study-backrefs');
-const { studyReferences } = require('../lib/study-refs');
-const path = require('path');
-const fs = require('fs').promises;
-const { execSync } = require('child_process');
-const Octokit = require('../lib/octokit');
-const matter = require('gray-matter');
-const fetch = require('node-fetch');
+import { loadCrawlResults } from '../lib/util.js';
+import studyBackrefs from '../lib/study-backrefs.js';
+import studyReferences from '../lib/study-refs.js';
+import loadJSON from '../lib/load-json.js';
+import path from 'node:path';
+import fs from 'fs/promises';
+import { execSync } from 'node:child_process';
+import Octokit from '../lib/octokit.js';
+import matter from 'gray-matter';
 
-const GH_TOKEN = (() => {
-  try {
-    return require('../../config.json').GH_TOKEN;
-  } catch (err) {
-    return process.env.GH_TOKEN;
-  }
-})();
+const config = await loadJSON("config.json");
+const GH_TOKEN = config?.GH_TOKEN ?? process.env.GH_TOKEN;
 
 const MAX_PR_BY_RUN = 10;
 
@@ -77,215 +72,213 @@ ${issueReport}
 `;
 }
 
-if (require.main === module) {
-  const knownAnomalyTypes = ['brokenLinks', 'outdatedSpecs', 'nonCanonicalRefs', 'discontinuedReferences'];
 
-  let edCrawlResultsPath = process.argv[2];
-  let trCrawlResultsPath = process.argv[3];
-  const anomalyFilter = process.argv.slice(4).filter(p => !p.startsWith('--'));
-  const unknownAnomalyType = anomalyFilter.find(p => !knownAnomalyTypes.includes(p));
-  if (unknownAnomalyType) {
-    console.error(`Unknown report type ${unknownAnomalyType} - known types are ${knownAnomalyTypes.join(', ')}`);
-    process.exit(1);
-  }
-  const anomalyTypes = anomalyFilter.length ? anomalyFilter : knownAnomalyTypes;
-  const updateMode = process.argv.includes('--update') ? 'update-untracked' : (process.argv.includes('--update-tracked') ? 'update-tracked' : false);
-  const dryRun = process.argv.includes('--dry-run');
-  const noGit = dryRun || updateMode || process.argv.includes('--no-git');
+const knownAnomalyTypes = ['brokenLinks', 'outdatedSpecs', 'nonCanonicalRefs', 'discontinuedReferences'];
 
-  if (!noGit && !GH_TOKEN) {
-    console.error('GH_TOKEN must be set to some personal access token as an env variable or in a config.json file');
-    process.exit(1);
-  }
+let edCrawlResultsPath = process.argv[2];
+let trCrawlResultsPath = process.argv[3];
+const anomalyFilter = process.argv.slice(4).filter(p => !p.startsWith('--'));
+const unknownAnomalyType = anomalyFilter.find(p => !knownAnomalyTypes.includes(p));
+if (unknownAnomalyType) {
+  console.error(`Unknown report type ${unknownAnomalyType} - known types are ${knownAnomalyTypes.join(', ')}`);
+  process.exit(1);
+}
+const anomalyTypes = anomalyFilter.length ? anomalyFilter : knownAnomalyTypes;
+const updateMode = process.argv.includes('--update') ? 'update-untracked' : (process.argv.includes('--update-tracked') ? 'update-tracked' : false);
+const dryRun = process.argv.includes('--dry-run');
+const noGit = dryRun || updateMode || process.argv.includes('--no-git');
 
-  // Target the index file if needed
-  if (!edCrawlResultsPath.endsWith('index.json')) {
-    edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
+if (!noGit && !GH_TOKEN) {
+  console.error('GH_TOKEN must be set to some personal access token as an env variable or in a config.json file');
+  process.exit(1);
+}
+
+// Target the index file if needed
+if (!edCrawlResultsPath.endsWith('index.json')) {
+  edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
+}
+if (!trCrawlResultsPath.endsWith('index.json')) {
+  trCrawlResultsPath = path.join(trCrawlResultsPath, 'index.json');
+}
+
+let existingReports = [];
+if (updateMode) {
+  console.log('Compiling list of relevant existing issue reports…');
+  // List all existing reports to serve as a comparison point
+  // to detect if any report can be deleted
+  // if the anomalies are no longer reported
+  const reportFiles = (await fs.readdir('issues')).map(p => 'issues/' + p);
+  for (const anomalyType of anomalyTypes) {
+    existingReports = existingReports.concat(reportFiles.filter(p => p.endsWith(`-${anomalyType.toLowerCase()}.md`)));
   }
-  if (!trCrawlResultsPath.endsWith('index.json')) {
-    trCrawlResultsPath = path.join(trCrawlResultsPath, 'index.json');
-  }
-  (async function () {
-    let existingReports = [];
-    if (updateMode) {
-      console.log('Compiling list of relevant existing issue reports…');
-      // List all existing reports to serve as a comparison point
-      // to detect if any report can be deleted
-      // if the anomalies are no longer reported
-      const reportFiles = (await fs.readdir('issues')).map(p => 'issues/' + p);
-      for (const anomalyType of anomalyTypes) {
-        existingReports = existingReports.concat(reportFiles.filter(p => p.endsWith(`-${anomalyType.toLowerCase()}.md`)));
-      }
-      console.log('- done');
+  console.log('- done');
+}
+const nolongerRelevantReports = new Set(existingReports);
+
+// Donwload automatic map of multipages anchors in HTML spec
+let htmlFragments = {};
+try {
+  console.log('Downloading HTML spec fragments data…');
+  htmlFragments = await fetch('https://html.spec.whatwg.org/multipage/fragment-links.json').then(r => r.json());
+  console.log('- done');
+} catch (err) {
+  console.log('- failed: could not fetch HTML fragments data, may report false positive broken links on HTML spec');
+}
+
+console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`);
+const crawl = await loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath);
+console.log('- done');
+console.log('Running references analysis…');
+// TODO: if we're not running all the reports, this could run only the
+// relevant study function
+const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments).concat(studyReferences(crawl.ed));
+console.log('- done');
+const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
+const needsPush = {};
+for (const anomalyType of anomalyTypes) {
+  const anomalies = results.filter(r => r.name === anomalyType);
+  const specs = [...new Set(anomalies.map(a => a.specs.map(s => s.url)).flat())];
+  for (const url of specs) {
+    const specAnomalies = anomalies.filter(a => a.specs[0].url === url);
+    const spec = specAnomalies[0].specs[0];
+    console.log(`Compiling ${anomalyType} report for ${spec.title}…`);
+    // if we don't know the repo, we can't file an issue
+    if (!spec.nightly?.repository) {
+      console.log(`No known repo for ${spec.title}, skipping`);
+      continue;
     }
-    const nolongerRelevantReports = new Set(existingReports);
-
-    // Donwload automatic map of multipages anchors in HTML spec
-    let htmlFragments = {};
+    if (spec.standing === "discontinued") {
+      console.log(`${spec.title} is discontinued, skipping`);
+      continue;
+    }
+    const issueMoniker = `${spec.shortname}-${anomalyType.toLowerCase()}`;
+    // is there already a file with that moniker?
+    const issueFilename = path.join('issues/', issueMoniker + '.md');
+    let tracked = 'N/A';
+    let existingReportContent;
     try {
-      console.log('Downloading HTML spec fragments data…');
-      htmlFragments = await fetch('https://html.spec.whatwg.org/multipage/fragment-links.json').then(r => r.json());
-      console.log('- done');
-    } catch (err) {
-      console.log('- failed: could not fetch HTML fragments data, may report false positive broken links on HTML spec');
-    }
-
-    console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`);
-    const crawl = await loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath);
-    console.log('- done');
-    console.log('Running references analysis…');
-    // TODO: if we're not running all the reports, this could run only the
-    // relevant study function
-    const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments).concat(studyReferences(crawl.ed));
-    console.log('- done');
-    const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
-    const needsPush = {};
-    for (const anomalyType of anomalyTypes) {
-      const anomalies = results.filter(r => r.name === anomalyType);
-      const specs = [...new Set(anomalies.map(a => a.specs.map(s => s.url)).flat())];
-      for (const url of specs) {
-        const specAnomalies = anomalies.filter(a => a.specs[0].url === url);
-        const spec = specAnomalies[0].specs[0];
-        console.log(`Compiling ${anomalyType} report for ${spec.title}…`);
-        // if we don't know the repo, we can't file an issue
-        if (!spec.nightly?.repository) {
-          console.log(`No known repo for ${spec.title}, skipping`);
+      if (!(await fs.stat(issueFilename)).isFile()) {
+        console.error(`${issueFilename} already exists but is not a file`);
+        continue;
+      } else {
+        if (!updateMode) {
+          console.log(`${issueFilename} already exists, bailing`);
           continue;
-        }
-        if (spec.standing === "discontinued") {
-          console.log(`${spec.title} is discontinued, skipping`);
-          continue;
-        }
-        const issueMoniker = `${spec.shortname}-${anomalyType.toLowerCase()}`;
-        // is there already a file with that moniker?
-        const issueFilename = path.join('issues/', issueMoniker + '.md');
-        let tracked = 'N/A';
-        let existingReportContent;
-        try {
-          if (!(await fs.stat(issueFilename)).isFile()) {
-            console.error(`${issueFilename} already exists but is not a file`);
-            continue;
-          } else {
-            if (!updateMode) {
-              console.log(`${issueFilename} already exists, bailing`);
-              continue;
-            } else {
-              nolongerRelevantReports.delete(issueFilename);
-              try {
-                const existingReport = matter(await fs.readFile(issueFilename, 'utf-8'));
-                tracked = existingReport.data.Tracked;
-                existingReportContent = existingReport.content;
-                // only update tracked or untracked reports based on
-                // CLI parameter
-                if ((updateMode === 'update-untracked' && tracked !== 'N/A') || (updateMode === 'update-tracked' && tracked === 'N/A')) {
-                  continue;
-                }
-              } catch (e) {
-                console.error('Failed to parse existing content', e);
-                continue;
-              }
-            }
-          }
-        } catch (err) {
-          // Intentionally blank
-        }
-        // if not, we create the file, add it in a branch
-        // and submit it as a pull request to the repo
-        const { title, content: issueReportContent } = issueWrapper(spec, specAnomalies, anomalyType);
-        if (updateMode) {
-          if (existingReportContent) {
-            const existingAnomalies = existingReportContent.split('\n').filter(l => l.startsWith('* [ ] ')).map(l => l.slice(6));
-            if (existingAnomalies.every((a, i) => specAnomalies[i] === a) && existingAnomalies.length === specAnomalies.length) {
-              // no substantial change, skip
-              console.log(`Skipping ${title}, no change`);
-              continue;
-            }
-          } else {
-            // in update mode, we only care about existing reports
-            continue;
-          }
-        }
-        const issueReportData = matter(issueReportContent);
-        issueReportData.data = {
-          Repo: spec.nightly.repository,
-          Tracked: tracked,
-          Title: title
-        };
-        let issueReport;
-        try {
-          issueReport = issueReportData.stringify();
-        } catch (err) {
-          console.error(`Failed to stringify report of ${anomalyType} for ${title}: ${err}`, issueReportContent);
-          continue;
-        }
-        if (dryRun) {
-          console.log(`Would add ${issueFilename} with`);
-          console.log(issueReport);
-          console.log();
         } else {
-          await fs.writeFile(issueFilename, issueReport, 'utf-8');
+          nolongerRelevantReports.delete(issueFilename);
           try {
-            if (!noGit) {
-              console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
-              execSync(`git checkout -b ${issueMoniker}`);
-              execSync(`git add ${issueFilename}`);
-              execSync(`git commit -m "File report on ${issueReportData.data.Title}"`);
-              needsPush[issueMoniker] = { title: issueReportData.data.Title, report: issueReport, repo: spec.nightly.repository, specTitle: spec.title, uri: spec.crawled };
-              console.log('- done');
-              execSync(`git checkout ${currentBranch}`);
+            const existingReport = matter(await fs.readFile(issueFilename, 'utf-8'));
+            tracked = existingReport.data.Tracked;
+            existingReportContent = existingReport.content;
+            // only update tracked or untracked reports based on
+            // CLI parameter
+            if ((updateMode === 'update-untracked' && tracked !== 'N/A') || (updateMode === 'update-tracked' && tracked === 'N/A')) {
+              continue;
             }
-          } catch (err) {
-            console.error(`Failed to commit error report for ${spec.title}`, err);
-            await fs.unlink(issueFilename);
-            execSync(`git checkout ${currentBranch}`);
+          } catch (e) {
+            console.error('Failed to parse existing content', e);
+            continue;
           }
         }
       }
+    } catch (err) {
+      // Intentionally blank
     }
-    if (nolongerRelevantReports.size) {
-      console.log('The following reports are no longer relevant, deleting them', [...nolongerRelevantReports]);
-      for (const issueFilename of nolongerRelevantReports) {
-        await fs.unlink(issueFilename);
-      }
-    }
-    if (Object.keys(needsPush).length) {
-      let counter = 0;
-      for (const branch in needsPush) {
-        if (counter > MAX_PR_BY_RUN) {
-          delete needsPush[branch];
+    // if not, we create the file, add it in a branch
+    // and submit it as a pull request to the repo
+    const { title, content: issueReportContent } = issueWrapper(spec, specAnomalies, anomalyType);
+    if (updateMode) {
+      if (existingReportContent) {
+        const existingAnomalies = existingReportContent.split('\n').filter(l => l.startsWith('* [ ] ')).map(l => l.slice(6));
+        if (existingAnomalies.every((a, i) => specAnomalies[i] === a) && existingAnomalies.length === specAnomalies.length) {
+          // no substantial change, skip
+          console.log(`Skipping ${title}, no change`);
           continue;
         }
-
-        // is there already a pull request targetting that branch?
-        const { data: pullrequests } = (await octokit.rest.pulls.list({
-          owner: repoOwner,
-          repo: repoName,
-          head: `${repoOwner}:${branch}`
-        }));
-        if (pullrequests.length > 0) {
-          console.log(`A pull request from branch ${branch} already exists, bailing`);
-          delete needsPush[branch];
+      } else {
+        // in update mode, we only care about existing reports
+        continue;
+      }
+    }
+    const issueReportData = matter(issueReportContent);
+    issueReportData.data = {
+      Repo: spec.nightly.repository,
+      Tracked: tracked,
+      Title: title
+    };
+    let issueReport;
+    try {
+      issueReport = issueReportData.stringify();
+    } catch (err) {
+      console.error(`Failed to stringify report of ${anomalyType} for ${title}: ${err}`, issueReportContent);
+      continue;
+    }
+    if (dryRun) {
+      console.log(`Would add ${issueFilename} with`);
+      console.log(issueReport);
+      console.log();
+    } else {
+      await fs.writeFile(issueFilename, issueReport, 'utf-8');
+      try {
+        if (!noGit) {
+          console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
+          execSync(`git checkout -b ${issueMoniker}`);
+          execSync(`git add ${issueFilename}`);
+          execSync(`git commit -m "File report on ${issueReportData.data.Title}"`);
+          needsPush[issueMoniker] = { title: issueReportData.data.Title, report: issueReport, repo: spec.nightly.repository, specTitle: spec.title, uri: spec.crawled };
+          console.log('- done');
+          execSync(`git checkout ${currentBranch}`);
         }
-        counter++;
+      } catch (err) {
+        console.error(`Failed to commit error report for ${spec.title}`, err);
+        await fs.unlink(issueFilename);
+        execSync(`git checkout ${currentBranch}`);
       }
     }
-    if (Object.keys(needsPush).length) {
-      console.log(`Pushing new branches ${Object.keys(needsPush).join(' ')}…`);
-      execSync(`git push origin ${Object.keys(needsPush).join(' ')}`);
-      console.log('- done');
-      for (const branch in needsPush) {
-        const { title, specTitle, uri, repo, report } = needsPush[branch];
-        console.log(`Creating pull request from branch ${branch}…`);
-        await octokit.rest.pulls.create({
-          owner: repoOwner,
-          repo: repoName,
-          title,
-          body: prWrapper(specTitle, uri, repo, report),
-          head: `${repoOwner}:${branch}`,
-          base: 'main'
-        });
-        console.log('- done');
-      }
+  }
+}
+if (nolongerRelevantReports.size) {
+  console.log('The following reports are no longer relevant, deleting them', [...nolongerRelevantReports]);
+  for (const issueFilename of nolongerRelevantReports) {
+    await fs.unlink(issueFilename);
+  }
+}
+if (Object.keys(needsPush).length) {
+  let counter = 0;
+  for (const branch in needsPush) {
+    if (counter > MAX_PR_BY_RUN) {
+      delete needsPush[branch];
+      continue;
     }
-  })();
+
+    // is there already a pull request targetting that branch?
+    const { data: pullrequests } = (await octokit.rest.pulls.list({
+      owner: repoOwner,
+      repo: repoName,
+      head: `${repoOwner}:${branch}`
+    }));
+    if (pullrequests.length > 0) {
+      console.log(`A pull request from branch ${branch} already exists, bailing`);
+      delete needsPush[branch];
+    }
+    counter++;
+  }
+}
+if (Object.keys(needsPush).length) {
+  console.log(`Pushing new branches ${Object.keys(needsPush).join(' ')}…`);
+  execSync(`git push origin ${Object.keys(needsPush).join(' ')}`);
+  console.log('- done');
+  for (const branch in needsPush) {
+    const { title, specTitle, uri, repo, report } = needsPush[branch];
+    console.log(`Creating pull request from branch ${branch}…`);
+    await octokit.rest.pulls.create({
+      owner: repoOwner,
+      repo: repoName,
+      title,
+      body: prWrapper(specTitle, uri, repo, report),
+      head: `${repoOwner}:${branch}`,
+      base: 'main'
+    });
+    console.log('- done');
+  }
 }

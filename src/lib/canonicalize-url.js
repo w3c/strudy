@@ -44,4 +44,4 @@ function canonicalizesTo (url, refUrl, options = { datedToLatest: false, equival
     : canon.includes(refUrl);
 }
 
-module.exports = { canonicalizeUrl, canonicalizesTo };
+export { canonicalizeUrl, canonicalizesTo };
