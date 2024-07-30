@@ -37,7 +37,7 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@octokit/plugin-throttling": "^8.0.0",
-    "@octokit/rest": "^20.0.1",
+    "@octokit/rest": "^21.0.1",
     "commander": "12.1.0",
     "gray-matter": "^4.0.3",
     "jsdom": "^24.1.1",
