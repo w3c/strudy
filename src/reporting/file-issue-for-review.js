@@ -5,6 +5,7 @@
 import { loadCrawlResults } from '../lib/util.js';
 import studyBackrefs from '../lib/study-backrefs.js';
 import studyReferences from '../lib/study-refs.js';
+import isInMultiSpecRepository from '../lib/is-in-multi-spec-repo.js';
 import loadJSON from '../lib/load-json.js';
 import path from 'node:path';
 import fs from 'node:fs/promises';
@@ -25,13 +26,8 @@ const octokit = new Octokit({
   // log: console
 });
 
-// based on `jq .[].nightly.repository index.json |sort|uniq -c|sort -rn|less`
-// in browser-specs
-// TODO: automate it?
-const multiSpecRepos = ['w3c/csswg-drafts', 'w3c/fxtf-drafts', 'w3c/svgwg', 'KhronosGroup/WebGL', 'httpwg/httpwg.github.io', 'w3c/css-houdini-drafts', 'WebAssembly/spec', 'w3c/woff', 'w3c/mediacapture-handle', 'w3c/epub-specs', 'gpuweb/gpuweb'].map(r => 'https://github.com/' + r);
-
-function issueWrapper (spec, anomalies, anomalyType) {
-  const titlePrefix = (multiSpecRepos.includes(spec.nightly.repository)) ? `[${spec.shortname}] ` : '';
+function issueWrapper (spec, anomalies, anomalyType, crawl) {
+  const titlePrefix = isInMultiSpecRepository(spec, crawl.ed) ? `[${spec.shortname}] ` : '';
   let anomalyReport = ''; let title = '';
   switch (anomalyType) {
     case 'brokenLinks':
@@ -186,7 +182,7 @@ for (const anomalyType of anomalyTypes) {
     }
     // if not, we create the file, add it in a branch
     // and submit it as a pull request to the repo
-    const { title, content: issueReportContent } = issueWrapper(spec, specAnomalies, anomalyType);
+    const { title, content: issueReportContent } = issueWrapper(spec, specAnomalies, anomalyType, crawl);
     if (updateMode) {
       if (existingReportContent) {
         const existingAnomalies = existingReportContent.split('\n').filter(l => l.startsWith('* [ ] ')).map(l => l.slice(6));
