@@ -5,51 +5,25 @@
  * object structure:
  *
  * {
- *   "category": "webidl",
  *   "name": "type of anomaly",
  *   "message": "Description of the anomaly",
- *   "specs": [
- *     { spec that contains or triggers the anomaly },
- *     { another spec that contains or triggers the anomaly },
- *     ...
- *   ]
+ *   "spec": { spec that contains or triggers the anomaly }
  * }
+ * 
+ * Some anomalies may be associated with more than one spec, when the code
+ * cannot tell which spec needs fixing (e.g., when checking duplicates while
+ * merging partials). In such cases, the `spec` property is replaced by a
+ * `specs` property that contains an array of specs.
  *
- * All anomalies will be associated with at least one spec (so specs.length > 0)
- * but some of them may be associated with more than one, when the code cannot
- * tell which of them needs to be fixed (e.g. when checking duplicates while
- * merging partials).
- *
- * The spec object returned in the "specs" array is the spec object provided in
- * the crawl results parameter.
+ * The spec object returned in the `spec` and `specs` properties is the spec
+ * object provided in the crawl results parameter.
  */
 
-import { recordCategorizedAnomaly } from './util.js';
 import * as WebIDL2 from 'webidl2';
 
 const getSpecs = list => [...new Set(list.map(({ spec }) => spec))];
 const specName = spec => spec.shortname ?? spec.url;
 const dfnName = dfn => `${dfn.idl.partial ? 'partial ' : ''}${dfn.idl.type} "${dfn.idl.name}"`;
-
-const possibleAnomalies = [
-  'incompatiblePartialIdlExposure',
-  'invalid',
-  'noExposure',
-  'noOriginalDefinition',
-  'overloaded',
-  'redefined',
-  'redefinedIncludes',
-  'redefinedMember',
-  'redefinedWithDifferentTypes',
-  'singleEnumValue',
-  'unexpectedEventHandler',
-  'unknownExposure',
-  'unknownExtAttr',
-  'unknownType',
-  'wrongCaseEnumValue',
-  'wrongKind',
-  'wrongType'
-];
 
 const basicTypes = new Set([
   // Types defined by Web IDL itself:
@@ -192,7 +166,7 @@ function describeMember (member) {
   return desc;
 }
 
-function studyWebIdl (edResults, curatedResults) {
+function studyWebIdl (specs, { curatedResults = [] } = {}) {
   const report = []; // List of anomalies to report
   const dfns = {}; // Index of IDL definitions (save includes)
   const includesStatements = {}; // Index of "includes" statements
@@ -201,7 +175,14 @@ function studyWebIdl (edResults, curatedResults) {
   const usedExtAttrs = {}; // Index of extended attributes
 
   // Record an anomaly for the given spec(s).
-  const recordAnomaly = recordCategorizedAnomaly(report, 'webidl', possibleAnomalies);
+  function recordAnomaly (spec, name, message) {
+    if (Array.isArray(spec)) {
+      report.push({ name, message, specs: spec });
+    }
+    else {
+      report.push({ name, message, spec });
+    }
+  }
 
   function inheritsFrom (iface, ancestor) {
     if (!iface.inheritance) return false;
@@ -397,7 +378,7 @@ function studyWebIdl (edResults, curatedResults) {
     }
   }
 
-  edResults
+  specs
     // We're only interested in specs that define Web IDL content
     .filter(spec => !!spec.idl)
 
@@ -666,7 +647,4 @@ function studyWebIdl (edResults, curatedResults) {
   return report;
 }
 
-/**************************************************
-Export methods for use as module
-**************************************************/
 export default studyWebIdl;

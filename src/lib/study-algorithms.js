@@ -1,11 +1,4 @@
 import { JSDOM } from 'jsdom';
-import { recordCategorizedAnomaly } from './util.js';
-
-const possibleAnomalies = [
-  'missingTaskForPromise',
-  'missingTaskForEvent'
-];
-
 
 /**
  * Normalize whitespaces in string to make analysis easier
@@ -57,9 +50,8 @@ function nestParallelSteps(algo) {
 /**
  * Main function, study all algorithms
  */
-function studyAlgorithms(edResults) {
+function studyAlgorithms(specs) {
   const report = [];
-  const recordAnomaly = recordCategorizedAnomaly(report, 'algorithms', possibleAnomalies);
 
   // Return human-friendly markdown that identifies the given algorithm
   function getAlgoName(algo) {
@@ -95,11 +87,19 @@ function studyAlgorithms(edResults) {
           // https://w3c.github.io/clipboard-apis/#dom-clipboard-read
           !html.includes('systemClipboardRepresentation')
       ) {
-        recordAnomaly(spec, 'missingTaskForPromise', `${getAlgoName(algo)} has a parallel step that resolves/rejects a promise directly`);
+        report.push({
+          name: 'missingTaskForPromise',
+          message: `${getAlgoName(algo)} has a parallel step that resolves/rejects a promise directly`,
+          spec
+        });
         return true;
       }
       else if (html.match(/fire an?( \w+)? event/i)) {
-        recordAnomaly(spec, 'missingTaskForEvent', `${getAlgoName(algo)} has a parallel step that fires an event directly`);
+        report.push({
+          name: 'missingTaskForEvent',
+          message: `${getAlgoName(algo)} has a parallel step that fires an event directly`,
+          spec
+        });
         return true;
       }
     }
@@ -133,13 +133,10 @@ function studyAlgorithms(edResults) {
     return anomalyFound;
   }
 
-  // We're only interested in specs that define algorithms
-  const specs = edResults.filter(spec => !!spec.algorithms);
-
   // Study algorithms in turn.
   // Note: the root level of each algorithm is its first step. It may say
   // something like "run these steps in parallel" in particular.
-  for (const spec of specs) {
+  for (const spec of specs.filter(spec => !!spec.algorithms)) {
     for (const algo of spec.algorithms) {
       nestParallelSteps(algo);
       studyAlgorithmStep(spec, algo, algo);

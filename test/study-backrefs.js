@@ -3,7 +3,7 @@
  */
 /* global describe, it */
 
-import studyBackrefs from '../src/lib/study-backrefs.js';
+import study from '../src/lib/study-backrefs.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 
 const specEdUrl = 'https://w3c.github.io/spec/';
@@ -48,28 +48,33 @@ const populateSpec = (url, ids, links, dfns) => {
 
 function toCrawlResults (ids, links, trIds = ids) {
   return {
-    ed: [populateSpec(specEdUrl, toFullIds(specEdUrl, ids), []),
-      populateSpec(specEdUrl2, [], toLinks(specEdUrl, links))],
-    tr: [populateSpec(specEdUrl, toFullIds(specEdUrl, trIds), [])]
+    ed: [
+      populateSpec(specEdUrl, toFullIds(specEdUrl, ids), []),
+      populateSpec(specEdUrl2, [], toLinks(specEdUrl, links))
+    ],
+    tr: [
+      populateSpec(specEdUrl, toFullIds(specEdUrl, trIds), [])
+    ]
   };
 }
 
 describe('The links analyser', () => {
-  it('reports no anomaly if links are valid', () => {
+  it('reports no anomaly if links are valid', async () => {
     const ids = ['validid'];
     const crawlResult = toCrawlResults(ids, ids);
-    const report = studyBackrefs(crawlResult.ed, crawlResult.tr);
+    const report = await study(crawlResult.ed, { htmlFragments: {} });
     assertNbAnomalies(report, 0);
   });
 
-  it('reports a broken link', () => {
+  it('reports a broken link', async () => {
     const ids = ['validid'];
     const crawlResult = toCrawlResults([], ids);
-    const report = studyBackrefs(crawlResult.ed, crawlResult.tr);
+    const report = await study(crawlResult.ed, { htmlFragments: {} });
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
-      category: 'links',
-      message: specEdUrl + '#' + ids[0]
+      name: 'brokenLinks',
+      message: specEdUrl + '#' + ids[0],
+      spec: { url: 'https://www.w3.org/TR/spec2/' }
     });
   });
 

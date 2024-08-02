@@ -4,7 +4,7 @@
  */
 /* global describe, it */
 
-import studyWebIdl from '../src/lib/study-webidl.js';
+import study from '../src/lib/study-webidl.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 
 describe('The Web IDL analyser', () => {
@@ -21,7 +21,7 @@ describe('The Web IDL analyser', () => {
 
   function analyzeIdl (idl, idlSpec2) {
     const crawlResult = toCrawlResult(idl, idlSpec2);
-    return studyWebIdl(crawlResult);
+    return study(crawlResult);
   }
 
   it('reports no anomaly if IDL is valid', () => {
@@ -86,12 +86,11 @@ interface Invalid;
 `);
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
-      category: 'webidl',
       name: 'invalid',
       message: `Syntax error at line 3, since \`interface Invalid\`:
 interface Invalid;
                  ^ Bodyless interface`,
-      specs: [{ url: specUrl }]
+      spec: { url: specUrl }
     });
   });
 
@@ -105,11 +104,11 @@ interface Invalid;
 [Global=Window,Exposed=*]
 interface Valid: Invalid {};
 `);
-    const curatedResult = toCrawlResult(`
+    const curatedResults = toCrawlResult(`
 [Global=Window,Exposed=*]
 interface Invalid{};
 `);
-    const report = studyWebIdl(crawlResult, curatedResult);
+    const report = study(crawlResult, { curatedResults });
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, { name: 'invalid' });
   });
