@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/sparql-query'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-query/issues/151'
 Title: Broken references in SPARQL 1.2 Query Language
 ---
 

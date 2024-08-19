@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/sparql-update'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-update/issues/38'
 Title: Broken references in SPARQL 1.2 Update
 ---
 

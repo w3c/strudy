@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/w3c/encrypted-media'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/encrypted-media/issues/560'
 Title: '[eme-initdata-keyids] Broken references in "keyids" Initialization Data Format'
 ---
 
