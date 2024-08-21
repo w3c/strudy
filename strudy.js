@@ -171,9 +171,11 @@ Usage notes for some of the options:
   Tell Strudy what issue files to update when --issues is set and an issue file
   already exists for the issue at hand. Possible values are:
   "new" (default)  preserve existing files
+  "old"            preserve existing files but get rid of old ones for which
+                   study reveals no more issue
   "untracked"      update existing files that do not have a "Tracked" URL
   "tracked"        update existing files that have a "Tracked" URL
-  "all"            update all existing files
+  "all"            update all existing files, deleting them when needed
 
   Strudy will always create new issue files, the mode only changes the behavior
   for existing issue files.
@@ -203,7 +205,7 @@ Format must be one of "json" or "markdown".`)
       console.error(`The --format option can only be set to "markdown" when --issues is used.`);
       process.exit(2);
     }
-    if (options.updateMode && !['new', 'untracked', 'tracked', 'all'].includes(options.updateMode)) {
+    if (options.updateMode && !['new', 'old', 'untracked', 'tracked', 'all'].includes(options.updateMode)) {
       console.error(`Unsupported --update-mode option "${options.updateMode}"`);
       process.exit(2);
     }
@@ -281,7 +283,8 @@ Format must be one of "json" or "markdown".`)
         let existingReport;
         let tracked = 'N/A';
         if (await exists(filename)) {
-          if (options.updateMode === 'new') {
+          if (options.updateMode === 'new' ||
+              options.updateMode === 'old') {
             console.warn(`- skip ${filename}, file already exists`);
             continue;
           }
@@ -298,7 +301,7 @@ Format must be one of "json" or "markdown".`)
 ${entry.content}
 
 <sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`;
-        if (existingReport?.content === content) {
+        if (existingReport?.content.trim() === content.trim()) {
           console.warn(`- skip ${filename}, file already exists, no change`);
           continue;
         }
@@ -320,6 +323,18 @@ ${entry.content}
         reported += 1;
         if (options.max > 0 && reported >= options.max) {
           break;
+        }
+      }
+
+      if (options.updateMode === 'old' ||
+          options.updateMode === 'all') {
+        const reportFiles = await fs.readdir(options.issues);
+        const todelete = reportFiles.filter(file =>
+          anomaliesReport.looksGood.find(name => file === `${name}.md`));
+        for (const file of todelete) {
+          const filename = path.join(options.issues, file);
+          console.warn(`- delete ${filename}, no more anomalies detected`);
+          await fs.unlink(filename);
         }
       }
     }

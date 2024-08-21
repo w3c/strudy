@@ -479,6 +479,69 @@ ${serializeEntry(entry, 'markdown')}`)
 
 
 /**
+ * The report includes a set of anomalies. It can also be useful to know
+ * what things looked fine, in other words what other anomalies could have
+ * been reported in theory. This can typically be used to identify issue files
+ * created in the past and that now need to be deleted.
+ *
+ * Note: Some anomalies may hide others. For example, a WebIDL update can make
+ * the Web IDL invalid... and hide other WebIDL issues that may still exist in
+ * the spec. This function may return false negatives as a result.
+ */
+function getNamesOfNonReportedEntries(report, specs, what, structure) {
+  const groups = [];
+  anomalyGroups.filter(group =>
+    what.includes('all') ||
+    what.includes(group.name) ||
+    group.types.find(type => what.includes(type.name)));
+  const types = [];
+  for (const group of anomalyGroups) {
+    if (what.includes('all') ||
+        what.includes(group.name) ||
+        group.types.find(type => what.includes(type.name))) {
+      groups.push(group);
+      for (const type of group.types) {
+        if (what.includes('all') ||
+            what.includes(group.name) ||
+            what.includes(type)) {
+          types.push(type);
+        }
+      }
+    }
+  }
+
+  const levels = structure.split('/')
+    .map(level => level.replace(/\s+/g, ''));
+  let allNames;
+  switch (levels[0]) {
+    case 'flat':
+      // Not much we can say there
+      break;
+    case 'type+spec':
+      allNames = specs
+        .map(spec => types.map(type => `${spec.shortname}-${type.name.toLowerCase()}`))
+        .flat();
+      break;
+    case 'group+spec':
+      allNames = specs
+        .map(spec => groups.map(group => `${spec.shortname}-${group.name.toLowerCase()}`))
+        .flat();
+      break;
+    case 'spec':
+      allNames = specs.map(spec => spec.shortname);
+      break;
+    case 'type':
+      allNames = types.map(type => type.name);
+      break;
+    case 'group':
+      allNames = groups.map(group => group.name);
+      break;
+  }
+  return allNames.filter(name => !report.find(entry => entry.name === name));
+}
+
+
+/**
  * Main function that studies a crawl result and returns a structured
  * report.
  */
@@ -546,7 +609,8 @@ export default async function study(specs, options = {}) {
       studied: specs.length,
       anomalies: anomalies.length
     },
-    results: formatReport(format, report)
+    results: formatReport(format, report),
+    looksGood: getNamesOfNonReportedEntries(report, specs, what, structure)
   };
 
   // Return the structured report
