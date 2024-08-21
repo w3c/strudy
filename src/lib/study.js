@@ -62,7 +62,11 @@ const anomalyGroups = [
         title: 'Links to now gone anchors',
         description: 'The following links in the specification link to anchors that no longer exist in the Editor\'s Draft of the targeted specification'
       },
-      { name: 'frailLinks', title: 'Unstable link anchors' },
+      {
+        name: 'frailLinks',
+        title: 'Unstable link anchors',
+        description: 'The following links in the specification link to anchors that either have a new name or are inherently brittle'
+      },
       {
         name: 'nonCanonicalRefs',
         title: 'Non-canonical links',
@@ -166,17 +170,29 @@ const anomalyGroups = [
 
 
 /**
- * Possible report structures
+ * Possible report structures.
+ *
+ * "/" separates levels in the hierarchy.
+ * "+" combines creates a composed key at a given level.
+ *
+ * For example, "group+spec/type" means: first level per
+ * anomaly group and spec (so one "web-animations-2-webidl" entry if the
+ * spec "web-animations-2" has "webidl" issues), second level per type.
+ *
+ * The list is described in more details in the CLI help. Run:
+ *   npx strudy inspect --help
+ * ... or check the code in `strudy.js` at the root of the project.
  */
 const reportStructures = [
   'flat',
   'type+spec',
-  'group+spec>type',
-  'spec>type',
-  'spec>group>type',
-  'type>spec',
-  'group>type>spec',
-  'group>spec>type'
+  'group+spec',
+  'group+spec/type',
+  'spec/type',
+  'spec/group/type',
+  'type/spec',
+  'group/type/spec',
+  'group/spec/type'
 ];
 
 
@@ -230,7 +246,7 @@ function getAnomalyGroupFromType(type) {
  * Structure a flat list of anomalies to the requested structure
  */
 function structureResults(structure, anomalies, crawlResults) {
-  const levels = structure.split('>')
+  const levels = structure.split('/')
     .map(level => level.replace(/\s+/g, ''));
   const report = [];
 
@@ -243,7 +259,7 @@ function structureResults(structure, anomalies, crawlResults) {
 
     case 'type+spec':
       for (const anomaly of anomalies) {
-        const type = getAnomalyType(anomaly.name)
+        const type = getAnomalyType(anomaly.name);
         for (const spec of anomaly.specs) {
           let entry = report.find(entry =>
             entry.type.name === anomaly.name &&
@@ -252,6 +268,7 @@ function structureResults(structure, anomalies, crawlResults) {
             const titlePrefix = isInMultiSpecRepository(spec, crawlResults) ?
               `[${spec.shortname}] ` : '';
             entry = {
+              name: `${spec.shortname}-${type.name.toLowerCase()}`,
               title: `${titlePrefix}${type.title} in ${spec.title}`,
               type, spec, anomalies: []
             };
@@ -273,6 +290,7 @@ function structureResults(structure, anomalies, crawlResults) {
             const titlePrefix = isInMultiSpecRepository(spec, crawlResults) ?
               `[${spec.shortname}] ` : '';
             entry = {
+              name: `${spec.shortname}-${group.name.toLowerCase()}`,
               title: `${titlePrefix}${group.title} in ${spec.title}`,
               group, spec, anomalies: []
             };
@@ -290,6 +308,7 @@ function structureResults(structure, anomalies, crawlResults) {
             entry.spec.shortname === spec.shortname);
           if (!entry) {
             entry = {
+              name: spec.shortname,
               title: spec.title,
               spec, anomalies: []
             };
@@ -306,6 +325,7 @@ function structureResults(structure, anomalies, crawlResults) {
         let entry = report.find(entry => entry.type.name === anomaly.name);
         if (!entry) {
           entry = {
+            name: type.name.toLowerCase(),
             title: type.title,
             type, anomalies: []
           };
@@ -321,6 +341,7 @@ function structureResults(structure, anomalies, crawlResults) {
         let entry = report.find(entry => entry.group.name === group.name);
         if (!entry) {
           entry = {
+            name: group.name.toLowerCase(),
             title: group.title,
             group, anomalies: []
           };
@@ -332,7 +353,7 @@ function structureResults(structure, anomalies, crawlResults) {
   }
 
   if (levels.length > 1) {
-    const itemsStructure = levels.slice(1).join('>');
+    const itemsStructure = levels.slice(1).join('/');
     for (const entry of report) {
       entry.items = structureResults(itemsStructure, entry.anomalies, crawlResults);
       delete entry.anomalies;
@@ -354,49 +375,74 @@ function pad(str, depth) {
   return str;
 }
 
-function serializeEntry(entry, depth = 0) {
-  let res = '';
-  if (entry.spec && entry.group) {
-    res = `While crawling [${entry.spec.title}](${entry.spec.crawled}), ${makeLowerCase(entry.group.description ?? entry.group.title)}:`;
-  }
-  else if (entry.spec && entry.type) {
-    res = `While crawling [${entry.spec.title}](${entry.spec.crawled}), ${makeLowerCase(entry.type.description ?? entry.type.title)}:`;
-  }
-  else if (entry.group) {
-    if (depth === 0) {
-      res = (entry.group.description ?? entry.group.title) + ':';
+function serializeEntry(entry, format, depth = 0) {
+  let res;
+  if (format === 'json') {
+    res = Object.assign({}, entry);
+    if (entry.spec) {
+      res.spec = {
+        url: entry.spec.url,
+        shortname: entry.spec.shortname,
+        title: entry.spec.title
+      };
     }
-    else {
-      res = pad(`* ${entry.group.title}`, depth);
+    if (entry.specs) {
+      res.specs = entry.specs.map(spec => Object.assign({
+        url: spec.url,
+        shortname: spec.shortname,
+        title: spec.title
+      }));
     }
-  }
-  else if (entry.type) {
-    if (depth === 0) {
-      res = (entry.type.description ?? entry.type.title) + ':';
+    if (entry.items) {
+      res.items = entry.items.map(item => serializeEntry(item, format, depth + 1));
     }
-    else {
-      res = pad(`* ${entry.type.title}`, depth);
-    }
-  }
-  else if (entry.spec) {
-    if (depth === 0) {
-      res = `While crawling [${entry.spec.title}](${entry.spec.crawled}), the following anomalies were identified:`;
-    }
-    else {
-      res = pad(`* [${entry.spec.title}](${entry.spec.crawled})`, depth);
+    if (entry.anomalies) {
+      res.anomalies = entry.anomalies.map(anomaly => serializeEntry(anomaly, format, depth + 1));
     }
   }
-  else if (entry.message) {
-    res = pad(`* ${entry.message}`, depth);
-  }
+  else if (format === 'markdown') {
+    res = '';
+    if (entry.spec && entry.group) {
+      res = `While crawling [${entry.spec.title}](${entry.spec.crawled}), ${makeLowerCase(entry.group.description ?? entry.group.title)}:`;
+    }
+    else if (entry.spec && entry.type) {
+      res = `While crawling [${entry.spec.title}](${entry.spec.crawled}), ${makeLowerCase(entry.type.description ?? entry.type.title)}:`;
+    }
+    else if (entry.group) {
+      if (depth === 0) {
+        res = (entry.group.description ?? entry.group.title) + ':';
+      }
+      else {
+        res = pad(`* ${entry.group.title}`, depth);
+      }
+    }
+    else if (entry.type) {
+      if (depth === 0) {
+        res = (entry.type.description ?? entry.type.title) + ':';
+      }
+      else {
+        res = pad(`* ${entry.type.title}`, depth);
+      }
+    }
+    else if (entry.spec) {
+      if (depth === 0) {
+        res = `While crawling [${entry.spec.title}](${entry.spec.crawled}), the following anomalies were identified:`;
+      }
+      else {
+        res = pad(`* [${entry.spec.title}](${entry.spec.crawled})`, depth);
+      }
+    }
+    else if (entry.message) {
+      res = pad(`* [ ] ${entry.message}`, depth);
+    }
 
-  for (const item of entry.items ?? []) {
-    res += '\n' + serializeEntry(item, depth + 1);
+    for (const item of entry.items ?? []) {
+      res += '\n' + serializeEntry(item, format, depth + 1);
+    }
+    for (const anomaly of entry.anomalies ?? []) {
+      res += `\n` + serializeEntry(anomaly, format, depth + 1);
+    }
   }
-  for (const anomaly of entry.anomalies ?? []) {
-    res += `\n` + serializeEntry(anomaly, depth + 1);
-  }
-
   return res;
 }
 
@@ -406,19 +452,26 @@ function serializeEntry(entry, depth = 0) {
  */
 function formatReport(format, report) {
   if (format === 'json') {
-    return report;
+    // We'll return the report as is, trimming the information about specs to
+    // a reasonable minimum (the rest of the information can easily be
+    // retrieved from the crawl result if needed)
+    return report.map(entry => serializeEntry(entry, 'json'));
   }
   else if (format === 'issue') {
     return report.map(entry => Object.assign({
+      name: entry.name,
       title: entry.title,
-      content: serializeEntry(entry)
+      spec: entry.spec,
+      content: serializeEntry(entry, 'markdown')
     }));
   }
   else if (format === 'full') {
     return [
       {
         title: 'Study report',
-        content: report.map(entry => serializeEntry(entry))
+        content: report.map(entry =>
+`## ${entry.title}
+${serializeEntry(entry, 'markdown')}`)
       }
     ]
   }
@@ -429,15 +482,18 @@ function formatReport(format, report) {
  * Main function that studies a crawl result and returns a structured
  * report.
  */
-export default async function study(specs, options) {
-  options = Object.assign({}, options ?? {});
+export default async function study(specs, options = {}) {
+  // Copy the options object (we're going to add options on our own
+  // before calling other study methods)
+  options = Object.assign({}, options);
+
   const what = options.what ?? ['all'];
   const structure = options.structure ?? 'type + spec';
   const format = options.format ?? 'issue';
 
   if (!what.includes('all')) {
     const validWhat = what.every(name =>
-      group.find(g => g.name === name || g.types.find(t => t.name === name)));
+      anomalyGroups.find(g => g.name === name || g.types.find(t => t.name === name)));
     if (!validWhat) {
       throw new Error('Invalid `what` option');
     }
@@ -450,7 +506,7 @@ export default async function study(specs, options) {
   // (but note study functions that analyze references need the whole list!)
   options.crawlResults = specs;
   if (options.specs) {
-    specs = options.crawlResults.filter(spec => specs.find(s => s.shortname === spec.shortname));
+    specs = options.crawlResults.filter(spec => options.specs.find(shortname => shortname === spec.shortname));
   }
 
   // Anomalies are studied in groups of related anomalies, let's compute the
