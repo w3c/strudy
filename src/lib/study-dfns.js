@@ -87,7 +87,7 @@ function matchCSSDfn(expected, actual) {
  *
  * @function
  * @private
- * @param {Object} css The root of the object that describes IDL terms in the
+ * @param {Object} idl The root of the object that describes IDL terms in the
  *   `idlparsed` extract.
  * @return {Array} An array of expected definitions
  */
@@ -108,7 +108,7 @@ function getExpectedDfnsFromIdl(idl = {}) {
 /**
  * Return true if the given parsed IDL object describes a default toJSON
  * operation that references:
- * https://heycam.github.io/webidl/#default-tojson-steps
+ * https://webidl.spec.whatwg.org/#default-tojson-steps
  *
  * @function
  * @private
@@ -127,9 +127,9 @@ function isDefaultToJSONOperation(desc) {
  *
  * @function
  * @public
- * @param {Object} desc The object that describes the IDL term in the
+ * @param {Object} idl The object that describes the IDL term in the
  *   `idlparsed` extract.
- * @param {Object} parentDesc (optional) The object that describes the parent
+ * @param {Object} parentIdl (optional) The object that describes the parent
  *   IDL term of the term to parse (used to compute the `for` property).
  * @return {Object} The expected definition, or null if no expected definition
  *   is defined.
@@ -305,7 +305,7 @@ function getExpectedDfnsFromIdlDesc(idl, {excludeRoot} = {excludeRoot: false}) {
  *
  * The function works around Respec's issue #3200 for methods and constructors
  * that take only optional parameters:
- * https://github.com/w3c/respec/issues/3200
+ * https://github.com/speced/respec/issues/3200
  *
  * @function
  * @private
@@ -462,14 +462,16 @@ export default function studyDefinitions(specs) {
     .map(spec => {
       const missing = checkSpecDefinitions(spec);
       const res = [];
-      for (const type of ['css', 'idl']) {
-        const anomalies = missing[type];
-        for (const anomaly of anomalies) {
-          res.push({
-            name: 'missingDfns',
-            message: formatAnomalyMessage(anomaly),
-            spec
-          });
+      if (!missing.obsoleteDfnsModel) {
+        for (const type of ['css', 'idl']) {
+          const anomalies = missing[type];
+          for (const anomaly of anomalies) {
+            res.push({
+              name: 'missingDfns',
+              message: formatAnomalyMessage(anomaly),
+              spec
+            });
+          }
         }
       }
       return res;

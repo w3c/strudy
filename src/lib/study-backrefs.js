@@ -116,7 +116,7 @@ function computeShortname(url) {
       return url;
     }
 
-    throw `Cannot extract meaningful name from ${url}`;
+    throw new Error(`Cannot extract meaningful name from ${url}`);
   }
 
   // Parse the URL to extract the name
@@ -127,7 +127,7 @@ function computeShortname(url) {
   // only contains a dot for fractional levels at the end of the name
   // (e.g. "blah-1.2" is good but "blah.blah" and "blah-3.1-blah" are not)
   if (!name.match(/^[\w\-]+((?<=\-v?\d+)\.\d+)?$/)) {
-    throw `Specification name contains unexpected characters: ${name} (extracted from ${url})`;
+    throw new Error(`Specification name contains unexpected characters: ${name} (extracted from ${url})`);
   }
 
   return name;

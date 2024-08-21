@@ -40,11 +40,15 @@ describe('The main study function', function () {
     assertNbAnomalies(report.results, 2);
     assertAnomaly(report.results, 0, {
       title: 'Crawl error in Hello world API',
-      content: `While crawling [Hello world API](${specUrl}), the following crawl errors occurred:\n* Boo`
+      content:
+`While crawling [Hello world API](${specUrl}), the following crawl errors occurred:
+* [ ] Boo`
     });
     assertAnomaly(report.results, 1, {
       title: 'Crawl error in Hello universe API',
-      content: `While crawling [Hello universe API](${specUrl2}), the following crawl errors occurred:\n* Borked`
+      content:
+`While crawling [Hello universe API](${specUrl2}), the following crawl errors occurred:
+* [ ] Borked`
     });
   });
 
@@ -53,15 +57,16 @@ describe('The main study function', function () {
       populateSpec(specUrl, { error: 'Boo' }),
       populateSpec(specUrl2, { error: 'Borked' })
     ];
-    const report = await study(crawlResult, { structure: 'type>spec', htmlFragments: {} });
+    const report = await study(crawlResult, { structure: 'type/spec', htmlFragments: {} });
     assertNbAnomalies(report.results, 1);
     assertAnomaly(report.results, 0, {
       title: 'Crawl error',
-      content: `The following crawl errors occurred:
+      content:
+`The following crawl errors occurred:
 * [Hello world API](https://w3c.github.io/world/)
-  * Boo
+  * [ ] Boo
 * [Hello universe API](https://w3c.github.io/universe/)
-  * Borked`
+  * [ ] Borked`
     });
   });
 
@@ -70,13 +75,14 @@ describe('The main study function', function () {
       populateSpec(specUrl, { error: 'Boo' }),
       populateSpec(specUrl2, { error: 'Borked' })
     ];
-    const report = await study(crawlResult, { structure: 'spec>type', htmlFragments: {} });
+    const report = await study(crawlResult, { structure: 'spec/type', htmlFragments: {} });
     assertNbAnomalies(report.results, 2);
     assertAnomaly(report.results, 0, {
       title: 'Hello world API',
-      content: `While crawling [Hello world API](https://w3c.github.io/world/), the following anomalies were identified:
+      content:
+`While crawling [Hello world API](https://w3c.github.io/world/), the following anomalies were identified:
 * Crawl error
-  * Boo`
+  * [ ] Boo`
     });
   });
 
@@ -85,14 +91,15 @@ describe('The main study function', function () {
       populateSpec(specUrl, { error: 'Boo' }),
       populateSpec(specUrl2, { error: 'Borked' })
     ];
-    const report = await study(crawlResult, { structure: 'spec>group>type', htmlFragments: {} });
+    const report = await study(crawlResult, { structure: 'spec/group/type', htmlFragments: {} });
     assertNbAnomalies(report.results, 2);
     assertAnomaly(report.results, 0, {
       title: 'Hello world API',
-      content: `While crawling [Hello world API](https://w3c.github.io/world/), the following anomalies were identified:
+      content:
+`While crawling [Hello world API](https://w3c.github.io/world/), the following anomalies were identified:
 * Generic
   * Crawl error
-    * Boo`
+    * [ ] Boo`
     });
   });
 
@@ -101,13 +108,14 @@ describe('The main study function', function () {
       populateSpec(specUrl, { error: 'Boo' }),
       populateSpec(specUrl2, { error: 'Borked' })
     ];
-    const report = await study(crawlResult, { structure: 'group+spec>type', htmlFragments: {} });
+    const report = await study(crawlResult, { structure: 'group+spec/type', htmlFragments: {} });
     assertNbAnomalies(report.results, 2);
     assertAnomaly(report.results, 0, {
       title: 'Generic in Hello world API',
-      content: `While crawling [Hello world API](https://w3c.github.io/world/), the following errors prevented the spec from being analyzed:
+      content:
+`While crawling [Hello world API](https://w3c.github.io/world/), the following errors prevented the spec from being analyzed:
 * Crawl error
-  * Boo`
+  * [ ] Boo`
     });
   });
 
@@ -116,16 +124,17 @@ describe('The main study function', function () {
       populateSpec(specUrl, { error: 'Boo' }),
       populateSpec(specUrl2, { error: 'Borked' })
     ];
-    const report = await study(crawlResult, { structure: 'group>type>spec', htmlFragments: {} });
+    const report = await study(crawlResult, { structure: 'group/type/spec', htmlFragments: {} });
     assertNbAnomalies(report.results, 1);
     assertAnomaly(report.results, 0, {
       title: 'Generic',
-      content: `The following errors prevented the spec from being analyzed:
+      content:
+`The following errors prevented the spec from being analyzed:
 * Crawl error
   * [Hello world API](https://w3c.github.io/world/)
-    * Boo
+    * [ ] Boo
   * [Hello universe API](https://w3c.github.io/universe/)
-    * Borked`
+    * [ ] Borked`
     });
   });
 
@@ -134,17 +143,27 @@ describe('The main study function', function () {
       populateSpec(specUrl, { error: 'Boo' }),
       populateSpec(specUrl2, { error: 'Borked' })
     ];
-    const report = await study(crawlResult, { structure: 'group>spec>type', htmlFragments: {} });
+    const report = await study(crawlResult, { structure: 'group/spec/type', htmlFragments: {} });
     assertNbAnomalies(report.results, 1);
     assertAnomaly(report.results, 0, {
       title: 'Generic',
-      content: `The following errors prevented the spec from being analyzed:
+      content:
+`The following errors prevented the spec from being analyzed:
 * [Hello world API](https://w3c.github.io/world/)
   * Crawl error
-    * Boo
+    * [ ] Boo
 * [Hello universe API](https://w3c.github.io/universe/)
   * Crawl error
-    * Borked`
+    * [ ] Borked`
     });
+  });
+
+  it('only reports anomalies for requested specs', async function() {
+    const crawlResult = [
+      populateSpec(specUrl, { error: 'Boo' }),
+      populateSpec(specUrl2, { error: 'Borked' })
+    ];
+    const report = await study(crawlResult, { specs: ['universe'], htmlFragments: {} });
+    assertNbAnomalies(report.results, 1);
   });
 });

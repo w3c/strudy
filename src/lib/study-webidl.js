@@ -166,7 +166,7 @@ function describeMember (member) {
   return desc;
 }
 
-function studyWebIdl (specs, { curatedResults = [] } = {}) {
+function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) {
   const report = []; // List of anomalies to report
   const dfns = {}; // Index of IDL definitions (save includes)
   const includesStatements = {}; // Index of "includes" statements
@@ -174,13 +174,19 @@ function studyWebIdl (specs, { curatedResults = [] } = {}) {
   const usedTypes = {}; // Index of types used in the IDL
   const usedExtAttrs = {}; // Index of extended attributes
 
-  // Record an anomaly for the given spec(s).
+  // Record an anomaly for the given spec(s),
+  // provided we are indeed interested in the results
   function recordAnomaly (spec, name, message) {
     if (Array.isArray(spec)) {
-      report.push({ name, message, specs: spec });
+      const filtered = spec.filter(sp => specs.find(s => s.shortname === sp.shortname));
+      if (filtered.length > 0) {
+        report.push({ name, message, specs: filtered });
+      }
     }
     else {
-      report.push({ name, message, spec });
+      if (specs.find(s => s.shortname === spec.shortname)) {
+        report.push({ name, message, spec });
+      }
     }
   }
 
@@ -378,7 +384,11 @@ function studyWebIdl (specs, { curatedResults = [] } = {}) {
     }
   }
 
-  specs
+  // We need to run the analysis on all specs, even if caller is only
+  // interested in a few of them, because types may be defined in specs that
+  // the caller is not interested in.
+  const allSpecs = (crawledResults.length > 0) ? crawledResults : specs;
+  allSpecs
     // We're only interested in specs that define Web IDL content
     .filter(spec => !!spec.idl)
 
