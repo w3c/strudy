@@ -1,280 +1,172 @@
-/* Takes a report of anomalies produced by Strudy,
-   creates a draft of an issue per spec and per anomaly type
-   and submits as a pull request in this repo if no existing one matches
+/**
+ * Looks at draft issue files produced by the Strudy CLI in the issues folder
+ * and submits new/updated/deleted ones as pull requests in this repo if there
+ * is no pending pull request already.
 */
-import { loadCrawlResults } from '../lib/util.js';
-import studyBackrefs from '../lib/study-backrefs.js';
-import studyReferences from '../lib/study-refs.js';
-import isInMultiSpecRepository from '../lib/is-in-multi-spec-repo.js';
-import loadJSON from '../lib/load-json.js';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { fileURLToPath } from "node:url";
 import { execSync } from 'node:child_process';
-import Octokit from '../lib/octokit.js';
 import matter from 'gray-matter';
+import { Command, InvalidArgumentError } from 'commander';
 
-const config = await loadJSON("config.json");
-const GH_TOKEN = config?.GH_TOKEN ?? process.env.GH_TOKEN;
+/**
+ * Command-line execution parameters for calls to `execSync`
+ */
+const scriptPath = path.dirname(fileURLToPath(import.meta.url));
+const execParams = {
+  cwd: path.join(scriptPath, '..', '..'),
+  encoding: 'utf8'
+};
 
-const MAX_PR_BY_RUN = 10;
 
-const repoOwner = 'w3c';
-const repoName = 'strudy';
+/**
+ * Wrap "matter" issue report to create a suitable PR body
+ */
+function prWrapper(action, issueReport) {
+  if (action === 'add') {
+    return `This pull request was automatically created by Strudy upon detecting errors in ${issueReport.data.Title}.
 
-const octokit = new Octokit({
-  auth: GH_TOKEN
-  // log: console
-});
-
-function issueWrapper (spec, anomalies, anomalyType, crawl) {
-  const titlePrefix = isInMultiSpecRepository(spec, crawl.ed) ? `[${spec.shortname}] ` : '';
-  let anomalyReport = ''; let title = '';
-  switch (anomalyType) {
-    case 'brokenLinks':
-      title = `Broken references in ${spec.title}`;
-      anomalyReport = 'the following links to other specifications were detected as pointing to non-existing anchors';
-      break;
-    case 'outdatedSpecs':
-      title = `Outdated references in ${spec.title}`;
-      anomalyReport = 'the following links were detected as pointing to outdated specifications';
-      break;
-    case 'nonCanonicalRefs':
-      title = `Non-canonical references in ${spec.title}`;
-      anomalyReport = 'the following links were detected as pointing to outdated URLs';
-      break;
-    case 'discontinuedReferences':
-      title = `Normative references to discontinued specs in ${spec.title}`;
-      anomalyReport = 'the following normative referenced were detected as pointing to discontinued specifications';
-      break;
-  }
-  return {
-    title: titlePrefix + title,
-    content: `
-While crawling [${spec.title}](${spec.crawled}), ${anomalyReport}:
-${anomalies.map(anomaly => `* [ ] ${anomaly.message}`).join('\n')}
-
-<sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`
-  };
-}
-
-function prWrapper (title, uri, repo, issueReport) {
-  return `This pull request was automatically created by Strudy upon detecting errors in ${title}.
-
-Please check that these errors were correctly detected, and that they have not already been reported in ${repo}.
+Please check that these errors were correctly detected, and that they have not already been reported in ${issueReport.data.Repo}.
 
 If everything is OK, you can merge this pull request which will report the issue below to the repo, and update the underlying report file with a link to the said issue.
 
-${issueReport}
+${issueReport.stringify()}
 `;
-}
-
-
-const knownAnomalyTypes = ['brokenLinks', 'outdatedSpecs', 'nonCanonicalRefs', 'discontinuedReferences'];
-
-let edCrawlResultsPath = process.argv[2];
-let trCrawlResultsPath = process.argv[3];
-const anomalyFilter = process.argv.slice(4).filter(p => !p.startsWith('--'));
-const unknownAnomalyType = anomalyFilter.find(p => !knownAnomalyTypes.includes(p));
-if (unknownAnomalyType) {
-  console.error(`Unknown report type ${unknownAnomalyType} - known types are ${knownAnomalyTypes.join(', ')}`);
-  process.exit(1);
-}
-const anomalyTypes = anomalyFilter.length ? anomalyFilter : knownAnomalyTypes;
-const updateMode = process.argv.includes('--update') ? 'update-untracked' : (process.argv.includes('--update-tracked') ? 'update-tracked' : false);
-const dryRun = process.argv.includes('--dry-run');
-const noGit = dryRun || updateMode || process.argv.includes('--no-git');
-
-if (!noGit && !GH_TOKEN) {
-  console.error('GH_TOKEN must be set to some personal access token as an env variable or in a config.json file');
-  process.exit(1);
-}
-
-// Target the index file if needed
-if (!edCrawlResultsPath.endsWith('index.json')) {
-  edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
-}
-if (!trCrawlResultsPath.endsWith('index.json')) {
-  trCrawlResultsPath = path.join(trCrawlResultsPath, 'index.json');
-}
-
-let existingReports = [];
-if (updateMode) {
-  console.log('Compiling list of relevant existing issue reports…');
-  // List all existing reports to serve as a comparison point
-  // to detect if any report can be deleted
-  // if the anomalies are no longer reported
-  const reportFiles = (await fs.readdir('issues')).map(p => 'issues/' + p);
-  for (const anomalyType of anomalyTypes) {
-    existingReports = existingReports.concat(reportFiles.filter(p => p.endsWith(`-${anomalyType.toLowerCase()}.md`)));
   }
-  console.log('- done');
-}
-const nolongerRelevantReports = new Set(existingReports);
+  else {
+    return `This pull request was automatically created by Strudy while analyzing ${issueReport.data.Title}.
 
-// Donwload automatic map of multipages anchors in HTML spec
-let htmlFragments = {};
-try {
-  console.log('Downloading HTML spec fragments data…');
-  htmlFragments = await fetch('https://html.spec.whatwg.org/multipage/fragment-links.json').then(r => r.json());
-  console.log('- done');
-} catch (err) {
-  console.log('- failed: could not fetch HTML fragments data, may report false positive broken links on HTML spec');
+Please check that past errors listed below have indeed been corrected, and that the related issue in ${issueReport.data.Repo} has been closed accordingly.
+
+If everything looks OK, you can merge this pull request to delete the issue file.
+
+${issueReport.stringify()}
+`;
+  }
 }
 
-console.log(`Opening crawl results ${edCrawlResultsPath} and ${trCrawlResultsPath}…`);
-const crawl = await loadCrawlResults(edCrawlResultsPath, trCrawlResultsPath);
-console.log('- done');
-console.log('Running references analysis…');
-// TODO: if we're not running all the reports, this could run only the
-// relevant study function
-const results = studyBackrefs(crawl.ed, crawl.tr, htmlFragments).concat(studyReferences(crawl.ed));
-console.log('- done');
-const currentBranch = noGit || execSync('git branch --show-current', { encoding: 'utf8' }).trim();
-const needsPush = {};
-for (const anomalyType of anomalyTypes) {
-  const anomalies = results.filter(r => r.name === anomalyType);
-  const specs = [...new Set(anomalies.map(a => a.specs.map(s => s.url)).flat())];
-  for (const url of specs) {
-    const specAnomalies = anomalies.filter(a => a.specs[0].url === url);
-    const spec = specAnomalies[0].specs[0];
-    console.log(`Compiling ${anomalyType} report for ${spec.title}…`);
-    // if we don't know the repo, we can't file an issue
-    if (!spec.nightly?.repository) {
-      console.log(`No known repo for ${spec.title}, skipping`);
-      continue;
+/**
+ * Parse the maximum number of pull requests option as integer
+ */
+function myParseInt(value) {
+  const parsedValue = parseInt(value, 10);
+  if (isNaN(parsedValue)) {
+    throw new InvalidArgumentError('Not a number.');
+  }
+  return parsedValue;
+}
+
+const program = new Command();
+program
+  .description('File added/updated/deleted issue files as individual GitHub pull requests')
+  .option('--dry-run', 'run the script without creating any actual pull request')
+  .option('-m, --max <max>', 'maximum number of pull requests to create/update', myParseInt, 10)
+  .showHelpAfterError('(run with --help for usage information)')
+  .addHelpText('after', `
+Minimal usage example:
+  To create up to 10 pull requests from local issue files, run:
+    $ node file-issue-for-review.js
+
+Description:
+  The command looks into the \`issues\` folder to find files that have been
+  added, updated or deleted, and that have not yet been committed to the
+  repository. For each of them, it creates a pull request on GitHub, unless one
+  already exists.
+
+  The \`gh\` and \`git\` CLI commands must be available and functional. The
+  command will push Git updates to the \`origin\` remote, which must exist.
+
+Usage notes for some of the options:
+--dry-run
+  Run the script without committing anything, and without creating any actual
+  pull request. The option is meant for debugging.
+
+-m, --max <max>
+  Maximum number of pull requests to create. Defaults to 10.
+
+  You may set the option to 0 to create as many pull requests as needed. You
+  may want to check that there aren't too many pull requests to create first,
+  though!
+`)
+  .action(async (options) => {
+    function execOrLog(cmd) {
+      options.dryRun ? console.log(cmd) : execSync(cmd, execParams);
     }
-    if (spec.standing === "discontinued") {
-      console.log(`${spec.title} is discontinued, skipping`);
-      continue;
+
+    if (options.dryRun) {
+      console.log('DRY RUN!');
+      console.log('The command won\'t make any actual change.');
     }
-    const issueMoniker = `${spec.shortname}-${anomalyType.toLowerCase()}`;
-    // is there already a file with that moniker?
-    const issueFilename = path.join('issues/', issueMoniker + '.md');
-    let tracked = 'N/A';
-    let existingReportContent;
+    console.log('How many pull requests can we use to change the world?');
+    console.log(`- nb pull requests that we may create: ${options.max}`);
+
+    console.log('On which Git branch are we?');
+    const currentBranch = execSync('git branch --show-current', execParams).trim();
+    console.log(`- current branch: ${currentBranch}`);
+
+    console.log('How many issue files ought to be reported?');
+    const toadd = execSync('git diff --name-only --diff-filter=d issues', execParams).trim().split('\n');
+    console.log(`- nb issue files to add/update: ${toadd.length}`);
+    const todelete = execSync('git diff --name-only --diff-filter=D issues', execParams).trim().split('\n');
+    console.log(`- nb issue files to delete: ${todelete.length}`);
+    const toreport = toadd.map(name => { return { action: 'add', filename: name }; })
+      .concat(todelete.map(name => { return { action: 'delete', filename: name }; }))
+      .sort((e1, e2) => e1.filename.localeCompare(e2.filename));
+
+    if (toreport.length === 0) {
+      console.log('No issue files to report');
+    }
+
+    let reported = 0;
     try {
-      if (!(await fs.stat(issueFilename)).isFile()) {
-        console.error(`${issueFilename} already exists but is not a file`);
-        continue;
-      } else {
-        if (!updateMode) {
-          console.log(`${issueFilename} already exists, bailing`);
-          continue;
-        } else {
-          nolongerRelevantReports.delete(issueFilename);
-          try {
-            const existingReport = matter(await fs.readFile(issueFilename, 'utf-8'));
-            tracked = existingReport.data.Tracked;
-            existingReportContent = existingReport.content;
-            // only update tracked or untracked reports based on
-            // CLI parameter
-            if ((updateMode === 'update-untracked' && tracked !== 'N/A') || (updateMode === 'update-tracked' && tracked === 'N/A')) {
-              continue;
-            }
-          } catch (e) {
-            console.error('Failed to parse existing content', e);
-            continue;
-          }
-        }
-      }
-    } catch (err) {
-      // Intentionally blank
-    }
-    // if not, we create the file, add it in a branch
-    // and submit it as a pull request to the repo
-    const { title, content: issueReportContent } = issueWrapper(spec, specAnomalies, anomalyType, crawl);
-    if (updateMode) {
-      if (existingReportContent) {
-        const existingAnomalies = existingReportContent.split('\n').filter(l => l.startsWith('* [ ] ')).map(l => l.slice(6));
-        if (existingAnomalies.every((a, i) => specAnomalies[i] === a) && existingAnomalies.length === specAnomalies.length) {
-          // no substantial change, skip
-          console.log(`Skipping ${title}, no change`);
+      console.log('Create pull requests as needed...');
+      for (const entry of toreport) {
+        // Look for a related PR that may still be pending
+        const issueMoniker = entry.filename.match(/^issues\/(.*)\.md$/)[1];
+        const pendingPRStr = execSync(`gh pr list --head ${issueMoniker} --json number,headRefName`, execParams);
+        const pendingPR = JSON.parse(pendingPRStr)[0];
+        if (pendingPR) {
+          console.log(`- skip ${entry.filename}, a pending PR already exists (#${pendingPR.number}`);
           continue;
         }
-      } else {
-        // in update mode, we only care about existing reports
-        continue;
-      }
-    }
-    const issueReportData = matter(issueReportContent);
-    issueReportData.data = {
-      Repo: spec.nightly.repository,
-      Tracked: tracked,
-      Title: title
-    };
-    let issueReport;
-    try {
-      issueReport = issueReportData.stringify();
-    } catch (err) {
-      console.error(`Failed to stringify report of ${anomalyType} for ${title}: ${err}`, issueReportContent);
-      continue;
-    }
-    if (dryRun) {
-      console.log(`Would add ${issueFilename} with`);
-      console.log(issueReport);
-      console.log();
-    } else {
-      await fs.writeFile(issueFilename, issueReport, 'utf-8');
-      try {
-        if (!noGit) {
-          console.log(`Committing issue report as ${issueFilename} in branch ${issueMoniker}…`);
-          execSync(`git checkout -b ${issueMoniker}`);
-          execSync(`git add ${issueFilename}`);
-          execSync(`git commit -m "File report on ${issueReportData.data.Title}"`);
-          needsPush[issueMoniker] = { title: issueReportData.data.Title, report: issueReport, repo: spec.nightly.repository, specTitle: spec.title, uri: spec.crawled };
-          console.log('- done');
-          execSync(`git checkout ${currentBranch}`);
-        }
-      } catch (err) {
-        console.error(`Failed to commit error report for ${spec.title}`, err);
-        await fs.unlink(issueFilename);
-        execSync(`git checkout ${currentBranch}`);
-      }
-    }
-  }
-}
-if (nolongerRelevantReports.size) {
-  console.log('The following reports are no longer relevant, deleting them', [...nolongerRelevantReports]);
-  for (const issueFilename of nolongerRelevantReports) {
-    await fs.unlink(issueFilename);
-  }
-}
-if (Object.keys(needsPush).length) {
-  let counter = 0;
-  for (const branch in needsPush) {
-    if (counter > MAX_PR_BY_RUN) {
-      delete needsPush[branch];
-      continue;
-    }
 
-    // is there already a pull request targetting that branch?
-    const { data: pullrequests } = (await octokit.rest.pulls.list({
-      owner: repoOwner,
-      repo: repoName,
-      head: `${repoOwner}:${branch}`
-    }));
-    if (pullrequests.length > 0) {
-      console.log(`A pull request from branch ${branch} already exists, bailing`);
-      delete needsPush[branch];
+        let issueReport;
+        if (entry.action === 'add') {
+          issueReport = matter(await fs.readFile(entry.filename, 'utf-8'));
+        }
+        else {
+          // File was deleted, retrieve its previous content from the HEAD
+          issueReport = matter(await execSync(`git show HEAD:${entry.filename}`, execParams));
+        }
+
+        console.log(`- create PR for ${entry.filename}`);
+        execOrLog(`git checkout -b ${issueMoniker}`);
+        execOrLog(`git add ${entry.filename}`);
+        execOrLog(`git commit -m "${entry.action === 'add' ? 'File' : 'Delete'} report on ${issueReport.data.Title}"`);
+        execOrLog(`git push origin ${issueMoniker}`);
+
+        const prBodyFile = path.join(execParams.cwd, '__pr.md')
+        const prBody = prWrapper(entry.action, issueReport);
+        await fs.writeFile(prBodyFile, prBody, 'utf8');
+        try {
+          execOrLog(`gh pr create --body-file __pr.md --title "${entry.action === 'add' ? 'File' : 'Delete'} report on ${issueReport.data.Title.replace(/"/g, '')}"`);
+        }
+        finally {
+          await fs.rm(prBodyFile, { force: true });
+        }
+
+        reported += 1;
+        if (options.max > 0 && reported > options.max) {
+          break;
+        }
+      }
     }
-    counter++;
-  }
-}
-if (Object.keys(needsPush).length) {
-  console.log(`Pushing new branches ${Object.keys(needsPush).join(' ')}…`);
-  execSync(`git push origin ${Object.keys(needsPush).join(' ')}`);
-  console.log('- done');
-  for (const branch in needsPush) {
-    const { title, specTitle, uri, repo, report } = needsPush[branch];
-    console.log(`Creating pull request from branch ${branch}…`);
-    await octokit.rest.pulls.create({
-      owner: repoOwner,
-      repo: repoName,
-      title,
-      body: prWrapper(specTitle, uri, repo, report),
-      head: `${repoOwner}:${branch}`,
-      base: 'main'
-    });
-    console.log('- done');
-  }
-}
+    finally {
+      console.log(`- get back to the initial Git branch ${currentBranch}`);
+      execOrLog(`git checkout ${currentBranch}`, execParams);
+      console.log(`- nb PR ${options.dryRun ? 'that would be ' : ''}created: ${reported}`);
+    }
+  });
+
+program.parseAsync(process.argv);
