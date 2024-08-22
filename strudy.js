@@ -334,7 +334,7 @@ ${entry.content}
         for (const file of todelete) {
           const filename = path.join(options.issues, file);
           console.warn(`- delete ${filename}, no more anomalies detected`);
-          await fs.unlink(filename);
+          await fs.rm(filename, { force: true });
         }
       }
     }
