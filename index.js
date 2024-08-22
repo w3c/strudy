@@ -1,7 +1,6 @@
 import study from './src/lib/study.js';
-import studyWebIdl from './src/lib/study-webidl.js';
 
-export { study, studyWebIdl };
+export { study };
 
-const strudy = { study, studyWebIdl };
+const strudy = { study };
 export default strudy;
