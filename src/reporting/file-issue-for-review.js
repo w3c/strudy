@@ -105,10 +105,14 @@ Usage notes for some of the options:
     const currentBranch = execSync('git branch --show-current', execParams).trim();
     console.log(`- current branch: ${currentBranch}`);
 
+    // Possibly useful reminder about calls to `filter` below:
+    // `split` on an empty string does not return an empty array!
     console.log('How many issue files ought to be reported?');
-    const toadd = execSync('git diff --name-only --diff-filter=d issues/*.md', execParams).trim().split('\n');
+    const toadd = execSync('git diff --name-only --diff-filter=d issues/*.md', execParams)
+      .trim().split('\n').filter(x => !!x);
     console.log(`- nb issue files to add/update: ${toadd.length}`);
-    const todelete = execSync('git diff --name-only --diff-filter=D issues/*.md', execParams).trim().split('\n');
+    const todelete = execSync('git diff --name-only --diff-filter=D issues/*.md', execParams)
+      .trim().split('\n').filter(x => !!x);
     console.log(`- nb issue files to delete: ${todelete.length}`);
     const toreport = toadd.map(name => { return { action: 'add', filename: name }; })
       .concat(todelete.map(name => { return { action: 'delete', filename: name }; }))
