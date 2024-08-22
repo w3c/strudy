@@ -4,7 +4,7 @@ Tracked: 'https://github.com/w3c/html-aam/issues/447'
 Title: Broken references in HTML Accessibility API Mappings 1.0
 ---
 
-While crawling [HTML Accessibility API Mappings 1.0](https://w3c.github.io/html-aam/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [HTML Accessibility API Mappings 1.0](https://w3c.github.io/html-aam/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://html.spec.whatwg.org/multipage/iframe-embed-object.html#attr-param-name
 * [ ] https://html.spec.whatwg.org/multipage/microdata.html#attr-itemprop
 * [ ] https://html.spec.whatwg.org/multipage/sections.html#sectioning-root

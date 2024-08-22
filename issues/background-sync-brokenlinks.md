@@ -4,7 +4,7 @@ Tracked: 'https://github.com/WICG/background-sync/issues/186'
 Title: Broken references in Web Background Synchronization
 ---
 
-While crawling [Web Background Synchronization](https://wicg.github.io/background-sync/spec/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Web Background Synchronization](https://wicg.github.io/background-sync/spec/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://notifications.spec.whatwg.org/#permission-model
 * [ ] https://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html#service-worker-registration-interface
 * [ ] https://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html#service-worker-global-scope-interface

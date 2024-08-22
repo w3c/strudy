@@ -4,7 +4,7 @@ Tracked: 'https://github.com/w3c/webappsec-cspee/issues/27'
 Title: 'Broken references in Content Security Policy: Embedded Enforcement'
 ---
 
-While crawling [Content Security Policy: Embedded Enforcement](https://w3c.github.io/webappsec-cspee/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Content Security Policy: Embedded Enforcement](https://w3c.github.io/webappsec-cspee/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://fetch.spec.whatwg.org/#concept-response-csp-list
 * [ ] https://w3c.github.io/webappsec-csp/#port-part-match
 

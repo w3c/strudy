@@ -4,7 +4,7 @@ Tracked: 'https://github.com/w3c/ServiceWorker/issues/1669'
 Title: Broken references in Service Workers Nightly
 ---
 
-While crawling [Service Workers Nightly](https://w3c.github.io/ServiceWorker/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Service Workers Nightly](https://w3c.github.io/ServiceWorker/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://w3c.github.io/push-api/#h-the-push-event
 * [ ] https://w3c.github.io/push-api/#dfn-fire-the-push-event
 * [ ] https://wicg.github.io/BackgroundSync/spec/#sync
