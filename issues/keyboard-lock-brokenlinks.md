@@ -4,7 +4,7 @@ Tracked: 'https://github.com/WICG/keyboard-lock/issues/68'
 Title: Broken references in Keyboard Lock
 ---
 
-While crawling [Keyboard Lock](https://wicg.github.io/keyboard-lock/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Keyboard Lock](https://wicg.github.io/keyboard-lock/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] http://www.w3.org/TR/uievents-code/#code-keyw
 * [ ] http://www.w3.org/TR/uievents-code/#code-keya
 * [ ] http://www.w3.org/TR/uievents-code/#code-keys

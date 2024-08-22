@@ -4,7 +4,7 @@ Tracked: 'https://github.com/immersive-web/lighting-estimation/issues/58'
 Title: Broken references in WebXR Lighting Estimation API Level 1
 ---
 
-While crawling [WebXR Lighting Estimation API Level 1](https://immersive-web.github.io/lighting-estimation/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [WebXR Lighting Estimation API Level 1](https://immersive-web.github.io/lighting-estimation/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://www.w3.org/TR/webxr/#xrsession-list-of-enabled-features
 * [ ] https://www.w3.org/TR/webxrlayers-1/#session
 

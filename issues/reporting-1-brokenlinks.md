@@ -4,7 +4,7 @@ Tracked: 'https://github.com/w3c/reporting/issues/261'
 Title: Broken references in Reporting API
 ---
 
-While crawling [Reporting API](https://w3c.github.io/reporting/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Reporting API](https://w3c.github.io/reporting/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://fetch.spec.whatwg.org/#concept-response-https-state
 * [ ] https://fetch.spec.whatwg.org/#wait-for-a-response
 * [ ] https://html.spec.whatwg.org/multipage/webappapis.html#creation-url

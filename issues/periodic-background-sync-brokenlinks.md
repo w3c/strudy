@@ -4,7 +4,7 @@ Tracked: 'https://github.com/WICG/periodic-background-sync/issues/11'
 Title: Broken references in Web Periodic Background Synchronization
 ---
 
-While crawling [Web Periodic Background Synchronization](https://wicg.github.io/periodic-background-sync/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Web Periodic Background Synchronization](https://wicg.github.io/periodic-background-sync/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://dom.spec.whatwg.org/#context-object
 * [ ] https://w3c.github.io/permissions/#enumdef-permissionstate
 * [ ] https://w3c.github.io/permissions/#dictdef-permissiondescriptor

@@ -4,7 +4,7 @@ Tracked: 'https://github.com/w3c/webrtc-identity/issues/40'
 Title: Broken references in Identity for WebRTC 1.0
 ---
 
-While crawling [Identity for WebRTC 1.0](https://w3c.github.io/webrtc-identity/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Identity for WebRTC 1.0](https://w3c.github.io/webrtc-identity/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://w3c.github.io/webrtc-pc/#dfn-create-an-offer
 * [ ] https://w3c.github.io/webrtc-pc/#dfn-create-an-answer
 * [ ] https://www.w3.org/TR/webrtc/#dom-rtcconfiguration-peeridentity

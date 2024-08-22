@@ -4,7 +4,7 @@ Tracked: 'https://github.com/WICG/background-fetch/issues/167'
 Title: Broken references in Background Fetch
 ---
 
-While crawling [Background Fetch](https://wicg.github.io/background-fetch/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Background Fetch](https://wicg.github.io/background-fetch/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://fetch.spec.whatwg.org/#concept-fetch-terminate
 * [ ] https://w3c.github.io/permissions/#permission-state
 * [ ] https://w3c.github.io/permissions/#dictdef-permissiondescriptor

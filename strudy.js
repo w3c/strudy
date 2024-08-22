@@ -301,7 +301,11 @@ Format must be one of "json" or "markdown".`)
 ${entry.content}
 
 <sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>`;
-        if (existingReport?.content.trim() === content.trim()) {
+        // Note from @tidoust: One day, I'll understand how to set up Git and
+        // code so that all line endings end up being "\n" even on Windows
+        // machines. In the meantime, note that local issue files may well
+        // contain "\r\n" on Windows machines.
+        if (existingReport?.content.replace(/\r\n/g, '\n').trim() === content.trim()) {
           console.warn(`- skip ${filename}, file already exists, no change`);
           continue;
         }

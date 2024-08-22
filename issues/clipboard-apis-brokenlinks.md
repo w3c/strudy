@@ -4,7 +4,7 @@ Tracked: 'https://github.com/w3c/clipboard-apis/issues/187'
 Title: Broken references in Clipboard API and events
 ---
 
-While crawling [Clipboard API and events](https://w3c.github.io/clipboard-apis/), the following links to other specifications were detected as pointing to non-existing anchors, which should be fixed:
+While crawling [Clipboard API and events](https://w3c.github.io/clipboard-apis/), the following links to other specifications were detected as pointing to non-existing anchors:
 * [ ] https://html.spec.whatwg.org/multipage/interaction.html#drag-data-item-kind
 * [ ] https://html.spec.whatwg.org/multipage/interaction.html#drag-data-item-type-string
 
