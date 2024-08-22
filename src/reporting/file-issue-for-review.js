@@ -106,9 +106,9 @@ Usage notes for some of the options:
     console.log(`- current branch: ${currentBranch}`);
 
     console.log('How many issue files ought to be reported?');
-    const toadd = execSync('git diff --name-only --diff-filter=d issues', execParams).trim().split('\n');
+    const toadd = execSync('git diff --name-only --diff-filter=d issues/*.md', execParams).trim().split('\n');
     console.log(`- nb issue files to add/update: ${toadd.length}`);
-    const todelete = execSync('git diff --name-only --diff-filter=D issues', execParams).trim().split('\n');
+    const todelete = execSync('git diff --name-only --diff-filter=D issues/*.md', execParams).trim().split('\n');
     console.log(`- nb issue files to delete: ${todelete.length}`);
     const toreport = toadd.map(name => { return { action: 'add', filename: name }; })
       .concat(todelete.map(name => { return { action: 'delete', filename: name }; }))
