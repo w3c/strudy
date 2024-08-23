@@ -88,16 +88,16 @@ function studyAlgorithms(specs) {
           !html.includes('systemClipboardRepresentation')
       ) {
         report.push({
-          name: 'missingTaskForPromise',
-          message: `${getAlgoName(algo)} has a parallel step that resolves/rejects a promise directly`,
+          name: 'missingTask',
+          message: `${getAlgoName(algo)} resolves/rejects a promise directly in a step that runs in parallel`,
           spec
         });
         return true;
       }
       else if (html.match(/fire an?( \w+)? event/i)) {
         report.push({
-          name: 'missingTaskForEvent',
-          message: `${getAlgoName(algo)} has a parallel step that fires an event directly`,
+          name: 'missingTask',
+          message: `${getAlgoName(algo)} fires an event directly in a step that runs in parallel`,
           spec
         });
         return true;

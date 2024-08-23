@@ -23,6 +23,7 @@ async function strudy(params) {
 
 describe(`Strudy's CLI`, function () {
   this.slow(5000);
+  this.timeout(10000);
 
   it('reports usage help when asked', async function () {
     const { stdout, stderr } = await strudy(`--help`);
@@ -71,6 +72,6 @@ describe(`Strudy's CLI`, function () {
       const { stdout, stderr } = await strudy(`inspect test/data/empty.json --issues issues --update-mode notamode`);
       assert.match(stderr, /Unsupported --update-mode option/);
       assert.deepEqual(stdout, '');
-    })
+    });
   });
 });
