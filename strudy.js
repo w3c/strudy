@@ -68,6 +68,7 @@ program
   .option('-i, --issues <folder>', 'report issues as markdown files in the given folder')
   .option('-m, --max <max>', 'maximum number of issue files to create/update', myParseInt, 0)
   .option('-s, --spec <specs...>', 'restrict analysis to given specs')
+  .option('--sort <sort>', 'key(s) to use to sort the structured report', 'default')
   .option('--structure <structure>', 'report structure', 'type+spec')
   .option('--tr <trreport>', 'path/URL to crawl report on published specs')
   .option('--update-mode <mode>', 'what issue files to update', 'new')
@@ -135,6 +136,39 @@ Usage notes for some of the options:
 
   For instance:
     $ strudy inspect . --spec picture-in-picture https://w3c.github.io/mediasession/
+
+--sort <sort>
+  Specifies the key(s) to use to sort each level in the structured report.
+  Use "/" to separate levels. See --structure for details on the possible
+  report structure.
+
+  Possible keys:
+  "default"   follow the natural order of the underlying structures, e.g.
+              return specs in the order in which they appear in the initial
+              list, anomalies in extraction order (which usually follows the
+              document order)
+  "name"      sort entries by the name. For a "spec" level, the name is the
+              spec's shortname. For a "type" level, the name is the anomaly
+              type name. For a "type+spec" level, the name is the name of the
+              file that would be created if --issues is set, meaning the spec's
+              shortname completed with the anomaly type name.
+  "title"     sort entries by their title. For a "spec" level, the title is the
+              spec's title. For the final level, the title is the anomaly
+              message. Etc.
+
+  If the --sort value contains more levels than there are in the structured
+  report, additional keys are ignored. If the value contails fewer levels than
+  there are in the structured report, the default order is used for unspecified
+  levels.
+
+  For example, if the structure is "type/spec", the --sort option could be:
+  "default"           to use the default order at all levels
+  "default/title"     to use the default order for the root level, and to sort
+                      specs by title
+  "name/title/title"  to sort anomaly types by names, specs by title, and
+                      anomalies by message.
+
+  Sort is always ascending.
 
 --structure <type>
   Describes the hierarchy in the report(s) that Strudy returns. Possible values:
@@ -257,6 +291,7 @@ Format must be one of "json" or "markdown".`)
     const anomaliesReport = await study(edReport.results, {
       what: options.what,
       structure: options.structure,
+      sort: options.sort,
       format: options.format === 'json' ?
         'json' :
         (options.issues ? 'issue' : 'full'),

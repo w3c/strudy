@@ -245,8 +245,10 @@ function getAnomalyGroupFromType(type) {
 /**
  * Structure a flat list of anomalies to the requested structure
  */
-function structureResults(structure, anomalies, crawlResults) {
+function structureResults(structure, sort, anomalies, crawlResults) {
   const levels = structure.split('/')
+    .map(level => level.replace(/\s+/g, ''));
+  const sortKeys = sort.split('/')
     .map(level => level.replace(/\s+/g, ''));
   const report = [];
 
@@ -352,10 +354,25 @@ function structureResults(structure, anomalies, crawlResults) {
       break;
   }
 
+  switch (sortKeys[0] ?? 'default') {
+    case 'name':
+      report.sort((e1, e2) => e1.name.localeCompare(e2.name));
+      break;
+    case 'title':
+      // Note: for actual anomalies, the title is the anomaly message. All
+      // other entries have title.
+      report.sort((e1, e2) => (e1.title ?? e1.message).localeCompare(e2.title ?? e2.message));
+      break;
+    case 'default':
+    default:
+      break;
+  }
+
   if (levels.length > 1) {
     const itemsStructure = levels.slice(1).join('/');
+    const itemsSort = sortKeys.slice(1).join('/');
     for (const entry of report) {
-      entry.items = structureResults(itemsStructure, entry.anomalies, crawlResults);
+      entry.items = structureResults(itemsStructure, itemsSort, entry.anomalies, crawlResults);
       delete entry.anomalies;
     }
   }
@@ -552,6 +569,7 @@ export default async function study(specs, options = {}) {
 
   const what = options.what ?? ['all'];
   const structure = options.structure ?? 'type + spec';
+  const sort = options.sort ?? 'default';
   const format = options.format ?? 'issue';
 
   if (!what.includes('all')) {
@@ -596,7 +614,7 @@ export default async function study(specs, options = {}) {
 
   // Now that we have a flat report of anomalies,
   // let's structure and serialize it as requested
-  const report = structureResults(structure, anomalies, options.crawlResults);
+  const report = structureResults(structure, sort, anomalies, options.crawlResults);
 
   // And serialize it using the right format
   const result = {
