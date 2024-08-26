@@ -29,8 +29,8 @@ describe('The algorithms analyser', () => {
     ]);
     const report = study(crawlResult);
     assertAnomaly(report, 0, {
-      name: 'missingTaskForPromise',
-      message: 'The algorithm that starts with "The encodingInfo() method MUST run the following steps:" has a parallel step that resolves/rejects a promise directly',
+      name: 'missingTask',
+      message: 'The algorithm that starts with "The encodingInfo() method MUST run the following steps:" resolves/rejects a promise directly in a step that runs in parallel',
       spec: { url: 'https://www.w3.org/TR/spec' }
     });
   });
