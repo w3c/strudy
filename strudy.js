@@ -385,7 +385,6 @@ ${entry.content}
       let reported = 0;
       for (const entry of content) {
         console.log(entry);
-        console.log();
         reported += 1;
         if (options.max > 0 && reported >= options.max) {
           break;

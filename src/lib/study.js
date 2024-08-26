@@ -446,7 +446,20 @@ function serializeEntry(entry, format, depth = 0) {
       }
     }
     else if (entry.message) {
-      res = pad(`* [ ] ${entry.message}`, depth);
+      if (depth === 0) {
+        if (entry.spec) {
+          res = `* [ ] [${entry.spec.title}](${entry.spec.crawled}) - ${entry.message}`;
+        }
+        else if (entry.specs) {
+          const specs = entry.specs
+            .map(spec => `[${spec.title}](${spec.crawled})`)
+            .join(', ');
+          res = `* [ ] ${specs} - ${entry.message}`;
+        }
+      }
+      else {
+        res = pad(`* [ ] ${entry.message}`, depth);
+      }
     }
 
     for (const item of entry.items ?? []) {
@@ -490,9 +503,16 @@ function formatReport(format, report) {
     return [
       {
         title: 'Study report',
-        content: report.map(entry =>
-`## ${entry.title}
-${serializeEntry(entry, 'markdown')}`)
+        content: report.map(entry => {
+          if (entry.title) {
+            return `## ${entry.title}
+${serializeEntry(entry, 'markdown')}
+`;
+          }
+          else {
+            return serializeEntry(entry, 'markdown');
+          }
+        })
       }
     ]
   }
@@ -533,7 +553,7 @@ function getNamesOfNonReportedEntries(report, specs, what, structure) {
 
   const levels = structure.split('/')
     .map(level => level.replace(/\s+/g, ''));
-  let allNames;
+  let allNames = [];
   switch (levels[0]) {
     case 'flat':
       // Not much we can say there
