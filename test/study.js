@@ -191,4 +191,22 @@ describe('The main study function', function () {
 See [Dealing with the event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-for-spec-authors) in the HTML specification for guidance on how to deal with algorithm sections that run *in parallel*.`
     });
   });
+
+  it('sorts entries as requested in the final report', async function() {
+    const crawlResult = [
+      populateSpec(specUrl, { error: 'Boo' }),
+      populateSpec(specUrl2, { error: 'Borked' })
+    ];
+    const report = await study(crawlResult, { structure: 'type/spec', sort: 'default/title', htmlFragments: {} });
+    assertNbAnomalies(report.results, 1);
+    assertAnomaly(report.results, 0, {
+      title: 'Crawl error',
+      content:
+`The following crawl errors occurred:
+* [Hello universe API](https://w3c.github.io/universe/)
+  * [ ] Borked
+* [Hello world API](https://w3c.github.io/world/)
+  * [ ] Boo`
+    });
+  });
 });
