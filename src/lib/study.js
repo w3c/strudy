@@ -103,14 +103,10 @@ const anomalyGroups = [
     description: 'The following problems were identified when analyzing algorithms',
     types: [
       {
-        name: 'missingTaskForPromise',
-        title: 'Missing tasks in parallel steps to handle a promise',
-        description: 'The following algorithms resolve or reject a Promise within a step that runs [in parallel](https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel) without first queuing a task'
-      },
-      {
-        name: 'missingTaskForEvent',
-        title: 'Missing tasks in parallel steps to fire an event',
-        description: 'The following algorithms fire an event within a step that runs [in parallel](https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel) without first queuing a task'
+        name: 'missingTask',
+        title: 'Missing tasks in parallel steps',
+        description: 'The following algorithms fire an event, or resolve or reject a Promise, within a step that runs [in parallel](https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel) without first queuing a task',
+        guidance: 'See [Dealing with the event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-for-spec-authors) in the HTML specification for guidance on how to deal with algorithm sections that run *in parallel*.'
       }
     ],
     study: studyAlgorithms
@@ -439,8 +435,16 @@ function serializeEntry(entry, format, depth = 0) {
     for (const item of entry.items ?? []) {
       res += '\n' + serializeEntry(item, format, depth + 1);
     }
-    for (const anomaly of entry.anomalies ?? []) {
-      res += `\n` + serializeEntry(anomaly, format, depth + 1);
+    if (entry.anomalies?.length > 0) {
+      for (const anomaly of entry.anomalies) {
+        res += `\n` + serializeEntry(anomaly, format, depth + 1);
+      }
+      if (entry.group?.guidance) {
+        res += `\n\n` + entry.group.guidance;
+      }
+      else if (entry.type?.guidance) {
+        res += `\n\n` + entry.type.guidance;
+      }
     }
   }
   return res;
