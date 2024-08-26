@@ -40,7 +40,7 @@
     "@octokit/rest": "^21.0.1",
     "commander": "12.1.0",
     "gray-matter": "^4.0.3",
-    "jsdom": "^24.1.1",
+    "jsdom": "^25.0.0",
     "reffy": "^17.1.1",
     "semver": "^7.3.5",
     "webidl2": "^24.2.2"
