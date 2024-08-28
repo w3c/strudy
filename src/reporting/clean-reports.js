@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from "node:url";
 import matter from 'gray-matter';
+import loadJSON from '../lib/load-json.js';
 
 const scriptPath = path.dirname(fileURLToPath(import.meta.url));
 
