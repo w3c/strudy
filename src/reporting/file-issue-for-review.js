@@ -24,7 +24,8 @@ const execParams = {
  * Wrap "matter" issue report to create a suitable PR body
  */
 function prWrapper(action, issueReport) {
-  if (action === 'add') {
+  switch (action) {
+  case 'add':
     return `This pull request was automatically created by Strudy upon detecting errors in ${issueReport.data.Title}.
 
 Please check that these errors were correctly detected, and that they have not already been reported in ${issueReport.data.Repo}.
@@ -33,8 +34,18 @@ If everything is OK, you can merge this pull request which will report the issue
 
 ${issueReport.stringify()}
 `;
-  }
-  else {
+
+  case 'update':
+    return `This pull request was automatically created by Strudy upon detecting errors in ${issueReport.data.Title}.
+
+Similar errors had already been detected. Please check that the diff is correct, and that the errors have not already been reported in ${issueReport.data.Repo}.
+
+If everything is OK, you can merge this pull request which will report the issue below to the repo, and update the underlying report file with a link to the said issue.
+
+${issueReport.stringify()}
+`;
+
+  case 'delete':
     return `This pull request was automatically created by Strudy while analyzing ${issueReport.data.Title}.
 
 Please check that past errors listed below have indeed been corrected, and that the related issue in ${issueReport.data.Repo} has been closed accordingly.
@@ -107,19 +118,38 @@ Usage notes for some of the options:
 
     // Possibly useful reminder about calls to `filter` below:
     // `split` on an empty string does not return an empty array!
+    // Note several git commands can report the list of changes:
+    // - `git diff` does not list files that need to be added
+    // - `git ls-files` does not differentiate between "modified" and "deleted"
+    // - `git status` lists everything and allows to detect situations where we
+    // should back off because there are other types of pending changes in the
+    // issues folder.
     console.log('How many issue files ought to be reported?');
-    const toadd = execSync('git diff --name-only --diff-filter=d issues/*.md', execParams)
-      .trim().split('\n').filter(x => !!x);
-    console.log(`- nb issue files to add/update: ${toadd.length}`);
-    const todelete = execSync('git diff --name-only --diff-filter=D issues/*.md', execParams)
-      .trim().split('\n').filter(x => !!x);
-    console.log(`- nb issue files to delete: ${todelete.length}`);
-    const toreport = toadd.map(name => { return { action: 'add', filename: name }; })
-      .concat(todelete.map(name => { return { action: 'delete', filename: name }; }))
-      .sort((e1, e2) => e1.filename.localeCompare(e2.filename));
-
+    const toreport = execSync('git status --porcelain issues', execParams)
+      .split('\n')
+      .filter(x => !!x.trim())
+      .map(line => {
+        // All lines start with a two-letter state followed by a space and the
+        // filename. For state values, see:
+        // https://git-scm.com/docs/git-status#_short_format
+        const match = line.match(/^(..) (.*)$/);
+        if (!match) {
+          throw new Error(`Unexpected line received when running "git status": "${line}"`);
+        }
+        const state = match[1];
+        if (![' M', ' D', '??'].includes(state)) {
+          throw new Error(`Unexpected state received when running "git status": "${line}"`);
+        }
+        const action =
+          (state === '??') ? 'add' :
+          (state === ' M') ? 'update' :
+          'delete';
+        return { action, filename: match[2].trim() };
+      });
+    console.log(`- nb issue files to report: ${toreport.length}`);
     if (toreport.length === 0) {
       console.log('No issue files to report');
+      return;
     }
 
     let reported = 0;
@@ -144,17 +174,21 @@ Usage notes for some of the options:
           issueReport = matter(await execSync(`git show HEAD:${entry.filename}`, execParams));
         }
 
+        const actionLabel =
+          (entry.action === 'add') ? 'File' :
+          (entry.action === 'update') ? 'Update' :
+          'Delete';
         console.log(`- create PR for ${entry.filename}`);
         execOrLog(`git checkout -b ${issueMoniker}`);
         execOrLog(`git add ${entry.filename}`);
-        execOrLog(`git commit -m "${entry.action === 'add' ? 'File' : 'Delete'} report on ${issueReport.data.Title}"`);
+        execOrLog(`git commit -m "${actionLabel} report on ${issueReport.data.Title}"`);
         execOrLog(`git push origin ${issueMoniker}`);
 
         const prBodyFile = path.join(execParams.cwd, '__pr.md')
         const prBody = prWrapper(entry.action, issueReport);
         await fs.writeFile(prBodyFile, prBody, 'utf8');
         try {
-          execOrLog(`gh pr create --body-file __pr.md --title "${entry.action === 'add' ? 'File' : 'Delete'} report on ${issueReport.data.Title.replace(/"/g, '')}"`);
+          execOrLog(`gh pr create --body-file __pr.md --title "${actionLabel} report on ${issueReport.data.Title.replace(/"/g, '')}"`);
         }
         finally {
           await fs.rm(prBodyFile, { force: true });
