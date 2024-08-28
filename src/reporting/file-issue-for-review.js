@@ -179,7 +179,10 @@ Usage notes for some of the options:
           (entry.action === 'update') ? 'Update' :
           'Delete';
         console.log(`- create PR for ${entry.filename}`);
-        execOrLog(`git checkout -b ${issueMoniker}`);
+        // Note: always use the initial branch as starting point
+        // otherwise commits made for files already reported would also be
+        // copied to the new branch.
+        execOrLog(`git checkout -b ${issueMoniker} ${currentBranch}`);
         execOrLog(`git add ${entry.filename}`);
         execOrLog(`git commit -m "${actionLabel} report on ${issueReport.data.Title}"`);
         execOrLog(`git push origin ${issueMoniker}`);
