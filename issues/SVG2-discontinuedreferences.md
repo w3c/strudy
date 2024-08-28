@@ -2,7 +2,7 @@
 Title: >-
   [SVG2] Normative references to discontinued specs in Scalable Vector Graphics
   (SVG) 2
-Tracked: N/A
+Tracked: Intentionally not filed as an issue since this is already addressed in the spec, see https://github.com/w3c/strudy/pull/696#pullrequestreview-2266068791
 Repo: 'https://github.com/w3c/svgwg'
 ---
 
