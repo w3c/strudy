@@ -1,6 +1,6 @@
 ---
 Repo: 'https://github.com/WICG/digital-goods'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/digital-goods/issues/55'
 Title: Broken references in Digital Goods API
 ---
 
