@@ -609,9 +609,13 @@ export default async function study(specs, options = {}) {
 
   // Only keep specs that caller wants to study
   // (but note study functions that analyze references need the whole list!)
+  // Study skips discontinued specs by default, unless they are explicitly
+  // mentioned in the list of specs to study.
   options.crawlResults = specs;
   if (options.specs) {
-    specs = options.crawlResults.filter(spec => options.specs.find(shortname => shortname === spec.shortname));
+    specs = options.crawlResults.filter(spec => options.specs.find(shortname =>
+      (shortname === 'all' && spec.standing !== 'discontinued') ||
+      shortname === spec.shortname));
   }
 
   // Anomalies are studied in groups of related anomalies, let's compute the

@@ -67,7 +67,7 @@ program
   .option('-f, --format <format>', 'report markdown or json', 'markdown')
   .option('-i, --issues <folder>', 'report issues as markdown files in the given folder')
   .option('-m, --max <max>', 'maximum number of issue files to create/update', myParseInt, 0)
-  .option('-s, --spec <specs...>', 'restrict analysis to given specs')
+  .option('-s, --spec <specs...>', 'restrict analysis to given specs', ['all'])
   .option('--sort <sort>', 'key(s) to use to sort the structured report', 'default')
   .option('--structure <structure>', 'report structure', 'type+spec')
   .option('--tr <trreport>', 'path/URL to crawl report on published specs')
@@ -127,15 +127,20 @@ Usage notes for some of the options:
   report (see --structure).
 
 -s, --spec <specs...>
-  Valid spec values may be a shortname, a URL, or a relative path to a JSON
-  file that contains a list of spec URLs and/or shortnames. Shortnames may be
-  the shortname of the spec series.
-
-  Use "all" to include all specs. This is equivalent to not setting the option
-  at all.
+  Valid spec values are spec shortnames. Use "all" to include all specs. This
+  is equivalent to not setting the option at all.
 
   For instance:
-    $ strudy inspect . --spec picture-in-picture https://w3c.github.io/mediasession/
+    $ strudy inspect . --spec picture-in-picture
+
+  The analysis skips discontinued specs that may appear in the crawl result by
+  default. To force an analysis on a discontinued spec, mention its shortname
+  explicitly. You may combine that shortname with the value "all" to analyze
+  all non-discontinued specs plus the ones explicitly listed with their
+  shortnames.
+
+  For instance:
+    $ strudy inspect . --spec all --spec tracking-dnt
 
 --sort <sort>
   Specifies the key(s) to use to sort each level in the structured report.
