@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Server Timing
-Tracked: N/A
+Tracked: 'https://github.com/w3c/server-timing/issues/98'
 Repo: 'https://github.com/w3c/server-timing'
 ---
 

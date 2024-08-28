@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Service Workers Nightly
-Tracked: N/A
+Tracked: 'https://github.com/w3c/ServiceWorker/issues/1726'
 Repo: 'https://github.com/w3c/ServiceWorker'
 ---
 

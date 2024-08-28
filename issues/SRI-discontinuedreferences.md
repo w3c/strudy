@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Subresource Integrity
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-subresource-integrity/issues/124'
 Repo: 'https://github.com/w3c/webappsec-subresource-integrity'
 ---
 

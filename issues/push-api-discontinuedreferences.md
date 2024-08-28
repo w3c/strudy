@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Push API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/push-api/issues/390'
 Repo: 'https://github.com/w3c/push-api'
 ---
 

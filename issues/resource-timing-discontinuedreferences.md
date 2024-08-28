@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Resource Timing
-Tracked: N/A
+Tracked: 'https://github.com/w3c/resource-timing/issues/404'
 Repo: 'https://github.com/w3c/resource-timing'
 ---
 

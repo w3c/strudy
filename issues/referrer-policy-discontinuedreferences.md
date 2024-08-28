@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Referrer Policy
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-referrer-policy/issues/172'
 Repo: 'https://github.com/w3c/webappsec-referrer-policy'
 ---
 

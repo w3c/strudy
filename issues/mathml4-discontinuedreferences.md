@@ -2,7 +2,7 @@
 Title: >-
   Normative references to discontinued specs in Mathematical Markup Language
   (MathML) Version 4.0
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mathml/issues/503'
 Repo: 'https://github.com/w3c/mathml'
 ---
 
