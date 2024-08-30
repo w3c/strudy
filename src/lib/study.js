@@ -141,7 +141,12 @@ const anomalyGroups = [
     title: 'Web IDL problems',
     description: 'The following Web IDL problems were identified',
     types: [
-      { name: 'incompatiblePartialIdlExposure', title: 'Incompatible `[Exposed]` attribute in partial definitions' },
+      {
+        name: 'incompatiblePartialIdlExposure',
+        title: 'Incompatible `[Exposed]` attribute in partial definitions',
+        description: 'The following partial definitions were found with an exposure set that is not a subset of the exposure set of the partial’s original interface or namespace',
+        guidance: 'See the [`[Exposed]`](https://webidl.spec.whatwg.org/#Exposed) extended attribute section in Web IDL for requirements.'
+      },
       { name: 'invalid', title: 'Invalid Web IDL' },
       { name: 'noExposure', title: 'Missing `[Exposed]` attributes' },
       { name: 'noOriginalDefinition', title: 'Missing base interfaces' },
@@ -150,12 +155,25 @@ const anomalyGroups = [
       { name: 'redefinedIncludes', title: 'Duplicated `includes` statements' },
       { name: 'redefinedMember', title: 'Duplicated members' },
       { name: 'redefinedWithDifferentTypes', title: 'Duplicated IDL names with different types' },
-      { name: 'singleEnumValue', title: 'Enums with a single value' },
-      { name: 'unexpectedEventHandler', title: 'Missing `EventTarget` inheritances' },
+      {
+        name: 'singleEnumValue',
+        title: 'Enums with a single value',
+        description: 'The following enumerations define a single value (or no value at all)'
+      },
+      {
+        name: 'unexpectedEventHandler',
+        title: 'Missing `EventTarget` inheritances',
+        description: 'The following event handlers were found on interfaces that do not inherit from \`EventTarget\`'
+      },
       { name: 'unknownExposure', title: 'Unknown globals in `[Exposed]` attribute' },
       { name: 'unknownExtAttr', title: 'Unknown extended attributes' },
       { name: 'unknownType', title: 'Unknown Web IDL type' },
-      { name: 'wrongCaseEnumValue', title: 'Enums with wrong casing' },
+      {
+        name: 'wrongCaseEnumValue',
+        title: 'Enum values that ignore naming conventions',
+        description: 'The following enum values were found to ignore naming conventions (lower case, hyphen separated words)',
+        guidance: 'See [Use casing rules consistent with existing APIs](https://w3ctag.github.io/design-principles/#casing-rules) in Web Platform Design Principles document for guidance.'
+      },
       { name: 'wrongKind', title: 'Invalid inheritance chains' },
       { name: 'wrongType', title: 'Web IDL names incorrectly used as types' }
     ],
