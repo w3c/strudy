@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in HTML Standard
-Tracked: N/A
+Tracked: The CanvasTextRendering names are inherited from SVG and seem widely deployed; flipY seems widely supported (according to WPT)
 Repo: 'https://github.com/whatwg/html'
 ---
 
