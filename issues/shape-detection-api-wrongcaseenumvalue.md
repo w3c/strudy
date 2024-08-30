@@ -2,7 +2,7 @@
 Title: >-
   [shape-detection-api] Enum values that ignore naming conventions in
   Accelerated Shape Detection in Images
-Tracked: N/A
+Tracked: 'https://github.com/WICG/shape-detection-api/issues/103'
 Repo: 'https://github.com/WICG/shape-detection-api'
 ---
 

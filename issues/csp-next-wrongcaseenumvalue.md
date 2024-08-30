@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in Scripting Policy
-Tracked: N/A
+Tracked: 'https://github.com/WICG/csp-next/issues/10'
 Repo: 'https://github.com/WICG/csp-next'
 ---
 

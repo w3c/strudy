@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in Payment Handler API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/payment-handler/issues/418'
 Repo: 'https://github.com/w3c/payment-handler'
 ---
 
