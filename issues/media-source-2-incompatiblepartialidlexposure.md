@@ -2,7 +2,7 @@
 Title: >-
   Incompatible `[Exposed]` attribute in partial definitions in Media Source
   Extensions™
-Tracked: N/A
+Tracked: https://github.com/w3c/media-source/issues/280
 Repo: 'https://github.com/w3c/media-source'
 ---
 
