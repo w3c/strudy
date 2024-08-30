@@ -1,6 +1,6 @@
 ---
 Title: '[webcodecs] Enum values that ignore naming conventions in WebCodecs'
-Tracked: N/A
+Tracked: too late to change as discussed in https://github.com/w3c/webcodecs/issues/786
 Repo: 'https://github.com/w3c/webcodecs'
 ---
 
