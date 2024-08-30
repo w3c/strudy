@@ -23,7 +23,7 @@ import * as WebIDL2 from 'webidl2';
 
 const getSpecs = list => [...new Set(list.map(({ spec }) => spec))];
 const specName = spec => spec.shortname ?? spec.url;
-const dfnName = dfn => `${dfn.idl.partial ? 'partial ' : ''}${dfn.idl.type} "${dfn.idl.name}"`;
+const dfnName = dfn => `${dfn.idl.partial ? 'partial ' : ''}${dfn.idl.type} \`${dfn.idl.name}\``;
 
 const basicTypes = new Set([
   // Types defined by Web IDL itself:
@@ -203,7 +203,7 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
   function checkEventHandlers (spec, memberHolder, iface = memberHolder) {
     const eventHandler = memberHolder.members.find(m => m?.name?.startsWith('on') && m.type === 'attribute' && m.idlType?.idlType === 'EventHandler');
     if (eventHandler && !inheritsFrom(iface, 'EventTarget')) {
-      recordAnomaly(spec, 'unexpectedEventHandler', `The interface "${iface.name}" defines an event handler "${eventHandler.name}" but does not inherit from EventTarget`);
+      recordAnomaly(spec, 'unexpectedEventHandler', `The interface \`${iface.name}\` defines an event handler \`${eventHandler.name}\` but does not inherit from \`EventTarget\``);
     }
   }
 
@@ -236,12 +236,12 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     // Make sure that the interface is defined somewhere
     const ifaceExposure = getExposure(iface);
     if (ifaceExposure.length === 0 && !iface.partial) {
-      recordAnomaly(spec, 'noExposure', `The interface "${iface.name}" has no [Exposed] extended attribute`);
+      recordAnomaly(spec, 'noExposure', `The interface \`${iface.name}\` has no \`[Exposed]\` extended attribute`);
     } else if (ifaceExposure.length > 0 && ifaceExposure[0] !== '*') {
       // Make sure that the interface is exposed on known globals
       const unknown = ifaceExposure.filter(e => !Object.keys(globals).includes(e));
       if (unknown.length > 0) {
-        recordAnomaly(spec, 'unknownExposure', `The [Exposed] extended attribute of the interface "${iface.name}" references unknown global(s): ${unknown.join(', ')}`);
+        recordAnomaly(spec, 'unknownExposure', `The \`[Exposed]\` extended attribute of the interface \`${iface.name}\` references unknown global(s): ${unknown.join(', ')}`);
       }
     }
 
@@ -249,11 +249,11 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     if (iface.partial) {
       const mainExposure = getExposure(mainInterface);
       if (ifaceExposure[0] === '*' && mainExposure[0] !== '*') {
-        recordAnomaly(spec, 'incompatiblePartialIdlExposure', `The partial interface "${iface.name}" is exposed on all globals but the original interface is not (${mainExposure.join(', ')})`);
+        recordAnomaly(spec, 'incompatiblePartialIdlExposure', `The partial interface \`${iface.name}\` is exposed on all globals but the original interface is not (${mainExposure.join(', ')})`);
       } else if (ifaceExposure.length > 0 && mainExposure.length > 0 && mainExposure[0] !== '*') {
         const problematic = ifaceExposure.filter(x => !mainExposure.includes(x));
         if (problematic.length > 0) {
-          recordAnomaly(spec, 'incompatiblePartialIdlExposure', `The [Exposed] extended attribute of the partial interface "${iface.name}" references globals on which the original interface is not exposed: ${problematic.join(', ')} (original exposure: ${mainExposure.join(', ')})`);
+          recordAnomaly(spec, 'incompatiblePartialIdlExposure', `The \`[Exposed]\` extended attribute of the partial interface \`${iface.name}\` references globals on which the original interface is not exposed: ${problematic.join(', ')} (original exposure: ${mainExposure.join(', ')})`);
         }
       }
     }
@@ -261,14 +261,14 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
 
   function checkEnumMultipleValues (spec, idl) {
     if (idl.values.length <= 1) {
-      recordAnomaly(spec, 'singleEnumValue', `The enum "${idl.name}" has fewer than 2 possible values`);
+      recordAnomaly(spec, 'singleEnumValue', `The enum \`${idl.name}\` has fewer than 2 possible values`);
     }
   }
 
   function checkSyntaxOfEnumValue (spec, idl) {
     idl.values.forEach(({ value }) => {
-      if (value.match(/[A-Z_]/)) {
-        recordAnomaly(spec, 'wrongCaseEnumValue', `The value "${value}" of the enum "${idl.name}" does not match the expected conventions (lower case, hyphen separated words)`);
+      if (value.match(/[A-Z_\s]/)) {
+        recordAnomaly(spec, 'wrongCaseEnumValue', `The value \`"${value}"\` of the enum \`${idl.name}\` does not match the expected conventions (lower case, hyphen separated words)`);
       }
     });
   }
@@ -277,9 +277,9 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     if (!idl.inheritance) return;
     const parent = dfns[idl.inheritance];
     if (!parent) {
-      recordAnomaly(spec, 'unknownType', `"${idl.name}" inherits from "${idl.inheritance}" which is not defined anywhere`);
+      recordAnomaly(spec, 'unknownType', `\`${idl.name}\` inherits from \`${idl.inheritance}\` which is not defined anywhere`);
     } else if (parent[0].idl.type !== idl.type) {
-      recordAnomaly(spec, 'wrongKind', `"${idl.name}" is of kind "${idl.type}" but inherits from "${idl.inheritance}" which is of kind "${parent[0].idl.type}"`);
+      recordAnomaly(spec, 'wrongKind', `\`${idl.name}\` is of kind \`${idl.type}\` but inherits from \`${idl.inheritance}\` which is of kind \`${parent[0].idl.type}\``);
     }
   }
 
@@ -360,7 +360,7 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
 
         if (isOverloadedOperation(targetMember, sourceMember)) {
           if (!selfCheck) {
-            recordAnomaly(specs, 'overloaded', `"${describeMember(targetMember)}" in ${targetName} overloads an operation defined in ${sourceName}`);
+            recordAnomaly(specs, 'overloaded', `\`${describeMember(targetMember)}\` in ${targetName} overloads an operation defined in ${sourceName}`);
           }
           break;
         }
@@ -372,9 +372,9 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
 
         if (!knownDuplicates.includes(targetMember.name)) {
           if (selfCheck) {
-            recordAnomaly(specs, 'redefinedMember', `"${targetMember.name}" in ${targetName} is defined more than once`);
+            recordAnomaly(specs, 'redefinedMember', `\`${targetMember.name}\` in ${targetName} is defined more than once`);
           } else {
-            recordAnomaly(specs, 'redefinedMember', `"${targetMember.name}" in ${targetName} duplicates a member defined in ${sourceName}`);
+            recordAnomaly(specs, 'redefinedMember', `\`${targetMember.name}\` in ${targetName} duplicates a member defined in ${sourceName}`);
           }
         }
         // No need to report the same redefined member twice
@@ -472,7 +472,7 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     const types = new Set(dfns[name].map(({ idl }) => idl.type));
     const specs = getSpecs(dfns[name]);
     if (types.size > 1) {
-      recordAnomaly(specs, 'redefinedWithDifferentTypes', `"${name}" is defined multiple times with different types (${[...types].join(', ')}) in ${specs.map(specName).join(', ')}`);
+      recordAnomaly(specs, 'redefinedWithDifferentTypes', `\`${name}\` is defined multiple times with different types (${[...types].join(', ')}) in ${specs.map(specName).join(', ')}`);
       continue;
     }
     const type = [...types][0];
@@ -481,15 +481,15 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     if (allowPartials.includes(type)) {
       const mainDefs = dfns[name].filter(({ idl }) => !idl.partial);
       if (mainDefs.length === 0) {
-        recordAnomaly(specs, 'noOriginalDefinition', `"${name}" is only defined as a partial ${type} (in ${specs.map(specName).join(', ')})`);
+        recordAnomaly(specs, 'noOriginalDefinition', `\`${name}\` is only defined as a partial ${type} (in ${specs.map(specName).join(', ')})`);
         continue;
       } else if (mainDefs.length > 1) {
-        recordAnomaly(getSpecs(mainDefs), 'redefined', `"${name}" is defined as a non-partial ${type} mutiple times in ${getSpecs(mainDefs).map(specName).join(', ')}`);
+        recordAnomaly(getSpecs(mainDefs), 'redefined', `\`${name}\` is defined as a non-partial ${type} mutiple times in ${getSpecs(mainDefs).map(specName).join(', ')}`);
       }
       mainDef = mainDefs[0].idl;
     } else {
       if (dfns[name].length > 1) {
-        recordAnomaly(dfns[name].map(({ spec }) => spec), 'redefined', `"${name}" is defined multiple times (with type ${type}) in ${specs.map(specName).join(', ')}`);
+        recordAnomaly(dfns[name].map(({ spec }) => spec), 'redefined', `\`${name}\` is defined multiple times (with type ${type}) in ${specs.map(specName).join(', ')}`);
       }
       mainDef = dfns[name][0].idl;
     }
@@ -533,7 +533,7 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     const statements = includesStatements[key];
     if (statements.length > 1) {
       const specs = getSpecs(statements);
-      recordAnomaly(specs, 'redefinedIncludes', `The includes statement "${key}" is defined more than once in ${specs.map(specName).join(', ')}`);
+      recordAnomaly(specs, 'redefinedIncludes', `The includes statement \`${key}\` is defined more than once in ${specs.map(specName).join(', ')}`);
     }
 
     const statement = statements[0];
@@ -545,9 +545,9 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     // it again). Let's just make sure that there is an "interface" definition.
     const target = dfns[statement.idl.target];
     if (!target) {
-      recordAnomaly(statement.spec, 'unknownType', `Target "${statement.idl.target}" in includes statement "${key}" is not defined anywhere`);
+      recordAnomaly(statement.spec, 'unknownType', `Target \`${statement.idl.target}\` in includes statement \`${key}\` is not defined anywhere`);
     } else if (!target.find(({ idl }) => idl.type === 'interface')) {
-      recordAnomaly(statement.spec, 'wrongKind', `Target "${statement.idl.target}" in includes statement "${key}" must be of kind "interface"`);
+      recordAnomaly(statement.spec, 'wrongKind', `Target \`${statement.idl.target}\` in includes statement \`${key}\` must be of kind \`interface\``);
     }
 
     // Check mixin exists and is an interface mixin
@@ -556,9 +556,9 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     // again). let's just make sure that there is an "interface mixin" definition.
     const mixin = dfns[statement.idl.includes];
     if (!mixin) {
-      recordAnomaly(statement.spec, 'unknownType', `Mixin "${statement.idl.includes}" in includes statement "${key}" is not defined anywhere`);
+      recordAnomaly(statement.spec, 'unknownType', `Mixin \`${statement.idl.includes}\` in includes statement \`${key}\` is not defined anywhere`);
     } else if (!mixin.find(({ idl }) => idl.type === 'interface mixin')) {
-      recordAnomaly(statement.spec, 'wrongKind', `Mixin "${statement.idl.includes}" in includes statement "${key}" must be of kind "interface mixin"`);
+      recordAnomaly(statement.spec, 'wrongKind', `Mixin \`${statement.idl.includes}\` in includes statement \`${key}\` must be of kind \`interface mixin\``);
     }
   }
 
@@ -566,22 +566,22 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
   for (const name in usedTypes) {
     if (!basicTypes.has(name) && !dfns[name]) {
       for (const { spec, idl } of usedTypes[name]) {
-        recordAnomaly(spec, 'unknownType', `Unknown type "${name}" used in definition of "${idl.name}"`);
+        recordAnomaly(spec, 'unknownType', `Unknown type \`${name}\` used in definition of \`${idl.name}\``);
       }
     } else if (dfns[name]) {
       // Namespaces and interface mixins "do not create types".
       const types = dfns[name].map(({ idl }) => idl.type);
       if (types.every(type => type === 'namespace')) {
         for (const { spec, idl } of usedTypes[name]) {
-          recordAnomaly(spec, 'wrongType', `Namespace "${name}" cannot be used as a type in definition of "${idl.name}"`);
+          recordAnomaly(spec, 'wrongType', `Namespace \`${name}\` cannot be used as a type in definition of \`${idl.name}\``);
         }
       } else if (types.every(type => type === 'interface mixin')) {
         for (const { spec, idl } of usedTypes[name]) {
-          recordAnomaly(spec, 'wrongType', `Interface mixin "${name}" cannot be used as a type in definition of "${idl.name}"`);
+          recordAnomaly(spec, 'wrongType', `Interface mixin \`${name}\` cannot be used as a type in definition of \`${idl.name}\``);
         }
       } else if (types.every(type => type === 'namespace' || type === 'interface mixin')) {
         for (const { spec, idl } of usedTypes[name]) {
-          recordAnomaly(spec, 'wrongType', `Name "${name}" exists but is not a type and cannot be used in definition of "${idl.name}"`);
+          recordAnomaly(spec, 'wrongType', `Name \`${name}\` exists but is not a type and cannot be used in definition of \`${idl.name}\``);
         }
       }
     }
@@ -591,7 +591,7 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
   for (const name in usedExtAttrs) {
     if (!knownExtAttrs.has(name)) {
       for (const { spec, idl } of usedExtAttrs[name]) {
-        recordAnomaly(spec, 'unknownExtAttr', `Unknown extended attribute "${name}" used in definition of "${idl.name}"`);
+        recordAnomaly(spec, 'unknownExtAttr', `Unknown extended attribute \`${name}\` used in definition of \`${idl.name}\``);
       }
     }
   }

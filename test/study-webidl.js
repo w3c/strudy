@@ -132,7 +132,7 @@ interface Unexposed {};
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'noExposure',
-      message: 'The interface "Unexposed" has no [Exposed] extended attribute'
+      message: 'The interface `Unexposed` has no `[Exposed]` extended attribute'
     });
   });
 
@@ -144,7 +144,7 @@ interface WhereIAm {};
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'unknownExposure',
-      message: 'The [Exposed] extended attribute of the interface "WhereIAm" references unknown global(s): Unknown'
+      message: 'The `[Exposed]` extended attribute of the interface `WhereIAm` references unknown global(s): Unknown'
     });
   });
 
@@ -182,7 +182,7 @@ interface Carlos {
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'unexpectedEventHandler',
-      message: 'The interface "Carlos" defines an event handler "onbigbisous" but does not inherit from EventTarget'
+      message: 'The interface `Carlos` defines an event handler `onbigbisous` but does not inherit from `EventTarget`'
     });
   });
 
@@ -208,7 +208,7 @@ partial interface MyPlace {};
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'incompatiblePartialIdlExposure',
-      message: 'The [Exposed] extended attribute of the partial interface "MyPlace" references globals on which the original interface is not exposed: Elsewhere (original exposure: Somewhere)'
+      message: 'The `[Exposed]` extended attribute of the partial interface `MyPlace` references globals on which the original interface is not exposed: Elsewhere (original exposure: Somewhere)'
     });
   });
 
@@ -225,7 +225,7 @@ partial interface Somewhere {};
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'incompatiblePartialIdlExposure',
-      message: 'The partial interface "Somewhere" is exposed on all globals but the original interface is not (Somewhere)'
+      message: 'The partial interface `Somewhere` is exposed on all globals but the original interface is not (Somewhere)'
     });
   });
 
@@ -244,7 +244,7 @@ dictionary GrandBob {
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'redefined',
-      message: `"GrandBob" is defined as a non-partial dictionary mutiple times in ${specUrl}, ${specUrl2}`,
+      message: `\`GrandBob\` is defined as a non-partial dictionary mutiple times in ${specUrl}, ${specUrl2}`,
       specs: [{ url: specUrl }, { url: specUrl2 }]
     });
   });
@@ -264,7 +264,7 @@ enum GrandBob {
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'redefinedWithDifferentTypes',
-      message: `"GrandBob" is defined multiple times with different types (dictionary, enum) in ${specUrl}, ${specUrl2}`,
+      message: `\`GrandBob\` is defined multiple times with different types (dictionary, enum) in ${specUrl}, ${specUrl2}`,
       specs: [{ url: specUrl }, { url: specUrl2 }]
     });
   });
@@ -276,7 +276,7 @@ partial interface MyPlace {};
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'noOriginalDefinition',
-      message: `"MyPlace" is only defined as a partial interface (in ${specUrl})`
+      message: `\`MyPlace\` is only defined as a partial interface (in ${specUrl})`
     });
   });
 
@@ -289,7 +289,7 @@ enum SingleValue {
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'singleEnumValue',
-      message: 'The enum "SingleValue" has fewer than 2 possible values'
+      message: 'The enum `SingleValue` has fewer than 2 possible values'
     });
   });
 
@@ -299,17 +299,22 @@ enum WrongCase {
   "good",
   "NotGood",
   "very-good",
-  "not_good"
+  "not_good",
+  "not good either"
 };
 `);
-    assertNbAnomalies(report, 2);
+    assertNbAnomalies(report, 3);
     assertAnomaly(report, 0, {
       name: 'wrongCaseEnumValue',
-      message: 'The value "NotGood" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)'
+      message: 'The value `"NotGood"` of the enum `WrongCase` does not match the expected conventions (lower case, hyphen separated words)'
     });
     assertAnomaly(report, 1, {
       name: 'wrongCaseEnumValue',
-      message: 'The value "not_good" of the enum "WrongCase" does not match the expected conventions (lower case, hyphen separated words)'
+      message: 'The value `"not_good"` of the enum `WrongCase` does not match the expected conventions (lower case, hyphen separated words)'
+    });
+    assertAnomaly(report, 2, {
+      name: 'wrongCaseEnumValue',
+      message: 'The value `"not good either"` of the enum `WrongCase` does not match the expected conventions (lower case, hyphen separated words)'
     });
   });
 
@@ -326,7 +331,7 @@ MyHome includes MyRoom;
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
       name: 'redefinedIncludes',
-      message: `The includes statement "MyHome includes MyRoom" is defined more than once in ${specUrl}`
+      message: `The includes statement \`MyHome includes MyRoom\` is defined more than once in ${specUrl}`
     });
   });
 
@@ -337,11 +342,11 @@ MyHome includes MyRoom;
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'unknownType',
-      message: 'Target "MyHome" in includes statement "MyHome includes MyRoom" is not defined anywhere'
+      message: 'Target `MyHome` in includes statement `MyHome includes MyRoom` is not defined anywhere'
     });
     assertAnomaly(report, 1, {
       name: 'unknownType',
-      message: 'Mixin "MyRoom" in includes statement "MyHome includes MyRoom" is not defined anywhere'
+      message: 'Mixin `MyRoom` in includes statement `MyHome includes MyRoom` is not defined anywhere'
     });
   });
 
@@ -355,11 +360,11 @@ MyHome includes MyRoom;
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'wrongKind',
-      message: 'Target "MyHome" in includes statement "MyHome includes MyRoom" must be of kind "interface"'
+      message: 'Target `MyHome` in includes statement `MyHome includes MyRoom` must be of kind `interface`'
     });
     assertAnomaly(report, 1, {
       name: 'wrongKind',
-      message: 'Mixin "MyRoom" in includes statement "MyHome includes MyRoom" must be of kind "interface mixin"'
+      message: 'Mixin `MyRoom` in includes statement `MyHome includes MyRoom` must be of kind `interface mixin`'
     });
   });
 
@@ -373,11 +378,11 @@ dictionary MyShelf : MyHome { required boolean full; };
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'unknownType',
-      message: '"MyLivingRoom" inherits from "MyRoom" which is not defined anywhere'
+      message: '`MyLivingRoom` inherits from `MyRoom` which is not defined anywhere'
     });
     assertAnomaly(report, 1, {
       name: 'wrongKind',
-      message: '"MyShelf" is of kind "dictionary" but inherits from "MyHome" which is of kind "interface"'
+      message: '`MyShelf` is of kind `dictionary` but inherits from `MyHome` which is of kind `interface`'
     });
   });
 
@@ -394,19 +399,19 @@ dictionary MyShelf : MyHome { required boolean full; };
     assertNbAnomalies(report, 4);
     assertAnomaly(report, 0, {
       name: 'unknownType',
-      message: 'Unknown type "bool" used in definition of "MyRoom"'
+      message: 'Unknown type `bool` used in definition of `MyRoom`'
     });
     assertAnomaly(report, 1, {
       name: 'unknownType',
-      message: 'Unknown type "MyBed" used in definition of "MyRoom"'
+      message: 'Unknown type `MyBed` used in definition of `MyRoom`'
     });
     assertAnomaly(report, 2, {
       name: 'unknownType',
-      message: 'Unknown type "MyUnknownType" used in definition of "MyRoom"'
+      message: 'Unknown type `MyUnknownType` used in definition of `MyRoom`'
     });
     assertAnomaly(report, 3, {
       name: 'unknownType',
-      message: 'Unknown type "UnknownInnerType" used in definition of "MyRoom"'
+      message: 'Unknown type `UnknownInnerType` used in definition of `MyRoom`'
     });
   });
 
@@ -426,19 +431,19 @@ interface mixin MyNamespaceMixin {};
     assertNbAnomalies(report, 4);
     assertAnomaly(report, 0, {
       name: 'redefinedWithDifferentTypes',
-      message: `"MyNamespaceMixin" is defined multiple times with different types (namespace, interface mixin) in ${specUrl}`
+      message: `\`MyNamespaceMixin\` is defined multiple times with different types (namespace, interface mixin) in ${specUrl}`
     });
     assertAnomaly(report, 1, {
       name: 'wrongType',
-      message: 'Namespace "MyNamespace" cannot be used as a type in definition of "MyHome"'
+      message: 'Namespace `MyNamespace` cannot be used as a type in definition of `MyHome`'
     });
     assertAnomaly(report, 2, {
       name: 'wrongType',
-      message: 'Interface mixin "MyLivingRoom" cannot be used as a type in definition of "MyHome"'
+      message: 'Interface mixin `MyLivingRoom` cannot be used as a type in definition of `MyHome`'
     });
     assertAnomaly(report, 3, {
       name: 'wrongType',
-      message: 'Name "MyNamespaceMixin" exists but is not a type and cannot be used in definition of "MyHome"'
+      message: 'Name `MyNamespaceMixin` exists but is not a type and cannot be used in definition of `MyHome`'
     });
   });
 
@@ -458,15 +463,15 @@ interface mixin MyNamespaceMixin {};
     assertNbAnomalies(report, 3);
     assertAnomaly(report, 0, {
       name: 'unknownExtAttr',
-      message: 'Unknown extended attribute "UnknownExtAttr" used in definition of "MyRoom"'
+      message: 'Unknown extended attribute `UnknownExtAttr` used in definition of `MyRoom`'
     });
     assertAnomaly(report, 1, {
       name: 'unknownExtAttr',
-      message: 'Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyLivingRoom"'
+      message: 'Unknown extended attribute `SuperUnknownExtAttr` used in definition of `MyLivingRoom`'
     });
     assertAnomaly(report, 2, {
       name: 'unknownExtAttr',
-      message: 'Unknown extended attribute "SuperUnknownExtAttr" used in definition of "MyBedRoom"'
+      message: 'Unknown extended attribute `SuperUnknownExtAttr` used in definition of `MyBedRoom`'
     });
   });
 
@@ -496,11 +501,11 @@ partial interface MyPartialHome {
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface "MyHome" overloads an operation defined in interface "MyHome"'
+      message: '`operation overload` in partial interface `MyHome` overloads an operation defined in interface `MyHome`'
     });
     assertAnomaly(report, 1, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface "MyPartialHome" overloads an operation defined in another partial interface "MyPartialHome"'
+      message: '`operation overload` in partial interface `MyPartialHome` overloads an operation defined in another partial interface `MyPartialHome`'
     });
   });
 
@@ -532,7 +537,7 @@ partial interface MyPartialHome {
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'overloaded',
-      message: `"operation overload" in partial interface "MyHome" overloads an operation defined in interface "MyHome" (in ${specUrl})`,
+      message: `\`operation overload\` in partial interface \`MyHome\` overloads an operation defined in interface \`MyHome\` (in ${specUrl})`,
       specs: [{ url: specUrl2 }]
     });
 
@@ -540,7 +545,7 @@ partial interface MyPartialHome {
     // should be reported
     assertAnomaly(report, 1, {
       name: 'overloaded',
-      message: `"operation overload" in partial interface "MyPartialHome" (in ${specUrl2}) overloads an operation defined in another partial interface "MyPartialHome" (in ${specUrl})`,
+      message: `\`operation overload\` in partial interface \`MyPartialHome\` (in ${specUrl2}) overloads an operation defined in another partial interface \`MyPartialHome\` (in ${specUrl})`,
       specs: [{ url: specUrl2 }, { url: specUrl }]
     });
   });
@@ -568,11 +573,11 @@ partial interface mixin MyPartialRoom {
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'overloaded',
-      message: '"operation overload" in interface "MyHome" overloads an operation defined in interface mixin "MyRoom"'
+      message: '`operation overload` in interface `MyHome` overloads an operation defined in interface mixin `MyRoom`'
     });
     assertAnomaly(report, 1, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface mixin "MyPartialRoom" overloads an operation defined in interface mixin "MyPartialRoom"'
+      message: '`operation overload` in partial interface mixin `MyPartialRoom` overloads an operation defined in interface mixin `MyPartialRoom`'
     });
   });
 
@@ -605,25 +610,25 @@ partial interface mixin MyPartialRoom {
     assertNbAnomalies(report, 4);
     assertAnomaly(report, 0, {
       name: 'overloaded',
-      message: `"operation overload" in interface "MyHome" overloads an operation defined in interface mixin "MyRoom" (in ${specUrl2})`,
+      message: `\`operation overload\` in interface \`MyHome\` overloads an operation defined in interface mixin \`MyRoom\` (in ${specUrl2})`,
       specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 1, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface mixin "MyPartialRoom" overloads an operation defined in interface mixin "MyPartialRoom"',
+      message: '`operation overload` in partial interface mixin `MyPartialRoom` overloads an operation defined in interface mixin `MyPartialRoom`',
       specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 2, {
       name: 'overloaded',
-      message: `"operation overload" in partial interface mixin "MyPartialRoom" overloads an operation defined in interface mixin "MyPartialRoom" (in ${specUrl})`,
+      message: `\`operation overload\` in partial interface mixin \`MyPartialRoom\` overloads an operation defined in interface mixin \`MyPartialRoom\` (in ${specUrl})`,
       specs: [{ url: specUrl2 }]
     });
 
     assertAnomaly(report, 3, {
       name: 'overloaded',
-      message: `"operation overload" in partial interface mixin "MyPartialRoom" (in ${specUrl2}) overloads an operation defined in another partial interface mixin "MyPartialRoom" (in ${specUrl})`,
+      message: `\`operation overload\` in partial interface mixin \`MyPartialRoom\` (in ${specUrl2}) overloads an operation defined in another partial interface mixin \`MyPartialRoom\` (in ${specUrl})`,
       specs: [{ url: specUrl2 }, { url: specUrl }]
     });
   });
@@ -649,15 +654,15 @@ partial interface mixin MyRoom {
     assertNbAnomalies(report, 3);
     assertAnomaly(report, 0, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface "MyHome" overloads an operation defined in interface mixin "MyRoom"'
+      message: '`operation overload` in partial interface `MyHome` overloads an operation defined in interface mixin `MyRoom`'
     });
     assertAnomaly(report, 1, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface "MyHome" overloads an operation defined in partial interface mixin "MyRoom"'
+      message: '`operation overload` in partial interface `MyHome` overloads an operation defined in partial interface mixin `MyRoom`'
     });
     assertAnomaly(report, 2, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface mixin "MyRoom" overloads an operation defined in interface mixin "MyRoom"'
+      message: '`operation overload` in partial interface mixin `MyRoom` overloads an operation defined in interface mixin `MyRoom`'
     });
   });
 
@@ -684,19 +689,19 @@ partial interface mixin MyRoom {
     assertNbAnomalies(report, 3);
     assertAnomaly(report, 0, {
       name: 'overloaded',
-      message: `"operation overload" in partial interface "MyHome" overloads an operation defined in interface mixin "MyRoom" (in ${specUrl2})`,
+      message: `\`operation overload\` in partial interface \`MyHome\` overloads an operation defined in interface mixin \`MyRoom\` (in ${specUrl2})`,
       specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 1, {
       name: 'overloaded',
-      message: `"operation overload" in partial interface "MyHome" overloads an operation defined in partial interface mixin "MyRoom" (in ${specUrl2})`,
+      message: `\`operation overload\` in partial interface \`MyHome\` overloads an operation defined in partial interface mixin \`MyRoom\` (in ${specUrl2})`,
       specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 2, {
       name: 'overloaded',
-      message: '"operation overload" in partial interface mixin "MyRoom" overloads an operation defined in interface mixin "MyRoom"',
+      message: '`operation overload` in partial interface mixin `MyRoom` overloads an operation defined in interface mixin `MyRoom`',
       specs: [{ url: specUrl2 }]
     });
   });
@@ -721,19 +726,19 @@ interface mixin MyRoom {
     assertNbAnomalies(report, 4);
     assertAnomaly(report, 0, {
       name: 'redefinedMember',
-      message: '"dejaVu" in interface "MyHome" is defined more than once'
+      message: '`dejaVu` in interface `MyHome` is defined more than once'
     });
     assertAnomaly(report, 1, {
       name: 'redefinedMember',
-      message: '"dejaVu" in partial interface "MyHome" duplicates a member defined in interface "MyHome"'
+      message: '`dejaVu` in partial interface `MyHome` duplicates a member defined in interface `MyHome`'
     });
     assertAnomaly(report, 2, {
       name: 'redefinedMember',
-      message: '"dejaVu" in interface "MyHome" duplicates a member defined in interface mixin "MyRoom"'
+      message: '`dejaVu` in interface `MyHome` duplicates a member defined in interface mixin `MyRoom`'
     });
     assertAnomaly(report, 3, {
       name: 'redefinedMember',
-      message: '"dejaVu" in partial interface "MyHome" duplicates a member defined in interface mixin "MyRoom"'
+      message: '`dejaVu` in partial interface `MyHome` duplicates a member defined in interface mixin `MyRoom`'
     });
   });
 
@@ -758,19 +763,19 @@ interface mixin MyRoom {
     assertNbAnomalies(report, 3);
     assertAnomaly(report, 0, {
       name: 'redefinedMember',
-      message: `"dejaVu" in partial interface "MyHome" duplicates a member defined in interface "MyHome" (in ${specUrl})`,
+      message: `\`dejaVu\` in partial interface \`MyHome\` duplicates a member defined in interface \`MyHome\` (in ${specUrl})`,
       specs: [{ url: specUrl2 }]
     });
 
     assertAnomaly(report, 1, {
       name: 'redefinedMember',
-      message: `"dejaVu" in interface "MyHome" duplicates a member defined in interface mixin "MyRoom" (in ${specUrl2})`,
+      message: `\`dejaVu\` in interface \`MyHome\` duplicates a member defined in interface mixin \`MyRoom\` (in ${specUrl2})`,
       specs: [{ url: specUrl }]
     });
 
     assertAnomaly(report, 2, {
       name: 'redefinedMember',
-      message: '"dejaVu" in partial interface "MyHome" duplicates a member defined in interface mixin "MyRoom"',
+      message: '`dejaVu` in partial interface `MyHome` duplicates a member defined in interface mixin `MyRoom`',
       specs: [{ url: specUrl2 }]
     });
   });
