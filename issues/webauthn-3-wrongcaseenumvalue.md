@@ -2,7 +2,7 @@
 Title: >-
   Enum values that ignore naming conventions in Web Authentication: An API for
   accessing Public Key Credentials - Level 3
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webauthn/issues/2133'
 Repo: 'https://github.com/w3c/webauthn'
 ---
 

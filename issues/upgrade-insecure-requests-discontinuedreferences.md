@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Upgrade Insecure Requests
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-upgrade-insecure-requests/issues/34'
 Repo: 'https://github.com/w3c/webappsec-upgrade-insecure-requests'
 ---
 

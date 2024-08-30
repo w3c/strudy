@@ -2,7 +2,7 @@
 Title: >-
   Enum values that ignore naming conventions in Protected Audience (formerly
   FLEDGE)
-Tracked: N/A
+Tracked: 'https://github.com/WICG/turtledove/issues/1268'
 Repo: 'https://github.com/WICG/turtledove'
 ---
 

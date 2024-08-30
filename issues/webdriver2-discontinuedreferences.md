@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in WebDriver
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webdriver/issues/1836'
 Repo: 'https://github.com/w3c/webdriver'
 ---
 
