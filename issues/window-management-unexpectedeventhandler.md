@@ -1,6 +1,6 @@
 ---
 Title: Missing `EventTarget` inheritances in Window Management
-Tracked: N/A
+Tracked: Identified in the spec itself https://w3c.github.io/window-management/#api-extensions-to-screen
 Repo: 'https://github.com/w3c/window-management'
 ---
 
