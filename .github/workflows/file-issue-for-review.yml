@@ -30,7 +30,16 @@ jobs:
       working-directory: strudy
     - name: Run Strudy to detect new anomalies
       working-directory: strudy
-      run: node strudy.js inspect ../webref --issues issues --what brokenLinks discontinuedReferences incompatiblePartialIdlExposure unexpectedEventHandler wrongCaseEnumValue --update-mode old
+      run: |
+        node strudy.js inspect ../webref \
+          --issues issues \
+          --update-mode old \
+          --cc ${{ vars.CC }} \
+          --what brokenLinks \
+          --what discontinuedReferences \
+          --what incompatiblePartialIdlExposure \
+          --what unexpectedEventHandler \
+          --what wrongCaseEnumValue
     - name: Run issue filer script
       working-directory: strudy
       run: node src/reporting/file-issue-for-review.js --max 10

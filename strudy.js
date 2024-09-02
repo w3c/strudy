@@ -64,6 +64,7 @@ program
   .command('inspect')
   .alias('study')
   .argument('<crawl>', 'Path/URL to crawl report')
+  .option('-cc, --cc <names...>', 'people to Cc in issues that may need help')
   .option('-f, --format <format>', 'report markdown or json', 'markdown')
   .option('-i, --issues <folder>', 'report issues as markdown files in the given folder')
   .option('-m, --max <max>', 'maximum number of issue files to create/update', myParseInt, 0)
@@ -95,6 +96,22 @@ Argument:
   then for an "index.json" file.
 
 Usage notes for some of the options:
+-cc, --cc <names...>
+  Lists people to copy in issues with a "Cc" message so that they get notified.
+  This is helpful to follow issues that may warrant further discussion and
+  guidance.
+
+  Each name should be a GitHub handle, such as "tidoust" or "dontcallmedom".
+  The handle may start with a "@" (code will add it as prefix automatically
+  otherwise).
+
+  The "Cc" message will only be added to anomalies that are not obvious to fix:
+  for example, it will be set for anomalies about algorithms and Web IDL, but
+  not for broken links or references to discontinued specs (see "cc" flag in
+  the definitions of anomalies in src/lib/study.js).
+
+  The option is ignored if the --issues option is not set.
+
 -f, --format <format>
   Tell Strudy to return a report in the specified format. Format may be one of
   "markdown" (default when option is not set) or "json".
@@ -301,7 +318,8 @@ Format must be one of "json" or "markdown".`)
         'json' :
         (options.issues ? 'issue' : 'full'),
       trResults: trReport?.results ?? [],
-      specs: options.spec
+      specs: options.spec,
+      cc: (options.issues ? options.cc : null)
     });
 
     // Output the structured anomaly report
