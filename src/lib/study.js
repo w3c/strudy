@@ -109,7 +109,8 @@ const anomalyGroups = [
         guidance: 'See [Dealing with the event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-for-spec-authors) in the HTML specification for guidance on how to deal with algorithm sections that run *in parallel*.'
       }
     ],
-    study: studyAlgorithms
+    study: studyAlgorithms,
+    cc: true
   },
 
   {
@@ -178,7 +179,8 @@ const anomalyGroups = [
       { name: 'wrongType', title: 'Web IDL names incorrectly used as types' }
     ],
     study: studyWebIdl,
-    studyParams: ['curated']
+    studyParams: ['curated'],
+    cc: true
   }
 ];
 
@@ -406,7 +408,7 @@ function pad(str, depth) {
   return str;
 }
 
-function serializeEntry(entry, format, depth = 0) {
+function serializeEntry(entry, format, options, depth = 0) {
   let res;
   if (format === 'json') {
     res = Object.assign({}, entry);
@@ -425,10 +427,10 @@ function serializeEntry(entry, format, depth = 0) {
       }));
     }
     if (entry.items) {
-      res.items = entry.items.map(item => serializeEntry(item, format, depth + 1));
+      res.items = entry.items.map(item => serializeEntry(item, format, options, depth + 1));
     }
     if (entry.anomalies) {
-      res.anomalies = entry.anomalies.map(anomaly => serializeEntry(anomaly, format, depth + 1));
+      res.anomalies = entry.anomalies.map(anomaly => serializeEntry(anomaly, format, options, depth + 1));
     }
   }
   else if (format === 'markdown') {
@@ -481,17 +483,32 @@ function serializeEntry(entry, format, depth = 0) {
     }
 
     for (const item of entry.items ?? []) {
-      res += '\n' + serializeEntry(item, format, depth + 1);
+      res += '\n' + serializeEntry(item, format, options, depth + 1);
     }
     if (entry.anomalies?.length > 0) {
       for (const anomaly of entry.anomalies) {
-        res += `\n` + serializeEntry(anomaly, format, depth + 1);
+        res += `\n` + serializeEntry(anomaly, format, options, depth + 1);
       }
       if (entry.group?.guidance) {
         res += `\n\n` + entry.group.guidance;
       }
       else if (entry.type?.guidance) {
         res += `\n\n` + entry.type.guidance;
+      }
+      if (options?.cc?.length > 0 && entry.type) {
+        const mentions = options.cc
+          .map(name => name.startsWith('@') ? name : '@' + name)
+          .join(' ')
+        if (entry.type.cc) {
+          res += `\n\n<sub>Cc ${mentions}</sub>`;
+        }
+        else {
+          const group = anomalyGroups.find(group =>
+            group.types.find(type => type.name === entry.type.name));
+          if (group.cc) {
+            res += `\n\n<sub>Cc ${mentions}</sub>`;
+          }
+        }
       }
     }
   }
@@ -502,19 +519,19 @@ function serializeEntry(entry, format, depth = 0) {
 /**
  * Format the structured report as JSON or markdown, or a combination of both
  */
-function formatReport(format, report) {
+function formatReport(format, report, options) {
   if (format === 'json') {
     // We'll return the report as is, trimming the information about specs to
     // a reasonable minimum (the rest of the information can easily be
     // retrieved from the crawl result if needed)
-    return report.map(entry => serializeEntry(entry, 'json'));
+    return report.map(entry => serializeEntry(entry, 'json', options));
   }
   else if (format === 'issue') {
     return report.map(entry => Object.assign({
       name: entry.name,
       title: entry.title,
       spec: entry.spec,
-      content: serializeEntry(entry, 'markdown')
+      content: serializeEntry(entry, 'markdown', options)
     }));
   }
   else if (format === 'full') {
@@ -524,11 +541,11 @@ function formatReport(format, report) {
         content: report.map(entry => {
           if (entry.title) {
             return `## ${entry.title}
-${serializeEntry(entry, 'markdown')}
+${serializeEntry(entry, 'markdown', options)}
 `;
           }
           else {
-            return serializeEntry(entry, 'markdown');
+            return serializeEntry(entry, 'markdown', options);
           }
         })
       }
@@ -673,7 +690,7 @@ export default async function study(specs, options = {}) {
       studied: specs.length,
       anomalies: anomalies.length
     },
-    results: formatReport(format, report),
+    results: formatReport(format, report, options),
     looksGood: getNamesOfNonReportedEntries(report, specs, what, structure)
   };
 
