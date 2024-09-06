@@ -1,6 +1,6 @@
 ---
 Title: '[cssom-1] Missing tasks in parallel steps in CSS Object Model (CSSOM)'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/10843'
 Repo: 'https://github.com/w3c/csswg-drafts'
 ---
 

@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Credential Management Level 1
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-credential-management/issues/260'
 Repo: 'https://github.com/w3c/webappsec-credential-management'
 ---
 
