@@ -33,7 +33,7 @@ jobs:
       run: |
         node strudy.js inspect ../webref \
           --issues issues \
-          --update-mode old \
+          --update-mode untracked \
           --cc ${{ vars.CC }} \
           --what brokenLinks \
           --what discontinuedReferences \
