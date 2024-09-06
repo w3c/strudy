@@ -229,8 +229,10 @@ Usage notes for some of the options:
   "new" (default)  preserve existing files
   "old"            preserve existing files but get rid of old ones for which
                    study reveals no more issue
-  "untracked"      update existing files that do not have a "Tracked" URL
-  "tracked"        update existing files that have a "Tracked" URL
+  "untracked"      same as "old" but also update existing files that do not
+                   have a "Tracked" URL
+  "tracked"        same as "old" but also update existing files that have a
+                   "Tracked" URL
   "all"            update all existing files, deleting them when needed
 
   Strudy will always create new issue files, the mode only changes the behavior
@@ -335,6 +337,7 @@ Format must be one of "json" or "markdown".`)
       // Caller wants to add/update issue files in the provided folder.
       // Issue files are formatted with the gray-matter library to save useful
       // metadata as front matter in the file.
+      const issueUrl = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)$/;
       let reported = 0;
       for (const entry of anomaliesReport.results) {
         const filename = path.join(options.issues, `${entry.name}.md`);
@@ -348,8 +351,8 @@ Format must be one of "json" or "markdown".`)
           }
           existingReport = matter(await fs.readFile(filename, 'utf-8'));
           tracked = existingReport.data.Tracked ?? 'N/A';
-          if ((options.updateMode === 'tracked' && tracked === 'N/A') ||
-              (options.updateMode === 'untracked' && tracked !== 'N/A')) {
+          if ((options.updateMode === 'tracked' && !tracked.match(issueUrl)) ||
+              (options.updateMode === 'untracked' && tracked.match(issueUrl))) {
             console.warn(`- skip ${filename}, file already exists, with Tracked="${tracked}"`);
             continue;
           }
@@ -388,8 +391,7 @@ ${entry.content}
         }
       }
 
-      if (options.updateMode === 'old' ||
-          options.updateMode === 'all') {
+      if (options.updateMode !== 'new') {
         const reportFiles = await fs.readdir(options.issues);
         const todelete = reportFiles.filter(file =>
           anomaliesReport.looksGood.find(name => file === `${name}.md`));
