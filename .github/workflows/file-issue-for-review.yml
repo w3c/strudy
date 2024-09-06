@@ -39,7 +39,7 @@ jobs:
           --what discontinuedReferences \
           --what incompatiblePartialIdlExposure \
           --what unexpectedEventHandler \
-          --what wrongCaseEnumValue
+          --what wrongCaseEnumValue \
           --what missingTask
     - name: Run issue filer script
       working-directory: strudy
