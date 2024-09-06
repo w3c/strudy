@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Cookie Store API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/cookie-store/issues/239'
 Repo: 'https://github.com/WICG/cookie-store'
 ---
 

@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Contact Picker API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/contact-picker/issues/78'
 Repo: 'https://github.com/w3c/contact-picker'
 ---
 
