@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Web Background Synchronization
-Tracked: N/A
+Tracked: 'https://github.com/WICG/background-sync/issues/189'
 Repo: 'https://github.com/WICG/background-sync'
 ---
 

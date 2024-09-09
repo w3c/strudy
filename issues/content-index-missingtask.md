@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Content Index
-Tracked: N/A
+Tracked: 'https://github.com/WICG/content-index/issues/34'
 Repo: 'https://github.com/WICG/content-index'
 ---
 
