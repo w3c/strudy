@@ -2,7 +2,7 @@
 Title: >-
   [encrypted-media-2] Missing tasks in parallel steps in Encrypted Media
   Extensions
-Tracked: N/A
+Tracked: 'https://github.com/w3c/encrypted-media/issues/562'
 Repo: 'https://github.com/w3c/encrypted-media'
 ---
 
