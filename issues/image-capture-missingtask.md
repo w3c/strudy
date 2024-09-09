@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in MediaStream Image Capture
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediacapture-image/issues/308'
 Repo: 'https://github.com/w3c/mediacapture-image'
 ---
 

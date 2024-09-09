@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Geolocation Sensor
-Tracked: N/A
+Tracked: 'https://github.com/w3c/geolocation-sensor/issues/63'
 Repo: 'https://github.com/w3c/geolocation-sensor'
 ---
 

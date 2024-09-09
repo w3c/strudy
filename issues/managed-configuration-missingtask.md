@@ -2,7 +2,7 @@
 Title: >-
   [managed-configuration] Missing tasks in parallel steps in Managed
   Configuration API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/WebApiDevice/issues/25'
 Repo: 'https://github.com/WICG/WebApiDevice'
 ---
 

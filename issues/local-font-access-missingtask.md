@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Local Font Access API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/local-font-access/issues/101'
 Repo: 'https://github.com/WICG/local-font-access'
 ---
 

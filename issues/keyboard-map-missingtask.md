@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Keyboard Map
-Tracked: N/A
+Tracked: 'https://github.com/WICG/keyboard-map/issues/46'
 Repo: 'https://github.com/WICG/keyboard-map'
 ---
 

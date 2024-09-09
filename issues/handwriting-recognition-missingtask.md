@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Handwriting Recognition API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/handwriting-recognition/issues/35'
 Repo: 'https://github.com/WICG/handwriting-recognition'
 ---
 

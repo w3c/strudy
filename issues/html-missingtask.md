@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in HTML Standard
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/html/issues/10608'
 Repo: 'https://github.com/whatwg/html'
 ---
 

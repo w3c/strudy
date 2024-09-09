@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Get Installed Related Apps API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/get-installed-related-apps/issues/40'
 Repo: 'https://github.com/WICG/get-installed-related-apps'
 ---
 

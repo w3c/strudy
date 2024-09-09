@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in JS Self-Profiling API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/js-self-profiling/issues/84'
 Repo: 'https://github.com/WICG/js-self-profiling'
 ---
 

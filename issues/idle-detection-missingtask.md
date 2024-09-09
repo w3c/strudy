@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Idle Detection API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/idle-detection/issues/54'
 Repo: 'https://github.com/WICG/idle-detection'
 ---
 
