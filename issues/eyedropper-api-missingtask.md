@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in EyeDropper API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/eyedropper-api/issues/37'
 Repo: 'https://github.com/WICG/eyedropper-api'
 ---
 

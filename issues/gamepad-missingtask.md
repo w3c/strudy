@@ -1,6 +1,6 @@
 ---
 Title: '[gamepad] Missing tasks in parallel steps in Gamepad'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/gamepad/issues/212'
 Repo: 'https://github.com/w3c/gamepad'
 ---
 

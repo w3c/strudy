@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Fullscreen API Standard
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/fullscreen/issues/240'
 Repo: 'https://github.com/whatwg/fullscreen'
 ---
 
