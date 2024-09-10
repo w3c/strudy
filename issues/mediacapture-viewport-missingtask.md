@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Viewport Capture
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediacapture-viewport/issues/25'
 Repo: 'https://github.com/w3c/mediacapture-viewport'
 ---
 

@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Region Capture
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediacapture-region/issues/84'
 Repo: 'https://github.com/w3c/mediacapture-region'
 ---
 

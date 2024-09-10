@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Presentation API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/presentation-api/issues/523'
 Repo: 'https://github.com/w3c/presentation-api'
 ---
 

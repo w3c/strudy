@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Picture-in-Picture
-Tracked: N/A
+Tracked: 'https://github.com/w3c/picture-in-picture/issues/230'
 Repo: 'https://github.com/w3c/picture-in-picture'
 ---
 

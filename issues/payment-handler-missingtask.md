@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Payment Handler API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/payment-handler/issues/419'
 Repo: 'https://github.com/w3c/payment-handler'
 ---
 

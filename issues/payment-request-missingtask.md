@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Payment Request API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/payment-request/issues/1032'
 Repo: 'https://github.com/w3c/payment-request'
 ---
 

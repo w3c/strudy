@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Media Session
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediasession/issues/339'
 Repo: 'https://github.com/w3c/mediasession'
 ---
 

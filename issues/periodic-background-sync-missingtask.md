@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Web Periodic Background Synchronization
-Tracked: N/A
+Tracked: 'https://github.com/WICG/periodic-background-sync/issues/13'
 Repo: 'https://github.com/WICG/periodic-background-sync'
 ---
 

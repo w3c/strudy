@@ -2,7 +2,7 @@
 Title: >-
   [mediacapture-handle-actions] Missing tasks in parallel steps in The
   Capture-Handle Actions Mechanism
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediacapture-handle/issues/77'
 Repo: 'https://github.com/w3c/mediacapture-handle'
 ---
 
