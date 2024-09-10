@@ -148,7 +148,7 @@ interface WhereIAm {};
     });
   });
 
-  it('reports no anomaly for valid EventHandler attributes definitions', () => {
+  it('reports EventHandler attributes with no matching events', () => {
     const report = analyzeIdl(`
 [Exposed=*]
 interface Event {};
@@ -163,6 +163,34 @@ interface Carlos : EventTarget {
 [Exposed=*]
 interface EventTarget {};
 `);
+    assertNbAnomalies(report, 1);
+    assertAnomaly(report, 0, {
+      name: 'noEvent',
+      message: 'The interface `Carlos` defines an event handler `onbigbisous` but no event named "bigbisous" targets it'
+    });
+  });
+
+  it('reports no anomaly for valid EventHandler attributes definitions', () => {
+    const crawlResult = toCrawlResult(`
+[Exposed=*]
+interface Event {};
+[LegacyTreatNonObjectAsNull]
+callback EventHandlerNonNull = any (Event event);
+typedef EventHandlerNonNull? EventHandler;
+
+[Global=Window,Exposed=*]
+interface Carlos : EventTarget {
+  attribute EventHandler onbigbisous;
+};
+[Exposed=*]
+interface EventTarget {};
+`);
+    crawlResult[0].events = [{
+      type: 'bigbisous',
+      interface: 'Event',
+      targets: ['Carlos']
+    }];
+    const report = study(crawlResult);
     assertNbAnomalies(report, 0);
   });
 
@@ -179,11 +207,73 @@ interface Carlos {
   attribute EventHandler onbigbisous;
 };
 `);
-    assertNbAnomalies(report, 1);
+    assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'unexpectedEventHandler',
       message: 'The interface `Carlos` defines an event handler `onbigbisous` but does not inherit from `EventTarget`'
     });
+    assertAnomaly(report, 1, { name: 'noEvent' });
+  });
+
+  it('follows the inheritance chain to assess event targets', () => {
+    const crawlResult = toCrawlResult(`
+[Exposed=*]
+interface Event {};
+[LegacyTreatNonObjectAsNull]
+callback EventHandlerNonNull = any (Event event);
+typedef EventHandlerNonNull? EventHandler;
+
+[Global=Window,Exposed=*]
+interface Singer : EventTarget {
+  attribute EventHandler onbigbisous;
+};
+
+[Global=Window,Exposed=*]
+interface Carlos : Singer {};
+[Exposed=*]
+interface EventTarget {};
+`);
+    crawlResult[0].events = [{
+      type: 'bigbisous',
+      interface: 'Event',
+      targets: [
+        'Carlos'
+      ]
+    }];
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
+  });
+
+  it('follows the bubbling path to assess event targets', () => {
+    const crawlResult = toCrawlResult(`
+[Exposed=*]
+interface Event {};
+[LegacyTreatNonObjectAsNull]
+callback EventHandlerNonNull = any (Event event);
+typedef EventHandlerNonNull? EventHandler;
+
+[Global=Window,Exposed=*]
+interface IDBDatabase : EventTarget {
+  attribute EventHandler onabort;
+};
+[Global=Window,Exposed=*]
+interface IDBTransaction : EventTarget {
+  attribute EventHandler onabort;
+};
+[Global=Window,Exposed=*]
+interface MyIndexedDB : IDBDatabase {
+};
+
+[Exposed=*]
+interface EventTarget {};`);
+    crawlResult[0].events = [{
+      type: 'abort',
+      interface: 'Event',
+      targets: ['IDBTransaction'],
+      bubbles: true
+    }];
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
   });
 
   it('detects incompatible partial exposure issues', () => {
