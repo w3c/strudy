@@ -28,7 +28,7 @@ jobs:
         git config user.email "<>"
         git remote set-url --push origin https://x-access-token:${{ secrets.ISSUE_REPORT_GH_TOKEN }}@github.com/$GITHUB_REPOSITORY
       working-directory: strudy
-    - name: Run Strudy to detect new anomalies
+    - name: Analyze the raw crawl results
       working-directory: strudy
       run: |
         node strudy.js inspect ../webref \
@@ -37,10 +37,24 @@ jobs:
           --cc ${{ vars.CC }} \
           --what brokenLinks \
           --what discontinuedReferences \
+          --what missingTask
+    - name: Switch to the curated branch
+      working-directory: webref
+      # Note: final "--" makes it clear that we're talking about the branch
+      # and not the folder. The "curated" folder should not exist in a job
+      # context, but better err on the safe side!
+      run: git checkout curated --
+    - name: Analyze the curated crawl results
+      working-directory: strudy
+      run: |
+        node strudy.js inspect ../webref \
+          --issues issues \
+          --update-mode untracked \
+          --cc ${{ vars.CC }} \
           --what incompatiblePartialIdlExposure \
           --what unexpectedEventHandler \
           --what wrongCaseEnumValue \
-          --what missingTask
+          --what noEvent
     - name: Run issue filer script
       working-directory: strudy
       run: node src/reporting/file-issue-for-review.js --max 10
