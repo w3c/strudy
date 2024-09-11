@@ -149,6 +149,11 @@ const anomalyGroups = [
         guidance: 'See the [`[Exposed]`](https://webidl.spec.whatwg.org/#Exposed) extended attribute section in Web IDL for requirements.'
       },
       { name: 'invalid', title: 'Invalid Web IDL' },
+      {
+        name: 'noEvent',
+        title: 'Event handlers with no matching events',
+        description: 'No matching events were found for the following event handlers'
+      },
       { name: 'noExposure', title: 'Missing `[Exposed]` attributes' },
       { name: 'noOriginalDefinition', title: 'Missing base interfaces' },
       { name: 'overloaded', title: 'Invalid overloaded operations' },

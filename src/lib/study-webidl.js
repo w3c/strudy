@@ -20,6 +20,7 @@
  */
 
 import * as WebIDL2 from 'webidl2';
+import { getInterfaceTreeInfo } from 'reffy';
 
 const getSpecs = list => [...new Set(list.map(({ spec }) => spec))];
 const specName = spec => spec.shortname ?? spec.url;
@@ -174,6 +175,15 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
   const usedTypes = {}; // Index of types used in the IDL
   const usedExtAttrs = {}; // Index of extended attributes
 
+  // We need to run the analysis on all specs, even if caller is only
+  // interested in a few of them, because types may be defined in specs that
+  // the caller is not interested in.
+  const allSpecs = (crawledResults.length > 0) ? crawledResults : specs;
+  const allEvents = allSpecs
+    .filter(spec => Array.isArray(spec.events))
+    .map(spec => spec.events.map(e => Object.assign({ spec }, e)))
+    .flat();
+
   // Record an anomaly for the given spec(s),
   // provided we are indeed interested in the results
   function recordAnomaly (spec, name, message) {
@@ -193,17 +203,54 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
   function inheritsFrom (iface, ancestor) {
     if (!iface.inheritance) return false;
     if (iface.inheritance === ancestor) return true;
+    if (!dfns[iface.inheritance]) return false;
     const parentInterface = dfns[iface.inheritance].find(({ idl }) => !idl.partial)?.idl;
     if (!parentInterface) return false;
     return inheritsFrom(parentInterface, ancestor);
   }
 
+  function getBubblingPath(iface) {
+    const interfaces = Object.values(dfns)
+      .map(dfn => dfn.find(d => d.idl.type === 'interface'))
+      .filter(dfn => !!dfn)
+      .map(dfn => dfn.idl);
+    const { bubblingPath } = getInterfaceTreeInfo(iface, interfaces);
+    return bubblingPath;
+  }
+
   // TODO: a full check of event handlers would require:
   // - checking if the interface doesn't include a mixin with eventhandlers
   function checkEventHandlers (spec, memberHolder, iface = memberHolder) {
-    const eventHandler = memberHolder.members.find(m => m?.name?.startsWith('on') && m.type === 'attribute' && m.idlType?.idlType === 'EventHandler');
-    if (eventHandler && !inheritsFrom(iface, 'EventTarget')) {
-      recordAnomaly(spec, 'unexpectedEventHandler', `The interface \`${iface.name}\` defines an event handler \`${eventHandler.name}\` but does not inherit from \`EventTarget\``);
+    const eventHandlers = memberHolder.members.filter(m => m?.name?.startsWith('on') && m.type === 'attribute' && m.idlType?.idlType === 'EventHandler');
+    if (eventHandlers.length > 0 && !inheritsFrom(iface, 'EventTarget')) {
+      recordAnomaly(spec, 'unexpectedEventHandler', `The interface \`${iface.name}\` defines an event handler \`${eventHandlers[0].name}\` but does not inherit from \`EventTarget\``);
+    }
+
+    for (const eventHandler of eventHandlers) {
+      const eventType = eventHandler.name.substring(2);
+      const events = allEvents.filter(e => e.type === eventType);
+      let event = events.find(e => e.targets?.find(target =>
+        target === iface.name));
+      if (!event) {
+        // No event found with the same type that targets the interface
+        // directly, but one the events may target an interface that
+        // inherits from the interface, or may bubble on the interface.
+        event = events.find(e => e.targets?.find(target => {
+          const inheritanceFound = dfns[target]?.find(dfn =>
+            dfn.idl.type === 'interface' &&
+            inheritsFrom(dfn.idl, iface.name));
+          if (inheritanceFound) return true;
+          if (!e.bubbles) return false;
+          const bubblingPath = getBubblingPath(target);
+          if (!bubblingPath) return false;
+          return bubblingPath.find(bubblingIface =>
+            iface.name === bubblingIface ||
+            inheritsFrom(iface, bubblingIface));
+        }));
+      }
+      if (!event) {
+        recordAnomaly(spec, 'noEvent', `The interface \`${iface.name}\` defines an event handler \`${eventHandler.name}\` but no event named "${eventType}" targets it`);
+      }
     }
   }
 
@@ -384,10 +431,6 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     }
   }
 
-  // We need to run the analysis on all specs, even if caller is only
-  // interested in a few of them, because types may be defined in specs that
-  // the caller is not interested in.
-  const allSpecs = (crawledResults.length > 0) ? crawledResults : specs;
   allSpecs
     // We're only interested in specs that define Web IDL content
     .filter(spec => !!spec.idl)
