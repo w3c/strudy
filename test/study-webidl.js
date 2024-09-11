@@ -7,6 +7,16 @@
 import study from '../src/lib/study-webidl.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 
+const baseEventIdl = `
+[Exposed=*]
+interface Event {};
+[LegacyTreatNonObjectAsNull]
+callback EventHandlerNonNull = any (Event event);
+typedef EventHandlerNonNull? EventHandler;
+[Exposed=*]
+interface EventTarget {};
+`;
+
 describe('The Web IDL analyser', () => {
   const specUrl = 'https://www.w3.org/TR/spec';
   const specUrl2 = 'https://www.w3.org/TR/spec2';
@@ -149,19 +159,11 @@ interface WhereIAm {};
   });
 
   it('reports EventHandler attributes with no matching events', () => {
-    const report = analyzeIdl(`
-[Exposed=*]
-interface Event {};
-[LegacyTreatNonObjectAsNull]
-callback EventHandlerNonNull = any (Event event);
-typedef EventHandlerNonNull? EventHandler;
-
+    const report = analyzeIdl(baseEventIdl + `
 [Global=Window,Exposed=*]
 interface Carlos : EventTarget {
   attribute EventHandler onbigbisous;
 };
-[Exposed=*]
-interface EventTarget {};
 `);
     assertNbAnomalies(report, 1);
     assertAnomaly(report, 0, {
@@ -171,20 +173,11 @@ interface EventTarget {};
   });
 
   it('reports no anomaly for valid EventHandler attributes definitions', () => {
-    const crawlResult = toCrawlResult(`
-[Exposed=*]
-interface Event {};
-[LegacyTreatNonObjectAsNull]
-callback EventHandlerNonNull = any (Event event);
-typedef EventHandlerNonNull? EventHandler;
-
+    const crawlResult = toCrawlResult(baseEventIdl +`
 [Global=Window,Exposed=*]
 interface Carlos : EventTarget {
   attribute EventHandler onbigbisous;
-};
-[Exposed=*]
-interface EventTarget {};
-`);
+};`);
     crawlResult[0].events = [{
       type: 'bigbisous',
       interface: 'Event',
@@ -195,18 +188,11 @@ interface EventTarget {};
   });
 
   it('detects unexpected EventHandler attributes', () => {
-    const report = analyzeIdl(`
-[Exposed=*]
-interface Event {};
-[LegacyTreatNonObjectAsNull]
-callback EventHandlerNonNull = any (Event event);
-typedef EventHandlerNonNull? EventHandler;
-
+    const report = analyzeIdl(baseEventIdl + `
 [Global=Window,Exposed=*]
 interface Carlos {
   attribute EventHandler onbigbisous;
-};
-`);
+};`);
     assertNbAnomalies(report, 2);
     assertAnomaly(report, 0, {
       name: 'unexpectedEventHandler',
@@ -216,23 +202,14 @@ interface Carlos {
   });
 
   it('follows the inheritance chain to assess event targets', () => {
-    const crawlResult = toCrawlResult(`
-[Exposed=*]
-interface Event {};
-[LegacyTreatNonObjectAsNull]
-callback EventHandlerNonNull = any (Event event);
-typedef EventHandlerNonNull? EventHandler;
-
+    const crawlResult = toCrawlResult(baseEventIdl + `
 [Global=Window,Exposed=*]
 interface Singer : EventTarget {
   attribute EventHandler onbigbisous;
 };
 
 [Global=Window,Exposed=*]
-interface Carlos : Singer {};
-[Exposed=*]
-interface EventTarget {};
-`);
+interface Carlos : Singer {};`);
     crawlResult[0].events = [{
       type: 'bigbisous',
       interface: 'Event',
@@ -245,13 +222,7 @@ interface EventTarget {};
   });
 
   it('follows the bubbling path to assess event targets', () => {
-    const crawlResult = toCrawlResult(`
-[Exposed=*]
-interface Event {};
-[LegacyTreatNonObjectAsNull]
-callback EventHandlerNonNull = any (Event event);
-typedef EventHandlerNonNull? EventHandler;
-
+    const crawlResult = toCrawlResult(baseEventIdl + `
 [Global=Window,Exposed=*]
 interface IDBDatabase : EventTarget {
   attribute EventHandler onabort;
@@ -262,10 +233,7 @@ interface IDBTransaction : EventTarget {
 };
 [Global=Window,Exposed=*]
 interface MyIndexedDB : IDBDatabase {
-};
-
-[Exposed=*]
-interface EventTarget {};`);
+};`);
     crawlResult[0].events = [{
       type: 'abort',
       interface: 'Event',
