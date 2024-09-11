@@ -151,8 +151,8 @@ const anomalyGroups = [
       { name: 'invalid', title: 'Invalid Web IDL' },
       {
         name: 'noEvent',
-        title: 'Suspicious event handlers',
-        description: 'The following suspicious event handlers were found'
+        title: 'Event handlers with no matching events',
+        description: 'No matching events were found for the following event handlers'
       },
       { name: 'noExposure', title: 'Missing `[Exposed]` attributes' },
       { name: 'noOriginalDefinition', title: 'Missing base interfaces' },
