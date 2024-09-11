@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in Navigation Timing Level 2
-Tracked: 'https://github.com/w3c/navigation-timing/issues/204'
+Tracked: 'back_forward kept for backwards compat, see https://github.com/w3c/navigation-timing/issues/204#issuecomment-2341052363'
 Repo: 'https://github.com/w3c/navigation-timing'
 ---
 
