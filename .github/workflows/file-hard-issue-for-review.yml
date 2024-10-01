@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
 
-name: Submit draft issue reports from Strudy analysis
+name: Submit draft issue of more challenging reports from Strudy analysis
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -35,25 +35,7 @@ jobs:
           --issues issues \
           --update-mode untracked \
           --cc ${{ vars.CC }} \
-          --what brokenLinks \
-          --what discontinuedReferences \
-    - name: Switch to the curated branch
-      working-directory: webref
-      # Note: final "--" makes it clear that we're talking about the branch
-      # and not the folder. The "curated" folder should not exist in a job
-      # context, but better err on the safe side!
-      run: git checkout curated --
-    - name: Analyze the curated crawl results
-      working-directory: strudy
-      run: |
-        node strudy.js inspect ../webref \
-          --issues issues \
-          --update-mode untracked \
-          --cc ${{ vars.CC }} \
-          --what incompatiblePartialIdlExposure \
-          --what unexpectedEventHandler \
-          --what wrongCaseEnumValue \
-          --what noEvent
+          --what missingTask
     - name: Run issue filer script
       working-directory: strudy
       run: node src/reporting/file-issue-for-review.js --max 10
