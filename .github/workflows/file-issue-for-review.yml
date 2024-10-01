@@ -1,5 +1,14 @@
 on:
   workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Type of issues to draft'
+        required: true
+        default: 'regular'
+        type: choice
+        options:
+          - regular
+          - challenging
 
 name: Submit draft issue reports from Strudy analysis
 jobs:
@@ -28,8 +37,9 @@ jobs:
         git config user.email "<>"
         git remote set-url --push origin https://x-access-token:${{ secrets.ISSUE_REPORT_GH_TOKEN }}@github.com/$GITHUB_REPOSITORY
       working-directory: strudy
-    - name: Analyze the raw crawl results
+    - name: Analyze the raw crawl results (regular)
       working-directory: strudy
+      if: ${{ inputs.profile == 'regular' }}
       run: |
         node strudy.js inspect ../webref \
           --issues issues \
@@ -37,6 +47,15 @@ jobs:
           --cc ${{ vars.CC }} \
           --what brokenLinks \
           --what discontinuedReferences \
+    - name: Analyze the raw crawl results (challenging)
+      working-directory: strudy
+      if: ${{ inputs.profile == 'challenging' }}
+      run: |
+        node strudy.js inspect ../webref \
+          --issues issues \
+          --update-mode untracked \
+          --cc ${{ vars.CC }} \
+          --what missingTask
     - name: Switch to the curated branch
       working-directory: webref
       # Note: final "--" makes it clear that we're talking about the branch
@@ -45,6 +64,7 @@ jobs:
       run: git checkout curated --
     - name: Analyze the curated crawl results
       working-directory: strudy
+      if: ${{ inputs.profile == 'regular' }}
       run: |
         node strudy.js inspect ../webref \
           --issues issues \
