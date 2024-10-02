@@ -2,7 +2,9 @@
 Title: >-
   Enum values that ignore naming conventions in Web Authentication: An API for
   accessing Public Key Credentials - Level 3
-Tracked: 'Willfull design https://github.com/w3c/webauthn/issues/2133#issuecomment-2321132318'
+Tracked: >-
+  Willfull design
+  https://github.com/w3c/webauthn/issues/2133#issuecomment-2321132318
 Repo: 'https://github.com/w3c/webauthn'
 ---
 
@@ -18,5 +20,7 @@ While crawling [Web Authentication: An API for accessing Public Key Credentials 
 * [ ] The value `"signalUnknownCredential"` of the enum `ClientCapability` does not match the expected conventions (lower case, hyphen separated words)
 
 See [Use casing rules consistent with existing APIs](https://w3ctag.github.io/design-principles/#casing-rules) in Web Platform Design Principles document for guidance.
+
+<sub>Cc @dontcallmedom @tidoust</sub>
 
 <sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>
