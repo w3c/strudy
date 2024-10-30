@@ -1,6 +1,6 @@
 ---
 Title: Broken links in EyeDropper API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/eyedropper-api/issues/39'
 Repo: 'https://github.com/WICG/eyedropper-api'
 ---
 
