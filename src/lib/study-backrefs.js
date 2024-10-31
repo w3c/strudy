@@ -396,7 +396,14 @@ function studyLinks(spec, links, report, edResults, trResults, htmlFragments) {
 
       // Check anchors
       const anchors = links[link].anchors || [];
-      for (const anchor of anchors) {
+      for (let anchor of anchors) {
+	if (anchor.startsWith(':~:text=')) {
+          // links using only text fragments are inherently fragile
+          recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
+	  continue;
+        }
+	// We remove the fragment directive for comparison
+	anchor = anchor.split(':~:')[0];
         const baseLink = (sourceSpec.nightly?.url === link || sourceSpec.nightly?.pages?.includes(link)) ? link : sourceSpec.nightly?.url;
         const matchFullNightlyLink = matchAnchor(baseLink, anchor);
         const matchFullReleaseLink = matchAnchor((sourceSpec.release || sourceSpec.nightly).url, anchor);
@@ -424,10 +431,6 @@ function studyLinks(spec, links, report, edResults, trResults, htmlFragments) {
                 ids.find(matchAnchor(`https://html.spec.whatwg.org/multipage/${htmlFragments[anchor]}.html`, anchor))) {
               // Deal with anchors that are JS-redirected from
               // the multipage version of HTML
-              recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
-            }
-            else if (anchor.startsWith(':~:text=')) {
-              // links using text fragments are inherently fragile
               recordAnomaly(spec, 'frailLinks', link + '#' + anchor);
             }
             else {
