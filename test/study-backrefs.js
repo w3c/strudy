@@ -67,7 +67,7 @@ describe('The links analyser', () => {
   });
 
   it('reports a broken link', async () => {
-    const ids = ['validid'];
+    const ids = ['invalidid'];
     const crawlResult = toCrawlResults([], ids);
     const report = await study(crawlResult.ed, { htmlFragments: {} });
     assertNbAnomalies(report, 1);
@@ -76,6 +76,13 @@ describe('The links analyser', () => {
       message: specEdUrl + '#' + ids[0],
       spec: { url: 'https://www.w3.org/TR/spec2/' }
     });
+  });
+
+
+  it('removes fragment directives when checking for broken links', async () => {
+    const crawlResult = toCrawlResults(['validid'], ['validid:~:text=foo']);
+    const report = await study(crawlResult.ed, { htmlFragments: {} });
+    assertNbAnomalies(report, 0);
   });
 
   /* TOTEST
