@@ -1,6 +1,6 @@
 ---
 Title: Broken links in MiniApp Manifest
-Tracked: N/A
+Tracked: 'https://github.com/w3c/miniapp-manifest/issues/70'
 Repo: 'https://github.com/w3c/miniapp-manifest'
 ---
 
