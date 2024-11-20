@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in Web Audio API 1.1
-Tracked: N/A
+Tracked: Too late to fix, see https://github.com/WebAudio/web-audio-api/issues/2599
 Repo: 'https://github.com/WebAudio/web-audio-api'
 ---
 
