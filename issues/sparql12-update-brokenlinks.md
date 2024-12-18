@@ -1,6 +1,6 @@
 ---
 Title: Broken links in SPARQL 1.2 Update
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-update/issues/51'
 Repo: 'https://github.com/w3c/sparql-update'
 ---
 
