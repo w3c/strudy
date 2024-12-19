@@ -9,7 +9,8 @@
   "files": [
     "index.js",
     "strudy.js",
-    "src/"
+    "src/",
+    "requirements.txt"
   ],
   "bugs": {
     "url": "https://github.com/w3c/strudy/issues"
