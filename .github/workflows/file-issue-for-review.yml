@@ -73,7 +73,8 @@ jobs:
           --what incompatiblePartialIdlExposure \
           --what unexpectedEventHandler \
           --what wrongCaseEnumValue \
-          --what noEvent
+          --what noEvent \
+          --what urlType
     - name: Run issue filer script
       working-directory: strudy
       run: node src/reporting/file-issue-for-review.js --max 10

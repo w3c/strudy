@@ -174,6 +174,7 @@ const anomalyGroups = [
       { name: 'unknownExposure', title: 'Unknown globals in `[Exposed]` attribute' },
       { name: 'unknownExtAttr', title: 'Unknown extended attributes' },
       { name: 'unknownType', title: 'Unknown Web IDL type' },
+      { name: 'urlType', title: 'Wrong Web IDL type for URLs' },
       {
         name: 'wrongCaseEnumValue',
         title: 'Enum values that ignore naming conventions',
