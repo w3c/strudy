@@ -1,3 +1,4 @@
+import studyCddl from './study-cddl.js';
 import studyDfns from './study-dfns.js';
 import studyAlgorithms from './study-algorithms.js';
 import studyBackrefs from './study-backrefs.js';
@@ -186,6 +187,19 @@ const anomalyGroups = [
     study: studyWebIdl,
     studyParams: ['curated'],
     cc: true
+  },
+
+  {
+    name: 'cddl',
+    title: 'Problems with CDDL',
+    description: 'The following problems were identified when analyzing CDDL definitions',
+    types: [
+      {
+        name: 'invalidCddl',
+        title: 'Invalid CDDL syntax'
+      }
+    ],
+    study: studyCddl
   }
 ];
 
