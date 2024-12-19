@@ -59,7 +59,7 @@ async function studyCddl (specs, { crawledResults = [] } = {}) {
   });
 
   for (const spec of specs) {
-    for (const cddlModule of spec.cddl) {
+    for (const cddlModule of (spec.cddl ?? [])) {
       stdout = '';
       await pyodide.runPythonAsync(`
 from cddlparser import parse
