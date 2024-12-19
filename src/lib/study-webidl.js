@@ -138,7 +138,7 @@ function isDOMStringUrlMember(member) {
   if (member.type !== 'attribute' && member.type !== 'field') {
     return false;
   }
-  if (!member.name.match(/(u|U)rl$/)) {
+  if (!member.name.match(/(url$/i)) {
     return false;
   }
   if (member.idlType?.idlType !== "DOMString") {
