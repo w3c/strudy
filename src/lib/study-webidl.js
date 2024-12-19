@@ -134,6 +134,19 @@ function isOverloadedOperation (a, b) {
   return true;
 }
 
+function isDOMStringUrlMember(member) {
+  if (member.type !== 'attribute' && member.type !== 'field') {
+    return false;
+  }
+  if (!member.name.match(/(u|U)rl$/)) {
+    return false;
+  }
+  if (member.idlType?.idlType !== "DOMString") {
+    return false;
+  }
+  return true;
+}
+
 // Helper to test if two members define an operation with the same identifier,
 // one of them being a static operation and the other a regular one. This is
 // allowed in Web IDL, see https://github.com/whatwg/webidl/issues/1097
@@ -366,9 +379,14 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
     if (!target.idl.members || !source.idl.members) {
       return;
     }
+    let targetName = dfnName(target);
     for (const targetMember of target.idl.members) {
       if (!targetMember.name) {
         continue;
+      }
+
+      if (isDOMStringUrlMember(targetMember)) {
+        recordAnomaly(target.spec, 'urlType', `\`${describeMember(targetMember)}\` in ${targetName} uses \`DOMString\` instead of recommended \`USVString\` for URLs`);
       }
 
       for (const sourceMember of source.idl.members) {
@@ -384,7 +402,6 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
         }
 
         // Prepare anomaly parameters
-        let targetName = dfnName(target);
         let sourceName = dfnName(source);
         const specs = [target.spec];
         if (sourceName === targetName) {

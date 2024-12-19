@@ -533,6 +533,31 @@ interface mixin MyNamespaceMixin {};
     });
   });
 
+  it('reports dictionary members and interface URL attributes that use DOMString instead of USVString', () => {
+    const report = analyzeIdl(`
+[Exposed=*] interface MyLink {
+  attribute DOMString url;
+  attribute DOMString alternateUrl;
+};
+dictionary MyLinkOptions {
+  DOMString fallbackUrl;
+};
+`);
+    assertNbAnomalies(report, 3);
+    assertAnomaly(report, 0, {
+      name: 'urlType',
+      message: '`attribute url` in interface `MyLink` uses `DOMString` instead of recommended `USVString` for URLs'
+    });
+    assertAnomaly(report, 1, {
+      name: 'urlType',
+      message: '`attribute alternateUrl` in interface `MyLink` uses `DOMString` instead of recommended `USVString` for URLs'
+    });
+    assertAnomaly(report, 2, {
+      name: 'urlType',
+      message: '`field fallbackUrl` in dictionary `MyLinkOptions` uses `DOMString` instead of recommended `USVString` for URLs'
+    });
+  });
+
   it('reports overloads across definitions (partial, same spec)', () => {
     const report = analyzeIdl(`
 [Global=Home,Exposed=*]
