@@ -541,9 +541,10 @@ interface mixin MyNamespaceMixin {};
 };
 dictionary MyLinkOptions {
   DOMString fallbackUrl;
+  sequence<DOMString> urls;
 };
 `);
-    assertNbAnomalies(report, 3);
+    assertNbAnomalies(report, 4);
     assertAnomaly(report, 0, {
       name: 'urlType',
       message: '`attribute url` in interface `MyLink` uses `DOMString` instead of recommended `USVString` for URLs'
@@ -555,6 +556,10 @@ dictionary MyLinkOptions {
     assertAnomaly(report, 2, {
       name: 'urlType',
       message: '`field fallbackUrl` in dictionary `MyLinkOptions` uses `DOMString` instead of recommended `USVString` for URLs'
+    });
+    assertAnomaly(report, 3, {
+      name: 'urlType',
+      message: '`field urls` in dictionary `MyLinkOptions` uses `DOMString` instead of recommended `USVString` for URLs'
     });
   });
 

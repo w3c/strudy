@@ -138,10 +138,10 @@ function isDOMStringUrlMember(member) {
   if (member.type !== 'attribute' && member.type !== 'field') {
     return false;
   }
-  if (!member.name.match(/(url$/i)) {
+  if (!member.name.match(/urls?$/i)) {
     return false;
   }
-  if (member.idlType?.idlType !== "DOMString") {
+  if (member.idlType?.idlType !== "DOMString" && (member.idlType?.generic !== "sequence" && member.idlType.idlType?.[0]?.idlType !== "DOMString")) {
     return false;
   }
   return true;
