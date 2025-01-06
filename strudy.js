@@ -64,7 +64,7 @@ program
   .command('inspect')
   .alias('study')
   .argument('<crawl>', 'Path/URL to crawl report')
-  .option('-cc, --cc <names...>', 'people to Cc in issues that may need help')
+  .option('--cc <names...>', 'people to Cc in issues that may need help')
   .option('-f, --format <format>', 'report markdown or json', 'markdown')
   .option('-i, --issues <folder>', 'report issues as markdown files in the given folder')
   .option('-m, --max <max>', 'maximum number of issue files to create/update', myParseInt, 0)
