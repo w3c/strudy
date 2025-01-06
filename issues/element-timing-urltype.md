@@ -1,7 +1,7 @@
 ---
 Title: Wrong Web IDL type for URLs in Element Timing API
 Tracked: N/A
-Repo: 'https://github.com/WICG/element-timing'
+Repo: 'https://github.com/w3c/element-timing'
 ---
 
 While crawling [Element Timing API](https://w3c.github.io/element-timing/), wrong Web IDL type for URLs:
