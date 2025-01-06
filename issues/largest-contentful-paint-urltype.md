@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Largest Contentful Paint
-Tracked: N/A
+Tracked: 'https://github.com/w3c/largest-contentful-paint/issues/128'
 Repo: 'https://github.com/w3c/largest-contentful-paint'
 ---
 

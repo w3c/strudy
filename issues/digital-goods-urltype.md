@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Digital Goods API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/digital-goods/issues/56'
 Repo: 'https://github.com/WICG/digital-goods'
 ---
 

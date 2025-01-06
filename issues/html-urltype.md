@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in HTML Standard
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/html/issues/10895'
 Repo: 'https://github.com/whatwg/html'
 ---
 

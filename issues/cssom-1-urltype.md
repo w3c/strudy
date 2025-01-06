@@ -1,6 +1,6 @@
 ---
 Title: '[cssom-1] Wrong Web IDL type for URLs in CSS Object Model (CSSOM)'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/csswg-drafts/issues/11447'
 Repo: 'https://github.com/w3c/csswg-drafts'
 ---
 

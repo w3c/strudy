@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Long Animation Frames API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/long-animation-frames/issues/27'
 Repo: 'https://github.com/w3c/long-animation-frames'
 ---
 

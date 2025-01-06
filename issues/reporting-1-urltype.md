@@ -1,6 +1,6 @@
 ---
 Title: '[reporting-1] Wrong Web IDL type for URLs in Reporting API'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/reporting/issues/275'
 Repo: 'https://github.com/w3c/reporting'
 ---
 

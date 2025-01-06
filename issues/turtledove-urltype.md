@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Protected Audience (formerly FLEDGE)
-Tracked: N/A
+Tracked: 'https://github.com/WICG/turtledove/issues/1376'
 Repo: 'https://github.com/WICG/turtledove'
 ---
 
