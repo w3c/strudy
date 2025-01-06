@@ -6,7 +6,6 @@ Repo: 'https://github.com/WICG/element-timing'
 
 While crawling [Element Timing API](https://w3c.github.io/element-timing/), wrong Web IDL type for URLs:
 * [ ] `attribute url` in interface `PerformanceElementTiming` uses `DOMString` instead of recommended `USVString` for URLs
-* [ ] `attribute url` in interface `PerformanceElementTiming` uses `DOMString` instead of recommended `USVString` for URLs
 
 <sub>Cc @dontcallmedom @tidoust</sub>
 
