@@ -5,7 +5,7 @@ Repo: 'https://github.com/whatwg/html'
 ---
 
 While crawling [HTML Standard](https://html.spec.whatwg.org/multipage/), wrong Web IDL type for URLs:
-* [ ] `attribute url` in interface `NotRestoredReasons` uses `DOMString` instead of recommended `USVString` for URLs
+* [ ] attributes `url` and `src` in interface `NotRestoredReasons` uses `DOMString` instead of recommended `USVString` for URLs
 
 <sub>Cc @dontcallmedom @tidoust</sub>
 
