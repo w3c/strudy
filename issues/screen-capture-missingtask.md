@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Screen Capture
-Tracked: N/A
+Tracked: https://github.com/w3c/mediacapture-screen-share/issues/303
 Repo: 'https://github.com/w3c/mediacapture-screen-share'
 ---
 
