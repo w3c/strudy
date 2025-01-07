@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Identifiers for WebRTC's Statistics API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webrtc-stats/issues/791'
 Repo: 'https://github.com/w3c/webrtc-stats'
 ---
 

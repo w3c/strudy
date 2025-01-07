@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Web App Launch Handler API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/web-app-launch/issues/95'
 Repo: 'https://github.com/WICG/web-app-launch'
 ---
 

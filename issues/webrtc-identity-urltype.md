@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Identity for WebRTC 1.0
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webrtc-identity/issues/42'
 Repo: 'https://github.com/w3c/webrtc-identity'
 ---
 

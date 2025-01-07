@@ -1,6 +1,6 @@
 ---
 Title: 'Wrong Web IDL type for URLs in WebRTC: Real-Time Communication in Browsers'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webrtc-pc/issues/3031'
 Repo: 'https://github.com/w3c/webrtc-pc'
 ---
 
