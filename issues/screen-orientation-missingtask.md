@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Screen Orientation
-Tracked: N/A
+Tracked: 'https://github.com/w3c/screen-orientation/issues/253'
 Repo: 'https://github.com/w3c/screen-orientation'
 ---
 

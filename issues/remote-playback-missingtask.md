@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Remote Playback API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/remote-playback/issues/159'
 Repo: 'https://github.com/w3c/remote-playback'
 ---
 

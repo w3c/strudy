@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Service Workers Nightly
-Tracked: N/A
+Tracked: 'https://github.com/w3c/ServiceWorker/issues/1740'
 Repo: 'https://github.com/w3c/ServiceWorker'
 ---
 

@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Captured Surface Control
-Tracked: N/A
+Tracked: 'https://github.com/w3c/mediacapture-surface-control/issues/52'
 Repo: 'https://github.com/w3c/mediacapture-surface-control'
 ---
 

@@ -2,7 +2,7 @@
 Title: >-
   [shape-detection-api] Missing tasks in parallel steps in Accelerated Shape
   Detection in Images
-Tracked: N/A
+Tracked: 'https://github.com/WICG/shape-detection-api/issues/105'
 Repo: 'https://github.com/WICG/shape-detection-api'
 ---
 
