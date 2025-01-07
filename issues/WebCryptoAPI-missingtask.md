@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Web Cryptography API
-Tracked: N/A
+Tracked: Unconventional usage of "throw", see https://github.com/w3c/webcrypto/pull/386#discussion_r1884057887
 Repo: 'https://github.com/w3c/webcrypto'
 ---
 
