@@ -76,7 +76,7 @@ function studyAlgorithms(specs) {
   function findAnomalyInParallelStep(spec, algo, step) {
     if (step.html) {
       const html = normalize(step.html);
-      if (html.match(/queu(e|ing) an?( \w+){0,2} (micro)?task/i)) {
+      if (html.match(/queu(e|ing) an?( \w+){0,3} (micro)?task/i)) {
         return false;
       }
       if (html.match(/(^|>| )(resolve|reject)(<| )/i) &&

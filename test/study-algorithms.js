@@ -34,4 +34,23 @@ describe('The algorithms analyser', () => {
       spec: { url: 'https://www.w3.org/TR/spec' }
     });
   });
+
+  it('reports no anomaly when a step queues a custom task', () => {
+    const crawlResult = toCrawlResult([
+      {
+        html: 'The custom() method MUST run the following steps:',
+        rationale: 'if',
+        steps: [
+          { html: 'Let <var>p</var> be a new promise.' },
+          { html: 'In parallel',
+            steps: [
+              { html: 'Queue a custom but fantastic task to resolve <var>p</var> with undefined' }
+            ]
+          }
+        ]
+      }
+    ]);
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
+  });
 });
