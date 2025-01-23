@@ -1,6 +1,6 @@
 ---
 Title: Broken links in RDF 1.2 Concepts and Abstract Syntax
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-concepts/issues/148'
 Repo: 'https://github.com/w3c/rdf-concepts'
 ---
 
