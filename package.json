@@ -33,7 +33,7 @@
   "main": "index.js",
   "bin": "./strudy.js",
   "devDependencies": {
-    "mocha": "11.0.1"
+    "mocha": "11.1.0"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
