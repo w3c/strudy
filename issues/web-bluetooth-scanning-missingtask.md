@@ -2,7 +2,7 @@
 Title: >-
   [web-bluetooth-scanning] Missing tasks in parallel steps in Web Bluetooth
   Scanning
-Tracked: N/A
+Tracked: 'https://github.com/WebBluetoothCG/web-bluetooth/issues/642'
 Repo: 'https://github.com/WebBluetoothCG/web-bluetooth'
 ---
 

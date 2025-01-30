@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in WebHID API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/webhid/issues/123'
 Repo: 'https://github.com/WICG/webhid'
 ---
 

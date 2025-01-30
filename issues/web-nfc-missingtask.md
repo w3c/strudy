@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Web NFC
-Tracked: N/A
+Tracked: 'https://github.com/w3c/web-nfc/issues/668'
 Repo: 'https://github.com/w3c/web-nfc'
 ---
 

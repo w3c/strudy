@@ -1,6 +1,6 @@
 ---
 Title: '[web-bluetooth] Missing tasks in parallel steps in Web Bluetooth'
-Tracked: N/A
+Tracked: 'https://github.com/WebBluetoothCG/web-bluetooth/issues/641'
 Repo: 'https://github.com/WebBluetoothCG/web-bluetooth'
 ---
 
