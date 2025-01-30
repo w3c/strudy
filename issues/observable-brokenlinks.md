@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Observable
-Tracked: N/A
+Tracked: 'https://github.com/WICG/observable/issues/195'
 Repo: 'https://github.com/WICG/observable'
 ---
 
