@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Writing Assistance APIs
-Tracked: N/A
+Tracked: 'https://github.com/webmachinelearning/writing-assistance-apis/issues/39'
 Repo: 'https://github.com/WICG/writing-assistance-apis'
 ---
 

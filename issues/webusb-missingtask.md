@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in WebUSB API
-Tracked: N/A
+Tracked: 'https://github.com/WICG/webusb/issues/253'
 Repo: 'https://github.com/WICG/webusb'
 ---
 

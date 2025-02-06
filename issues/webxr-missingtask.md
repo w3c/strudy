@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in WebXR Device API
-Tracked: N/A
+Tracked: 'https://github.com/immersive-web/webxr/issues/1400'
 Repo: 'https://github.com/immersive-web/webxr'
 ---
 
