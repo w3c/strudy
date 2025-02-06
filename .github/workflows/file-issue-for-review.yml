@@ -8,7 +8,7 @@ on:
         type: choice
         options:
           - regular
-          - challenging
+#          - challenging
 
 name: Submit draft issue reports from Strudy analysis
 jobs:
@@ -47,15 +47,15 @@ jobs:
           --cc ${{ vars.CC }} \
           --what brokenLinks \
           --what discontinuedReferences \
-    - name: Analyze the raw crawl results (challenging)
-      working-directory: strudy
-      if: ${{ inputs.profile == 'challenging' }}
-      run: |
-        node strudy.js inspect ../webref \
-          --issues issues \
-          --update-mode untracked \
-          --cc ${{ vars.CC }} \
           --what missingTask
+#    - name: Analyze the raw crawl results (challenging)
+#      working-directory: strudy
+#      if: ${{ inputs.profile == 'challenging' }}
+#      run: |
+#        node strudy.js inspect ../webref \
+#          --issues issues \
+#          --update-mode untracked \
+#          --cc ${{ vars.CC }} \
     - name: Switch to the curated branch
       uses: actions/checkout@v4
       with:
