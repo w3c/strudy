@@ -1,6 +1,6 @@
 ---
 Title: 'Wrong Web IDL type for URLs in Privacy-Preserving Attribution: Level 1'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/ppa/issues/99'
 Repo: 'https://github.com/w3c/ppa'
 ---
 
