@@ -141,7 +141,10 @@ function isDOMStringUrlMember(member) {
   if (!member.name.match(/urls?$/i)) {
     return false;
   }
-  if (member.idlType?.idlType !== "DOMString" && (member.idlType?.generic !== "sequence" && member.idlType.idlType?.[0]?.idlType !== "DOMString")) {
+  if (member.idlType?.idlType === "DOMString") {
+    return true;
+  }
+  if (member.idlType?.generic !== "sequence" || member.idlType.idlType?.[0]?.idlType !== "DOMString") {
     return false;
   }
   return true;
