@@ -1,6 +1,6 @@
 ---
 Title: '[svg-paths] Broken links in SVG Paths'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/svgwg/issues/971'
 Repo: 'https://github.com/w3c/svgwg'
 ---
 
