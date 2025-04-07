@@ -1,6 +1,6 @@
 ---
 Title: '[shacl12-sparql] Broken links in SHACL 1.2 SPARQL Extensions'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/data-shapes/issues/344'
 Repo: 'https://github.com/w3c/data-shapes'
 ---
 
