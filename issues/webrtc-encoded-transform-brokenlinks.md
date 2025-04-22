@@ -1,6 +1,6 @@
 ---
 Title: Broken links in WebRTC Encoded Transform
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webrtc-encoded-transform/issues/246'
 Repo: 'https://github.com/w3c/webrtc-encoded-transform'
 ---
 
