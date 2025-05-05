@@ -2,7 +2,7 @@
 Title: >-
   Normative references to discontinued specs in Propagation format for
   distributed context: Baggage
-Tracked: N/A
+Tracked: 'https://github.com/w3c/baggage/issues/149'
 Repo: 'https://github.com/w3c/baggage'
 ---
 
