@@ -1,6 +1,6 @@
 ---
 Title: Broken links in SPARQL 1.2 Federated Query
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-federated-query/issues/27'
 Repo: 'https://github.com/w3c/sparql-federated-query'
 ---
 
