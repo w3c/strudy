@@ -1,3 +1,4 @@
+import { describe, it } from 'node:test';
 import studyDefinitions from '../src/lib/study-dfns.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 

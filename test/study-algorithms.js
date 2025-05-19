@@ -1,3 +1,4 @@
+import { describe, it } from 'node:test';
 import study from '../src/lib/study-algorithms.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 

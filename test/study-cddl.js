@@ -5,13 +5,12 @@
  * analysis compensates for the header that Reffy adds to the CDDL extracts
  * and that isn't included in the tests.
  */
-/* global describe, it */
+import { describe, it } from 'node:test';
 
 import study from '../src/lib/study-cddl.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 
-describe('The CDDL analyser', function () {
-  this.timeout(5000);
+describe('The CDDL analyser', {timeout: 5000}, function () {
 
   const specUrl = 'https://www.w3.org/TR/spec';
   const specUrl2 = 'https://www.w3.org/TR/spec2';
