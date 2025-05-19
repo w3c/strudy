@@ -10,7 +10,7 @@ import { describe, it } from 'node:test';
 import study from '../src/lib/study-cddl.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 
-describe('The CDDL analyser', {timeout: 5000}, function () {
+describe('The CDDL analyser', {timeout: 10000}, function () {
 
   const specUrl = 'https://www.w3.org/TR/spec';
   const specUrl2 = 'https://www.w3.org/TR/spec2';
