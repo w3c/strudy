@@ -2,7 +2,7 @@
  * Tests the Web IDL analysis library.
  *
  */
-/* global describe, it */
+import { describe, it } from 'node:test';
 
 import study from '../src/lib/study-webidl.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';

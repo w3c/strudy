@@ -1,7 +1,7 @@
 /**
  * Tests the links analysis library.
  */
-/* global describe, it */
+import { describe, it } from 'node:test';
 
 import study from '../src/lib/study-backrefs.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';

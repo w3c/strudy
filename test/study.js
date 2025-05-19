@@ -1,3 +1,4 @@
+import { describe, it } from 'node:test';
 import study from '../src/lib/study.js';
 import { assertNbAnomalies, assertAnomaly } from './util.js';
 
@@ -21,9 +22,7 @@ function populateSpec(url, crawl) {
   return spec;
 }
 
-describe('The main study function', function () {
-  this.slow(5000);
-  this.timeout(10000);
+describe('The main study function', {timeout: 10000}, function () {
 
   it('reports no anomaly when spec is empty', async function() {
     const crawlResult = [{ url: specUrl }];

@@ -1,3 +1,4 @@
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { exec as execCb } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -21,9 +22,7 @@ async function strudy(params) {
   }
 }
 
-describe(`Strudy's CLI`, function () {
-  this.slow(5000);
-  this.timeout(10000);
+describe(`Strudy's CLI`, {timeout: 10000}, function () {
 
   it('reports usage help when asked', async function () {
     const { stdout, stderr } = await strudy(`--help`);
