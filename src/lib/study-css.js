@@ -33,7 +33,7 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
 
   // We need to consider all CSS definitions, even if caller is only interested
   // in a few specific specs.
-  const allSpecs = ((crawlResults?.length > 0) ? crawlResults : specs)
+  const allSpecs = (crawlResults?.length ? crawlResults : specs)
     .filter(spec => spec.css);
 
   // Merge features into a single namespace.
