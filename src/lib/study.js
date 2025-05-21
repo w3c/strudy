@@ -1,4 +1,5 @@
 import studyCddl from './study-cddl.js';
+import studyCSS from './study-css.js';
 import studyDfns from './study-dfns.js';
 import studyAlgorithms from './study-algorithms.js';
 import studyBackrefs from './study-backrefs.js';
@@ -201,6 +202,40 @@ const anomalyGroups = [
       }
     ],
     study: studyCddl
+  },
+
+  {
+    name: 'css',
+    title: 'Problems with CSS constructs',
+    description: 'The following problems were identified when analyzing CSS extracts',
+    types: [
+      {
+        name: 'cssTypeMismatch',
+        title: 'Type mismatch',
+        description: 'The following constructs were found with an unexpected type'
+      },
+      {
+        name: 'cssRedefined',
+        title: 'Redefined in unrelated specs',
+        description: 'The following constructs were found more than once in unrelated specs'
+      },
+      {
+        name: 'cssScoped',
+        title: 'Scoped and unscoped',
+        description: 'The following scoped constructs were found to also have an unscoped definition'
+      },
+      {
+        name: 'cssMissingBaseDfn',
+        title: 'Missing base definitions',
+        description: 'The following extended definitions were found while no base definition seems to exist'
+      },
+      {
+        name: 'cssMissingHref',
+        title: 'Missing link back to spec',
+        description: 'The following base definitions were found without a link back to the spec'
+      }
+    ],
+    study: studyCSS
   }
 ];
 
