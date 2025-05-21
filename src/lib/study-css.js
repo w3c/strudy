@@ -72,7 +72,7 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
     if (actualDfns.length === 0) {
       // No base definition found? Let's report if extensions are defined.
       // Otherwise, that just means we don't have a value for the base
-      // definition. That's find, we'll just assume the first dfn that is
+      // definition. That's fine, we'll just assume the first dfn that is
       // not an extension is the base definition
       for (const dfn of dfns) {
         if (dfn.newValues) {
