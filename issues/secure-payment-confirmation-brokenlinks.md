@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Secure Payment Confirmation
-Tracked: N/A
+Tracked: 'https://github.com/w3c/secure-payment-confirmation/issues/301'
 Repo: 'https://github.com/w3c/secure-payment-confirmation'
 ---
 

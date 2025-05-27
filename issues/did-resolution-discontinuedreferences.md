@@ -2,7 +2,7 @@
 Title: >-
   Normative references to discontinued specs in Decentralized Identifier
   Resolution (DID Resolution) v0.3
-Tracked: N/A
+Tracked: 'https://github.com/w3c/did-resolution/issues/153'
 Repo: 'https://github.com/w3c/did-resolution'
 ---
 
