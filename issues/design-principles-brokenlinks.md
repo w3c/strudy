@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Web Platform Design Principles
-Tracked: N/A
+Tracked: 'https://github.com/w3ctag/design-principles/issues/576'
 Repo: 'https://github.com/w3ctag/design-principles'
 ---
 
