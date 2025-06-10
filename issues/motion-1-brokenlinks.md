@@ -1,6 +1,6 @@
 ---
 Title: '[motion-1] Broken links in Motion Path Module Level 1'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/fxtf-drafts/issues/598'
 Repo: 'https://github.com/w3c/fxtf-drafts'
 ---
 
