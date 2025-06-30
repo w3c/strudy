@@ -1,6 +1,6 @@
 ---
 Title: Wrong Web IDL type for URLs in Federated Credential Management API
-Tracked: N/A
+Tracked: 'https://github.com/w3c-fedid/FedCM/issues/754'
 Repo: 'https://github.com/w3c-fedid/FedCM'
 ---
 
