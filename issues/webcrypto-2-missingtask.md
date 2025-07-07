@@ -1,10 +1,12 @@
 ---
-Title: Missing tasks in parallel steps in Web Cryptography API
-Tracked: Unconventional usage of "throw", see https://github.com/w3c/webcrypto/pull/386#discussion_r1884057887
+Title: Missing tasks in parallel steps in Web Cryptography API Level 2
+Tracked: >-
+  Unconventional usage of "throw", see
+  https://github.com/w3c/webcrypto/pull/386#discussion_r1884057887
 Repo: 'https://github.com/w3c/webcrypto'
 ---
 
-While crawling [Web Cryptography API](https://w3c.github.io/webcrypto/), the following algorithms fire an event, or resolve or reject a Promise, within a step that runs [in parallel](https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel) without first queuing a task:
+While crawling [Web Cryptography API Level 2](https://w3c.github.io/webcrypto/), the following algorithms fire an event, or resolve or reject a Promise, within a step that runs [in parallel](https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel) without first queuing a task:
 * [ ] The [SubtleCrypto/encrypt()](https://w3c.github.io/webcrypto/#dfn-SubtleCrypto-method-encrypt) algorithm resolves/rejects a promise directly in a step that runs in parallel
 * [ ] The [SubtleCrypto/decrypt()](https://w3c.github.io/webcrypto/#dfn-SubtleCrypto-method-decrypt) algorithm resolves/rejects a promise directly in a step that runs in parallel
 * [ ] The [SubtleCrypto/sign()](https://w3c.github.io/webcrypto/#dfn-SubtleCrypto-method-sign) algorithm resolves/rejects a promise directly in a step that runs in parallel
