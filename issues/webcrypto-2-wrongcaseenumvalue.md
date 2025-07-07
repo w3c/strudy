@@ -1,10 +1,10 @@
 ---
-Title: Enum values that ignore naming conventions in Web Cryptography API
-Tracked: Widely deployed, unlikely to change at this point
+Title: Enum values that ignore naming conventions in Web Cryptography API Level 2
+Tracked: 'Widely deployed, unlikely to change at this point'
 Repo: 'https://github.com/w3c/webcrypto'
 ---
 
-While crawling [Web Cryptography API](https://w3c.github.io/webcrypto/), the following enum values were found to ignore naming conventions (lower case, hyphen separated words):
+While crawling [Web Cryptography API Level 2](https://w3c.github.io/webcrypto/), the following enum values were found to ignore naming conventions (lower case, hyphen separated words):
 * [ ] The value `"deriveKey"` of the enum `KeyUsage` does not match the expected conventions (lower case, hyphen separated words)
 * [ ] The value `"deriveBits"` of the enum `KeyUsage` does not match the expected conventions (lower case, hyphen separated words)
 * [ ] The value `"wrapKey"` of the enum `KeyUsage` does not match the expected conventions (lower case, hyphen separated words)
