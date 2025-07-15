@@ -2,7 +2,7 @@
 Title: >-
   [vocab-owl-time-agg] Broken links in Extensions to the OWL-Time Ontology -
   temporal aggregates
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sdw/issues/1450'
 Repo: 'https://github.com/w3c/sdw'
 ---
 

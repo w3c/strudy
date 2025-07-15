@@ -1,6 +1,6 @@
 ---
 Title: 'Broken links in Trace Context: binary protocol'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/trace-context-binary/issues/20'
 Repo: 'https://github.com/w3c/trace-context-binary'
 ---
 

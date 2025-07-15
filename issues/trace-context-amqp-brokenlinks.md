@@ -1,6 +1,6 @@
 ---
 Title: 'Broken links in Trace Context: AMQP protocol'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/trace-context-amqp/issues/13'
 Repo: 'https://github.com/w3c/trace-context-amqp'
 ---
 
