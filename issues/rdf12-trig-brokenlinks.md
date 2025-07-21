@@ -1,6 +1,6 @@
 ---
 Title: Broken links in RDF 1.2 TriG
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-trig/issues/46'
 Repo: 'https://github.com/w3c/rdf-trig'
 ---
 

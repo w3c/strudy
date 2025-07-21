@@ -1,6 +1,6 @@
 ---
 Title: Broken links in RDF 1.2 XML Syntax
-Tracked: N/A
+Tracked: 'https://github.com/w3c/rdf-xml/issues/68'
 Repo: 'https://github.com/w3c/rdf-xml'
 ---
 

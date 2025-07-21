@@ -1,6 +1,6 @@
 ---
 Title: '[shacl12-core] Broken links in SHACL 1.2 Core'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/data-shapes/issues/436'
 Repo: 'https://github.com/w3c/data-shapes'
 ---
 

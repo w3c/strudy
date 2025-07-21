@@ -1,6 +1,6 @@
 ---
 Title: Broken links in SPARQL 1.2 Entailment Regimes
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-entailment/issues/39'
 Repo: 'https://github.com/w3c/sparql-entailment'
 ---
 
