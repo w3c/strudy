@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Data Integrity BBS Cryptosuites v1.0
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-di-bbs/issues/203'
 Repo: 'https://github.com/w3c/vc-di-bbs'
 ---
 

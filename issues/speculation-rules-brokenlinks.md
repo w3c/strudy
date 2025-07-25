@@ -1,6 +1,6 @@
 ---
 Title: '[speculation-rules] Broken links in Speculation Rules'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/nav-speculation/issues/401'
 Repo: 'https://github.com/WICG/nav-speculation'
 ---
 
