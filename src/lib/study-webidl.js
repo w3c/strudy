@@ -101,6 +101,14 @@ const knownExtAttrs = new Set([
   // Extended attributes defined by other specs:
   'CEReactions', // https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions
   'HTMLConstructor', // https://html.spec.whatwg.org/multipage/dom.html#htmlconstructor
+  'Reflect', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflect
+  'ReflectSetter', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectsetter
+  'ReflectURL', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflecturl
+  'ReflectNonNegative', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectnonnegative
+  'ReflectPositive', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectpositive
+  'ReflectPositiveWithFallback', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectpositivewithfallback
+  'ReflectRange', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectrange
+  'ReflectDefault', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectdefault
   'Serializable', // https://html.spec.whatwg.org/multipage/structured-data.html#serializable
   'StringContext', // https://w3c.github.io/webappsec-trusted-types/dist/spec/#webidl-string-context-xattr
   'Transferable', // https://html.spec.whatwg.org/multipage/structured-data.html#transferable
