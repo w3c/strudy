@@ -54,4 +54,20 @@ describe('The algorithms analyser', () => {
     const report = study(crawlResult);
     assertNbAnomalies(report, 0);
   });
+
+  it('reports no anomaly for the push API', () => {
+    const crawlResult = toCrawlResult([
+      {
+        html: 'Then run the following steps in parallel, with <var>dispatchedEvent</var>:',
+        rationale: 'wait',
+        steps: [
+          { html: '<p>Wait for all of the promises in the <a data-link-type=\"dfn\" data-link-for=\"ExtendableEvent\" data-xref-for=\"ExtendableEvent\" data-cite=\"service-workers\" data-cite-path=\"\" data-cite-frag=\"extendableevent-extend-lifetime-promises\" href=\"https://www.w3.org/TR/service-workers/#extendableevent-extend-lifetime-promises\">extend lifetime promises</a> of <var>dispatchedEvent</var> to resolve.</p>' },
+          { html: '<p>If they do not resolve successfully, then set <var>notificationResult</var> to something.</p>' },
+          { html: '<p>Otherwise, do something else.</p>' }
+        ]
+      }
+    ]);
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
+  });
 });
