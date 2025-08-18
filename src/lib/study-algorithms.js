@@ -82,7 +82,8 @@ function studyAlgorithms(specs) {
       if (html.match(/(^|>| )(resolve|reject)(<| )/i) &&
           // Push API checks on the status of promises:
           // https://w3c.github.io/push-api/#receiving-a-push-message
-          !html.match(/(wait for|if) all( of)? the promises/i) &&
+          !html.match(/wait for all of the promises/i) &&
+          !html.match(/>notificationResult</) &&
           // Clipboard APIs uses "resolve" to mean something else:
           // https://w3c.github.io/clipboard-apis/#dom-clipboard-read
           !html.includes('systemClipboardRepresentation')
