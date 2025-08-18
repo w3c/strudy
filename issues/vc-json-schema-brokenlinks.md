@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Verifiable Credentials JSON Schema Specification
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-json-schema/issues/248'
 Repo: 'https://github.com/w3c/vc-json-schema'
 ---
 

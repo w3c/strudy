@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Bitstring Status List v1.1
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-bitstring-status-list/issues/210'
 Repo: 'https://github.com/w3c/vc-bitstring-status-list'
 ---
 
