@@ -45,6 +45,6 @@
     "webidl2": "^24.2.2"
   },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test --test-reporter=spec"
   }
 }
