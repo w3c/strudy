@@ -1,6 +1,6 @@
 ---
 Title: Missing tasks in parallel steps in Push API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/push-api/issues/407'
 Repo: 'https://github.com/w3c/push-api'
 ---
 
