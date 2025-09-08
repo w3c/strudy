@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Web of Things (WoT) Discovery
-Tracked: N/A
+Tracked: 'https://github.com/w3c/wot-discovery/issues/553'
 Repo: 'https://github.com/w3c/wot-discovery'
 ---
 

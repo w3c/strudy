@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Web of Things (WoT) Profiles
-Tracked: N/A
+Tracked: 'https://github.com/w3c/wot-profile/issues/445'
 Repo: 'https://github.com/w3c/wot-profile'
 ---
 
