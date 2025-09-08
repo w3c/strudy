@@ -2,7 +2,7 @@
 Title: >-
   Enum values that ignore naming conventions in Modern Algorithms in the Web
   Cryptography API
-Tracked: N/A
+Tracked: Water under the bridge since that's an already broken enum that is being extended
 Repo: 'https://github.com/WICG/webcrypto-modern-algos'
 ---
 
