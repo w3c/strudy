@@ -2,7 +2,7 @@
 Title: >-
   Missing tasks in parallel steps in Modern Algorithms in the Web Cryptography
   API
-Tracked: N/A
+Tracked: Re-using the same weird pseudo-throw from WebCrypto
 Repo: 'https://github.com/WICG/webcrypto-modern-algos'
 ---
 
