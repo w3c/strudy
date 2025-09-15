@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Decentralized Identifier Resolution (DID Resolution) v0.3
-Tracked: N/A
+Tracked: 'https://github.com/w3c/did-resolution/issues/193'
 Repo: 'https://github.com/w3c/did-resolution'
 ---
 
