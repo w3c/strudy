@@ -1,6 +1,6 @@
 ---
 Title: '[prerendering-revamped] Broken links in Prerendering Revamped'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/nav-speculation/issues/414'
 Repo: 'https://github.com/WICG/nav-speculation'
 ---
 

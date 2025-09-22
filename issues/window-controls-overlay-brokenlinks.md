@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Window Controls Overlay
-Tracked: N/A
+Tracked: 'https://github.com/WICG/window-controls-overlay/issues/68'
 Repo: 'https://github.com/WICG/window-controls-overlay'
 ---
 

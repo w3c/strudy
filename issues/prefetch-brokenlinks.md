@@ -1,6 +1,6 @@
 ---
 Title: '[prefetch] Broken links in Prefetch'
-Tracked: N/A
+Tracked: 'https://github.com/WICG/nav-speculation/issues/413'
 Repo: 'https://github.com/WICG/nav-speculation'
 ---
 
