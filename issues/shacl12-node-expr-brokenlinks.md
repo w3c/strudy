@@ -1,6 +1,6 @@
 ---
 Title: '[shacl12-node-expr] Broken links in SHACL 1.2 Node Expressions'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/data-shapes/issues/588'
 Repo: 'https://github.com/w3c/data-shapes'
 ---
 
