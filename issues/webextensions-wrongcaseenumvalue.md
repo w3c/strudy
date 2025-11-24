@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in Web Extensions
-Tracked: N/A
+Tracked: https://github.com/w3c/webextensions/issues/563
 Repo: 'https://github.com/w3c/webextensions'
 ---
 
