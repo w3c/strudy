@@ -2,7 +2,7 @@
 Title: >-
   Normative references to discontinued specs in The Idempotency-Key HTTP Header
   Field
-Tracked: N/A
+Tracked: https://github.com/ietf-wg-httpapi/idempotency/issues/50
 Repo: 'https://github.com/ietf-wg-httpapi/idempotency'
 ---
 
