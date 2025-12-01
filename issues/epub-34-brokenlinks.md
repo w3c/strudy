@@ -1,6 +1,6 @@
 ---
 Title: '[epub-34] Broken links in EPUB 3.4'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/epub-specs/issues/2839'
 Repo: 'https://github.com/w3c/epub-specs'
 ---
 
