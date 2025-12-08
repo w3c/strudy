@@ -1,6 +1,6 @@
 ---
 Title: '[shacl12-rules] Broken links in SHACL 1.2 Rules'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/data-shapes/issues/693'
 Repo: 'https://github.com/w3c/data-shapes'
 ---
 
