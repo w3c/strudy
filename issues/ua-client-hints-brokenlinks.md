@@ -1,6 +1,6 @@
 ---
 Title: Broken links in User-Agent Client Hints
-Tracked: N/A
+Tracked: 'https://github.com/WICG/ua-client-hints/issues/389'
 Repo: 'https://github.com/WICG/ua-client-hints'
 ---
 
