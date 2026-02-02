@@ -36,7 +36,7 @@
     "@actions/core": "^3.0.0",
     "@octokit/plugin-throttling": "^11.0.1",
     "@octokit/rest": "^22.0.0",
-    "commander": "14.0.2",
+    "commander": "14.0.3",
     "gray-matter": "^4.0.3",
     "jsdom": "^28.0.0",
     "pyodide": "^0.29.0",
