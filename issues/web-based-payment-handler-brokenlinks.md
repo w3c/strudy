@@ -1,6 +1,6 @@
 ---
-Repo: 'https://github.com/w3c/payment-handler'
-Tracked: 'https://github.com/w3c/payment-handler/issues/412'
+Repo: 'https://github.com/w3c/web-based-payment-handler'
+Tracked: 'https://github.com/w3c/web-based-payment-handler/issues/412'
 Title: Broken references in Payment Handler API
 ---
 

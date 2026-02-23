@@ -1,7 +1,7 @@
 ---
 Title: Missing tasks in parallel steps in Payment Handler API
-Tracked: 'https://github.com/w3c/payment-handler/issues/419'
-Repo: 'https://github.com/w3c/payment-handler'
+Tracked: 'https://github.com/w3c/web-based-payment-handler/issues/419'
+Repo: 'https://github.com/w3c/web-based-payment-handler'
 ---
 
 While crawling [Payment Handler API](https://w3c.github.io/payment-handler/), the following algorithms fire an event, or resolve or reject a Promise, within a step that runs [in parallel](https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel) without first queuing a task:

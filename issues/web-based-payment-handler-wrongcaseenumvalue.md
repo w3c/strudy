@@ -1,7 +1,7 @@
 ---
 Title: Enum values that ignore naming conventions in Payment Handler API
-Tracked: 'https://github.com/w3c/payment-handler/issues/418'
-Repo: 'https://github.com/w3c/payment-handler'
+Tracked: 'https://github.com/w3c/web-based-payment-handler/issues/418'
+Repo: 'https://github.com/w3c/web-based-payment-handler'
 ---
 
 While crawling [Payment Handler API](https://w3c.github.io/payment-handler/), the following enum values were found to ignore naming conventions (lower case, hyphen separated words):
