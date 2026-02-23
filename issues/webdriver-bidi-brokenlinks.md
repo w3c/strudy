@@ -1,6 +1,6 @@
 ---
 Title: Broken links in WebDriver BiDi
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webdriver-bidi/issues/1082'
 Repo: 'https://github.com/w3c/webdriver-bidi'
 ---
 
