@@ -1,6 +1,6 @@
 ---
 Title: Broken links in WebXR DOM Overlays Module
-Tracked: N/A
+Tracked: https://github.com/w3c/pointerevents/pull/640
 Repo: 'https://github.com/immersive-web/dom-overlays'
 ---
 
