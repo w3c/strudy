@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Early detection of input events
-Tracked: N/A
+Tracked: 'https://github.com/WICG/is-input-pending/issues/51'
 Repo: 'https://github.com/WICG/is-input-pending'
 ---
 
