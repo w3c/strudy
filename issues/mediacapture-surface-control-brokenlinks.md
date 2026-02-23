@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Captured Surface Control
-Tracked: N/A
+Tracked: https://github.com/w3c/mediacapture-surface-control/pull/76
 Repo: 'https://github.com/w3c/mediacapture-surface-control'
 ---
 
