@@ -371,7 +371,7 @@ ${entry.content}
           continue;
         }
 
-        const issueReport = matter(content);
+        const issueReport = matter(content, {});
         issueReport.data = {
           Title: entry.title,
           Tracked: tracked
