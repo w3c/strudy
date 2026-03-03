@@ -10,7 +10,11 @@ jobs:
     steps:
     - name: Checkout strudy
       uses: actions/checkout@v4
-
+    - name: Checkout webref
+      uses: actions/checkout@v4
+      with:
+        repository: w3c/webref
+        path: webref
     - name: Setup node.js
       uses: actions/setup-node@v4
       with:
@@ -21,7 +25,7 @@ jobs:
         npm ci
 
     - name: Drop reports locally when related issues/PR are closed
-      run: node src/reporting/clean-reports.js
+      run: node src/reporting/clean-reports.js webref/ed/
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
