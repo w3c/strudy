@@ -10,6 +10,7 @@ import path from 'node:path';
 import { fileURLToPath } from "node:url";
 import matter from 'gray-matter';
 import loadJSON from '../lib/load-json.js';
+import { loadCrawlResults } from '../lib/util.js';
 
 const scriptPath = path.dirname(fileURLToPath(import.meta.url));
 
@@ -22,8 +23,9 @@ const scriptPath = path.dirname(fileURLToPath(import.meta.url));
  *   patches got dropped and why. To be used in a possible PR. Returns an
  *   empty string when there are no patches to drop.
  */
-async function dropReportsWhenPossible () {
+async function dropReportsWhenPossible (edCrawlResultsPath) {
   const rootDir = path.join(scriptPath, '../../issues');
+  const crawl = await loadCrawlResults(edCrawlResultsPath);
 
   console.log('Gather reports files');
   let reports = [];
@@ -39,8 +41,22 @@ async function dropReportsWhenPossible () {
   console.log();
   console.log('Extract list of issues');
   const issueUrl = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)$/;
+  const tobedroppedReports = [];
   for (const report of reports) {
     let contents;
+    const nameMatch = report.name.match(/\/([^\/]*)-[a-z]*\.md$/);
+    if (!nameMatch) {
+      console.error(`- "${report.name}" does not match expected naming convention`);
+    } else {
+      const shortname = nameMatch[1];
+      console.log(shortname);
+      const spec = crawl.ed.find(s => s.shortname === shortname);
+      if (!spec || spec.standing === "discontinued") {
+	console.log(`- "${report.name}" linked to discontinued spec`);
+	tobedroppedReports.push(report);
+	continue;
+      }
+    }
     try {
       contents = matter(await fs.promises.readFile(report.name, 'utf-8'));
     } catch (e) {
@@ -77,10 +93,10 @@ async function dropReportsWhenPossible () {
 
   console.log();
   console.log('Drop reports when possible');
-  reports = reports.filter(report => report.issue.state === 'closed');
-  if (reports.length > 0) {
+  tobedroppedReports.push(...reports.filter(report => report.issue.state === 'closed'));
+  if (tobedroppedReports.length > 0) {
     const res = [];
-    for (const report of reports) {
+    for (const report of tobedroppedReports) {
       console.log(`- drop "${report.name}"`);
       fs.unlinkSync(report.name);
       res.push(`- \`${report.name}\` was linked to now closed: [${report.issue.owner}/${report.issue.repo}#${report.issue.number}](${report.issue.url})`);
@@ -107,7 +123,19 @@ const octokit = new Octokit({
   // log: console
 });
 
-dropReportsWhenPossible()
+let edCrawlResultsPath = process.argv[2];
+
+if (!edCrawlResultsPath) {
+  console.error('Path to the webref crawl of editors draft needs to be provided as argument');
+  process.exit(1);
+}
+
+// Target the index file if needed
+if (!edCrawlResultsPath.endsWith('index.json')) {
+  edCrawlResultsPath = path.join(edCrawlResultsPath, 'index.json');
+}
+
+dropReportsWhenPossible(edCrawlResultsPath)
   .then(res => {
     core.exportVariable('dropped_reports', res);
     console.log();
