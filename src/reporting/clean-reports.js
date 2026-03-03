@@ -3,7 +3,7 @@
  * a pull request to drop reports that have been addressed.
  */
 
-import core from '@actions/core';
+import * as core from '@actions/core';
 import Octokit from '../lib/octokit.js';
 import fs from 'node:fs';
 import path from 'node:path';
