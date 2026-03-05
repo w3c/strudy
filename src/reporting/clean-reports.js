@@ -99,7 +99,11 @@ async function dropReportsWhenPossible (edCrawlResultsPath) {
     for (const report of tobedroppedReports) {
       console.log(`- drop "${report.name}"`);
       fs.unlinkSync(report.name);
-      res.push(`- \`${report.name}\` was linked to now closed: [${report.issue.owner}/${report.issue.repo}#${report.issue.number}](${report.issue.url})`);
+      if (report.issue) {
+	res.push(`- \`${report.name}\` was linked to now closed: [${report.issue.owner}/${report.issue.repo}#${report.issue.number}](${report.issue.url})`);
+      } else {
+	res.push(`- \`${report.name}\` associated to now discontinued spec`);
+      }
     }
     return res.join('\n');
   } else {
