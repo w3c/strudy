@@ -52,9 +52,9 @@ async function dropReportsWhenPossible (edCrawlResultsPath) {
       console.log(shortname);
       const spec = crawl.ed.find(s => s.shortname === shortname);
       if (!spec || spec.standing === "discontinued") {
-	console.log(`- "${report.name}" linked to discontinued spec`);
-	tobedroppedReports.push(report);
-	continue;
+        console.log(`- "${report.name}" linked to discontinued spec`);
+        tobedroppedReports.push(report);
+        continue;
       }
     }
     try {
