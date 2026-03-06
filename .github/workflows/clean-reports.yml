@@ -34,7 +34,6 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create PR to drop reports from repo if needed
-      working-directory: strudy
       uses: peter-evans/create-pull-request@v6
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,6 +41,7 @@ jobs:
         title: Drop no longer relevant reports
         commit-message: "Drop no longer relevant reports"
         body: ${{ env.dropped_reports }}
+        path: strudy
         assignees: tidoust, dontcallmedom
         branch: clean-reports
         branch-suffix: timestamp
