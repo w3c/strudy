@@ -1,6 +1,6 @@
 ---
 Title: Broken links in SPARQL 1.2 Query Language
-Tracked: N/A
+Tracked: 'https://github.com/w3c/sparql-query/issues/359'
 Repo: 'https://github.com/w3c/sparql-query'
 ---
 

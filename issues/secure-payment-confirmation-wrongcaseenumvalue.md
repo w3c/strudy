@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in Secure Payment Confirmation
-Tracked: N/A
+Tracked: 'https://github.com/w3c/secure-payment-confirmation/issues/322'
 Repo: 'https://github.com/w3c/secure-payment-confirmation'
 ---
 
