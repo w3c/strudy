@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Fetch Standard
-Tracked: N/A
+Tracked: 'https://github.com/whatwg/fetch/issues/1916'
 Repo: 'https://github.com/whatwg/fetch'
 ---
 

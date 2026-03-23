@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Event Timing API
-Tracked: N/A
+Tracked: 'https://github.com/w3c/event-timing/issues/167'
 Repo: 'https://github.com/w3c/event-timing'
 ---
 

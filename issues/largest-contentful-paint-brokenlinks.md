@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Largest Contentful Paint
-Tracked: N/A
+Tracked: 'https://github.com/w3c/largest-contentful-paint/issues/165'
 Repo: 'https://github.com/w3c/largest-contentful-paint'
 ---
 
