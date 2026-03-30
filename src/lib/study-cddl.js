@@ -16,89 +16,44 @@
  * somehow.
  */
 
-import { loadPyodide } from 'pyodide';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from "node:url";
-
-const scriptPath = path.dirname(fileURLToPath(import.meta.url));
-
-// Python WebAssembly environment (initialized once)
-let pyodide = null;
+import { parse } from 'cddlparser';
 
 async function studyCddl (specs, { crawledResults = [] } = {}) {
   const report = []; // List of anomalies to report
 
-  // Setup Python WebAssembly environment
-  if (!pyodide) {
-    pyodide = await loadPyodide();
-
-    // Retrieve the version of the cddlparser package to install from
-    // the "requirements.txt" file at the root of the project
-    const file = path.join(scriptPath, '..', '..', 'requirements.txt');
-    const contents = await fs.readFile(file, 'utf8');
-    const version = contents.match(/^cddlparser==(.*)/m)[1];
-
-    // Load micropip to "install" the cddlparser package.
-    // An alternative would be to `loadPackage` cddlparser from a Wheel URL
-    // directly to avoid having to install micropip. The Wheel URL in Pypi does
-    // not seem predictable. But the one for GitHub releases could work, e.g.:
-    // https://github.com/tidoust/cddlparser/releases/download/v0.4.0/cddlparser-0.4.0-py3-none-any.whl
-    // This would make loading slightly faster and avoid introducing yet
-    // another dependency. But it would hardcode the cddlparser repository name
-    // whereas the project could perhaps be moved in the future.
-    await pyodide.loadPackage('micropip');
-    const micropip = pyodide.pyimport('micropip');
-    await micropip.install(`cddlparser==${version}`);
-  }
-
-  // Python will report execution results to the standard output
-  let stdout = '';
-  pyodide.setStdout({
-    batched: str => stdout += str + '\n'
-  });
-
   for (const spec of specs) {
     for (const cddlModule of (spec.cddl ?? [])) {
-      stdout = '';
-      await pyodide.runPythonAsync(`
-from cddlparser import parse
-try:
-  parse('''${cddlModule.cddl}''')
-except Exception as err:
-  print(err)
-      `);
-      stdout = stdout.trim();
-
-      // If nothing was reported, that means parsing succeeded, CDDL is valid
-      if (!stdout) {
-        continue;
+      try {
+        parse(cddlModule.cddl);
       }
+      catch (err) {
+        // Format the error message, omitting the parser error name which does
+        // not bring much and makes the message less readable.
+        let message = cddlModule.name ?
+          `In the "${cddlModule.name}" module, ` :
+          '';
+        message += err.toString().replace(/^ParserError: /, '');
 
-      let message = cddlModule.name ?
-        `In the "${cddlModule.name}" module, ` :
-        '';
-      message += stdout;
+        // The parser reports the line number at which the error occurred... but
+        // it gets run against the expanded extract, and expansion drops the
+        // header that Reffy adds to the extracts to note the provenance. The line
+        // number is off by 5 as a result. Let's fix that. It's certainly not
+        // fantastic to hardcode the number of lines that compose the header, but
+        // let's say that's good enough for now!
+        const reLineNumber = / line (\d+):/;
+        const match = message.match(reLineNumber);
+        if (match) {
+          let lineNumber = parseInt(match[1], 10);
+          lineNumber += 5;
+          message = message.replace(reLineNumber, ` line ${lineNumber}:`);
+        }
 
-      // The parser reports the line number at which the error occurred... but
-      // it gets run against the expanded extract, and expansion drops the
-      // header that Reffy adds to the extracts to note the provenance. The line
-      // number is off by 5 as a result. Let's fix that. It's certainly not
-      // fantastic to hardcode the number of lines that compose the header, but
-      // let's say that's good enough for now!
-      const reLineNumber = / line (\d+):/;
-      const match = message.match(reLineNumber);
-      if (match) {
-        let lineNumber = parseInt(match[1], 10);
-        lineNumber += 5;
-        message = message.replace(reLineNumber, ` line ${lineNumber}:`);
+        report.push({
+          name: 'invalidCddl',
+          message,
+          spec
+        });
       }
-      
-      report.push({
-        name: 'invalidCddl',
-        message,
-        spec
-      });
     }
   }
   return report;
