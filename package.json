@@ -9,8 +9,7 @@
   "files": [
     "index.js",
     "strudy.js",
-    "src/",
-    "requirements.txt"
+    "src/"
   ],
   "bugs": {
     "url": "https://github.com/w3c/strudy/issues"
@@ -36,10 +35,10 @@
     "@actions/core": "^3.0.0",
     "@octokit/plugin-throttling": "^11.0.1",
     "@octokit/rest": "^22.0.0",
+    "cddlparser": "^0.6.0",
     "commander": "14.0.3",
     "gray-matter": "^4.0.3",
     "jsdom": "^29.0.1",
-    "pyodide": "^0.29.0",
     "reffy": "^20.0.1",
     "semver": "^7.3.5",
     "webidl2": "^24.2.2"

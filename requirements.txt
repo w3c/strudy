@@ -1,4 +1,0 @@
-# The CDDL parser used by Strudy is written in Python.
-# This file sets the version of the CDDL parser run by Strudy and makes it
-# possible for Dependabot to detect and propose updates.
-cddlparser==0.6.0
