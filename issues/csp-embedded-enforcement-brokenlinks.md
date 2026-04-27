@@ -1,6 +1,6 @@
 ---
 Title: 'Broken links in Content Security Policy: Embedded Enforcement'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/webappsec-cspee/issues/31'
 Repo: 'https://github.com/w3c/webappsec-cspee'
 ---
 
