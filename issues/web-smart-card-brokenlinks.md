@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Web Smart Card API
-Tracked: N/A
+Tracked: https://github.com/WICG/web-smart-card/pull/51
 Repo: 'https://github.com/WICG/web-smart-card'
 ---
 
