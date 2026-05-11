@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Verifiable Credential Barcodes v1.0
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-barcodes/issues/54'
 Repo: 'https://github.com/w3c/vc-barcodes'
 ---
 

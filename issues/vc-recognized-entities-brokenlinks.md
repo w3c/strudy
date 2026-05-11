@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Recognized Entities v1.0
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-recognized-entities/issues/78'
 Repo: 'https://github.com/w3c/vc-recognized-entities'
 ---
 
