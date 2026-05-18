@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Attribution Level 1
-Tracked: N/A
+Tracked: 'https://github.com/w3c/attribution/issues/432'
 Repo: 'https://github.com/w3c/attribution'
 ---
 
