@@ -1,6 +1,6 @@
 ---
 Title: '[shacl12-profiling] Broken links in SHACL 1.2 Profiling'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/data-shapes/issues/905'
 Repo: 'https://github.com/w3c/data-shapes'
 ---
 
