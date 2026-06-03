@@ -42,6 +42,5 @@ jobs:
         commit-message: "Drop no longer relevant reports"
         body: ${{ env.dropped_reports }}
         path: strudy
-        assignees: tidoust, dontcallmedom
         branch: clean-reports
         branch-suffix: timestamp
