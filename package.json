@@ -36,7 +36,7 @@
     "@octokit/plugin-throttling": "^11.0.1",
     "@octokit/rest": "^22.0.0",
     "cddlparser": "^0.6.0",
-    "commander": "14.0.3",
+    "commander": "15.0.0",
     "gray-matter": "^4.0.3",
     "jsdom": "^29.0.1",
     "reffy": "^21.0.0",
