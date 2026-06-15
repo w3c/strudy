@@ -22,6 +22,6 @@ While crawling [Web Cryptography API Level 2](https://w3c.github.io/webcrypto/),
 
 See [Dealing with the event loop](https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-for-spec-authors) in the HTML specification for guidance on how to deal with algorithm sections that run *in parallel*.
 
-<sub>Cc @dontcallmedom @tidoust</sub>
+<sub>Cc @tidoust</sub>
 
 <sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>
