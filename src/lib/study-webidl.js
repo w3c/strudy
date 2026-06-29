@@ -509,6 +509,25 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
             }
           }
           parseIdlNode(dfn, spec);
+
+          // A handful of interfaces define legacy aliases that should count as
+          // known IDL types. They are used to create standalone SVG interfaces
+          // for a few DOM* interfaces defined in the Geometry spec, to account
+          // for the fact that implementations continue to use SVG* interfaces
+          // in practice, see context in:
+          // https://github.com/w3c/svgwg/pull/1143
+          const legacyAliasesEA = dfn.extAttrs?.find(ea => ea.name === 'LegacyWindowAlias');
+          if (legacyAliasesEA) {
+            const legacyAliases = Array.isArray(legacyAliasesEA.rhs.value) ?
+              legacyAliasesEA.rhs.value.map(({ value }) => value) :
+              [legacyAliasesEA.rhs.value];
+            for (const legacyAlias of legacyAliases) {
+              if (!dfns[legacyAlias]) {
+                dfns[legacyAlias] = [];
+              }
+              dfns[legacyAlias].push({ spec, idl: dfn });
+            }
+          }
         } else if (dfn.type === 'includes') {
           // Includes statement:
           // https://webidl.spec.whatwg.org/#index-prod-IncludesStatement
