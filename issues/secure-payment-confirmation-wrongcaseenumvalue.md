@@ -1,7 +1,7 @@
 ---
 Title: Enum values that ignore naming conventions in Secure Payment Confirmation
 Tracked: >-
-  Willful misues of enums
+  Willful misuse of enums
   https://github.com/w3c/secure-payment-confirmation/issues/322#issuecomment-4032563394
 Repo: 'https://github.com/w3c/secure-payment-confirmation'
 ---
