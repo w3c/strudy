@@ -86,7 +86,13 @@ function studyAlgorithms(specs) {
           !html.match(/>notificationResult</) &&
           // Clipboard APIs uses "resolve" to mean something else:
           // https://w3c.github.io/clipboard-apis/#dom-clipboard-read
-          !html.includes('systemClipboardRepresentation')
+          !html.includes('systemClipboardRepresentation') &&
+          // Digital Credentials has a custom "reject" algo that queues a task
+          // https://w3c-fedid.github.io/digital-credentials/#dfn-reject-the-credential-request-with
+          !html.match(/reject the credential request with/i) &&
+          // Screen orientation has a custom "reject" algo that queues a task
+          // https://w3c.github.io/screen-orientation/#dfn-reject-and-nullify-the-current-lock-promise
+          !html.match(/reject and nullify the current lock promise/i)
       ) {
         report.push({
           name: 'missingTask',

@@ -70,4 +70,32 @@ describe('The algorithms analyser', () => {
     const report = study(crawlResult);
     assertNbAnomalies(report, 0);
   });
+
+  it('reports no anomaly when "reject a credential request" is used', () => {
+    const crawlResult = toCrawlResult([
+      {
+        html: 'In parallel:',
+        rationale: 'wait',
+        steps: [
+          { html: '<p>Reject the credential request with <var>error</var> and <var data-type="Promise">promise</var>.</p>' },
+        ]
+      }
+    ]);
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
+  });
+
+  it('reports no anomaly when "reject and nullify the current lock promise" is used', () => {
+    const crawlResult = toCrawlResult([
+      {
+        html: 'In parallel:',
+        rationale: 'wait',
+        steps: [
+          { html: '<p>Reject and nullify the current lock promise of document with an <code>AbortError</code>.</p>' },
+        ]
+      }
+    ]);
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
+  });
 });
