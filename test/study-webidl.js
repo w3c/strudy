@@ -473,6 +473,22 @@ dictionary MyShelf : MyHome { required boolean full; };
     });
   });
 
+  it('considers types defined through LegacyWindowAlias', () => {
+    const report = analyzeIdl(`
+[Exposed=*,
+ LegacyWindowAlias=(SVGMatrix,WebKitCSSMatrix)]
+interface DOMMatrix {
+    constructor();
+};
+
+[Exposed=*]
+interface SVGGraphicsElement {
+  SVGMatrix? getCTM();
+};
+`);
+    assertNbAnomalies(report, 0);
+  });
+
   it('reports wrong types', () => {
     const report = analyzeIdl(`
 [Global=Home,Exposed=*] interface MyHome {
