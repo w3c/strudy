@@ -38,7 +38,7 @@
     "cddlparser": "^0.6.0",
     "commander": "15.0.0",
     "gray-matter": "^4.0.3",
-    "jsdom": "^29.0.1",
+    "jsdom": "^30.0.0",
     "reffy": "^21.0.0",
     "semver": "^7.3.5",
     "webidl2": "^24.2.2"
