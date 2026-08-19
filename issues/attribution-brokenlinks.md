@@ -5,6 +5,6 @@ Repo: 'https://github.com/w3c/attribution'
 ---
 
 While crawling [Attribution Level 1](https://w3c.github.io/attribution/), the following links to other specifications were detected as pointing to non-existing anchors:
-* [ ] https://html.spec.whatwg.org/#concept-tuple-origin
+* [ ] https://html.spec.whatwg.org/#concept-tuple-origin (the correct anchor is `concept-origin-tuple`, and dropping the term from the `<pre class=anchors>` list would fix the problem as Bikeshed knows about the term)
 
 <sub>This issue was detected and reported semi-automatically by [Strudy](https://github.com/w3c/strudy/) based on data collected in [webref](https://github.com/w3c/webref/).</sub>
