@@ -45,5 +45,8 @@
   },
   "scripts": {
     "test": "node --test --test-reporter=spec"
+  },
+  "allowScripts": {
+    "puppeteer": true
   }
 }
