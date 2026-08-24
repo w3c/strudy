@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Client to Authenticator Protocol (CTAP)
-Tracked: N/A
+Tracked: Private repo, problem reported through contacts at FIDO Alliance
 ---
 
 While crawling [Client to Authenticator Protocol (CTAP)](https://fidoalliance.org/specs/fido-v2.2-ps-20250714/fido-client-to-authenticator-protocol-v2.2-ps-20250714.html), the following links to other specifications were detected as pointing to non-existing anchors:
