@@ -9,7 +9,7 @@ jobs:
     - name: Setup node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version-file: .node-version
     - name: Checkout strudy
       uses: actions/checkout@v4
     - name: Install dependencies
