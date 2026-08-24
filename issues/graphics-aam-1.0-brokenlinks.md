@@ -1,6 +1,6 @@
 ---
 Title: '[graphics-aam-1.0] Broken links in Graphics Accessibility API Mappings'
-Tracked: N/A
+Tracked: https://github.com/w3c/aria/pull/2873
 Repo: 'https://github.com/w3c/aria'
 ---
 
