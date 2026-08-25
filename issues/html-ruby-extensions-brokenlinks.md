@@ -1,6 +1,6 @@
 ---
 Title: Broken links in HTML Ruby Markup Extensions
-Tracked: N/A
+Tracked: 'https://github.com/w3c/html-ruby/issues/48'
 Repo: 'https://github.com/w3c/html-ruby'
 ---
 
