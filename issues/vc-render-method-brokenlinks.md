@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Verifiable Credential Rendering Methods v1.0
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-render-method/issues/71'
 Repo: 'https://github.com/w3c/vc-render-method'
 ---
 

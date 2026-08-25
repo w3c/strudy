@@ -1,6 +1,6 @@
 ---
 Title: Broken links in WebXR/WebGPU Binding Module - Level 1
-Tracked: N/A
+Tracked: 'https://github.com/immersive-web/webxr-webgpu-binding/issues/39'
 Repo: 'https://github.com/immersive-web/webxr-webgpu-binding'
 ---
 
