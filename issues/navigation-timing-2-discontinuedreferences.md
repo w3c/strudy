@@ -1,6 +1,6 @@
 ---
 Title: Normative references to discontinued specs in Navigation Timing Level 2
-Tracked: N/A
+Tracked: https://github.com/w3c/navigation-timing/pull/218
 Repo: 'https://github.com/w3c/navigation-timing'
 ---
 
