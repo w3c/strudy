@@ -1,7 +1,7 @@
 ---
 Title: Missing tasks in parallel steps in WebHID API
-Tracked: 'https://github.com/WICG/webhid/issues/123'
-Repo: 'https://github.com/WICG/webhid'
+Tracked: 'https://github.com/whatwg/hid/issues/123'
+Repo: 'https://github.com/whatwg/hid'
 ---
 
 While crawling [WebHID API](https://wicg.github.io/webhid/), the following algorithms fire an event, or resolve or reject a Promise, within a step that runs [in parallel](https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel) without first queuing a task:
