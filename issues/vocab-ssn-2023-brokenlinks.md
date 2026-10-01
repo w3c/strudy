@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Semantic Sensor Network Ontology - 2023 Edition
-Tracked: N/A
+Tracked: https://github.com/w3c/sdw-sosa-ssn/pull/550
 Repo: 'https://github.com/w3c/sdw-sosa-ssn'
 ---
 
