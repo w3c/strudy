@@ -2,7 +2,7 @@
 Title: >-
   Incompatible `[Exposed]` attribute in partial definitions in Media Capture and
   Streams Extensions
-Tracked: N/A
+Tracked: https://github.com/w3c/mediacapture-extensions/issues/74
 Repo: 'https://github.com/w3c/mediacapture-extensions'
 ---
 
