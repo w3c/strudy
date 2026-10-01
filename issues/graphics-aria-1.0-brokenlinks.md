@@ -1,6 +1,6 @@
 ---
 Title: '[graphics-aria-1.0] Broken links in WAI-ARIA Graphics Module'
-Tracked: N/A
+Tracked: 'https://github.com/w3c/aria/issues/2923'
 Repo: 'https://github.com/w3c/aria'
 ---
 

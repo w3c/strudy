@@ -1,6 +1,6 @@
 ---
 Title: Enum values that ignore naming conventions in Web Install
-Tracked: N/A
+Tracked: 'https://github.com/WICG/install-element/issues/39'
 Repo: 'https://github.com/WICG/install-element'
 ---
 

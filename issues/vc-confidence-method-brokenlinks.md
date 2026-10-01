@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Verifiable Credential Confidence Methods v1.0
-Tracked: N/A
+Tracked: 'https://github.com/w3c/vc-confidence-method/issues/52'
 Repo: 'https://github.com/w3c/vc-confidence-method'
 ---
 

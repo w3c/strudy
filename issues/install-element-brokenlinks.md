@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Web Install
-Tracked: N/A
+Tracked: 'https://github.com/WICG/install-element/issues/38'
 Repo: 'https://github.com/WICG/install-element'
 ---
 
