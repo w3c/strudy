@@ -233,6 +233,11 @@ const anomalyGroups = [
         name: 'cssMissingHref',
         title: 'Missing link back to spec',
         description: 'The following base definitions were found without a link back to the spec'
+      },
+      {
+        name: 'cssPlaceholderValue',
+        title: 'Placeholder value found in CSS syntax',
+        description: 'The following constructs were found with a syntax that includes a placeholder value'
       }
     ],
     study: studyCSS

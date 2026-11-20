@@ -195,4 +195,28 @@ describe('The CSS analyser', () => {
       spec: { url: specUrl }
     });
   });
+
+  it('reports placeholder values in syntaxes', async () => {
+    const crawlResults = [
+      {
+        url: specUrl,
+        css: {
+          properties: [
+            {
+              name: 'prop',
+              href: specUrl + '#prop',
+              value: 'auto | none | bikeshed-this | [ <string> <string> ]+'
+            }
+          ]
+        }
+      }
+    ];
+    const report = await studyCSS(crawlResults);
+    assertNbAnomalies(report, 1);
+    assertAnomaly(report, 0, {
+      name: 'cssPlaceholderValue',
+      message: '`prop`',
+      spec: { url: specUrl }
+    });
+  });
 });
