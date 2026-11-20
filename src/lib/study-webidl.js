@@ -109,6 +109,7 @@ const knownExtAttrs = new Set([
   'ReflectPositiveWithFallback', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectpositivewithfallback
   'ReflectRange', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectrange
   'ReflectDefault', // https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#xattr-reflectdefault
+  'SameAgentCluster', // https://html.spec.whatwg.org/multipage/structured-data.html#sameagentcluster
   'Serializable', // https://html.spec.whatwg.org/multipage/structured-data.html#serializable
   'StringContext', // https://w3c.github.io/webappsec-trusted-types/dist/spec/#webidl-string-context-xattr
   'Transferable', // https://html.spec.whatwg.org/multipage/structured-data.html#transferable
