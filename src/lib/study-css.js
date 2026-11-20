@@ -93,6 +93,18 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
           spec: dfn.spec
         });
       }
+      // Look for any placeholder value per:
+      // https://github.com/w3c/webref/issues/2106
+      // Note: The match is quite lax, but in practice no syntax should ever
+      // need to include "bikeshed", and we can restrict the check further over
+      // time if needed.
+      if (dfn.value?.match(/bikeshed/i)) {
+        res.push({
+          name: 'cssPlaceholderValue',
+          message: name,
+          spec: dfn.spec
+        });
+      }
     }
 
     // Look for redefinitions in different spec series
