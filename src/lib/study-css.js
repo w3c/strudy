@@ -31,6 +31,22 @@ const specName = spec => spec.shortname ?? spec.url;
 export default function studyCSS(specs, { crawlResults = null } = {}) {
   const res = [];
 
+  // Record an anomaly for the given spec(s),
+  // provided we are indeed interested in the results
+  function recordAnomaly(spec, anomaly) {
+    if (Array.isArray(spec)) {
+      const filtered = spec.filter(sp => specs.find(s => s.shortname === sp.shortname));
+      if (filtered.length > 0) {
+        res.push(Object.assign({}, anomaly, { specs: filtered }));
+      }
+    }
+    else {
+      if (specs.find(s => s.shortname === spec.shortname)) {
+        res.push(Object.assign({}, anomaly, { spec }));
+      }
+    }
+  }
+
   // We need to consider all CSS definitions, even if caller is only interested
   // in a few specific specs.
   const allSpecs = (crawlResults?.length ? crawlResults : specs)
@@ -76,10 +92,9 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
       // not an extension is the base definition
       for (const dfn of dfns) {
         if (dfn.newValues) {
-          res.push({
+          recordAnomaly(dfn.spec, {
             name: 'cssMissingBaseDfn',
-            message: `${name} is extended in ${specName(dfn.spec)}, but base definition was not found`,
-            spec: dfn.spec
+            message: `${name} is extended in ${specName(dfn.spec)}, but base definition was not found`
           });
         }
       }
@@ -87,10 +102,9 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
     }
     for (const dfn of actualDfns) {
       if (!dfn.href) {
-        res.push({
+        recordAnomaly(dfn.spec, {
           name: 'cssMissingHref',
-          message: name,
-          spec: dfn.spec
+          message: name
         });
       }
       // Look for any placeholder value per:
@@ -99,10 +113,9 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
       // need to include "bikeshed", and we can restrict the check further over
       // time if needed.
       if (dfn.value?.match(/bikeshed/i)) {
-        res.push({
+        recordAnomaly(dfn.spec, {
           name: 'cssPlaceholderValue',
-          message: name,
-          spec: dfn.spec
+          message: name
         });
       }
     }
@@ -121,10 +134,9 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
     }
     if (Object.keys(series).length > 1) {
       const specs = Object.values(series).flat();
-      res.push({
+      recordAnomaly(specs, {
         name: 'cssRedefined',
-        message: name + ' gets redefined in different spec series, found definitions in ' + specs.map(specName).join(', '),
-        specs
+        message: name + ' gets redefined in different spec series, found definitions in ' + specs.map(specName).join(', ')
       });
     }
 
@@ -140,17 +152,15 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
         const actualScoped = dfns.find(dfn => dfn.value);
         const actualUnscoped = unscoped.find(dfn => dfn.value);
         if (actualScoped?.value !== actualUnscoped?.value) {
-          res.push({
+          recordAnomaly(actualScoped?.spec ?? dfns[0].spec, {
             name: 'cssScoped',
-            message: `${name} is also defined without scoping in ${specName(actualUnscoped?.spec ?? unscoped[0].spec)}, syntaxes differ`,
-            spec: actualScoped?.spec ?? dfns[0].spec
+            message: `${name} is also defined without scoping in ${specName(actualUnscoped?.spec ?? unscoped[0].spec)}, syntaxes differ`
           });
         }
         else {
-          res.push({
+          recordAnomaly(actualUnscoped?.spec ?? unscoped[0].spec, {
             name: 'cssScoped',
-            message: `${name} is also defined without scoping in ${specName(actualUnscoped?.spec ?? unscoped[0].spec)}, same syntax`,
-            spec: actualUnscoped?.spec ?? unscoped[0].spec
+            message: `${name} is also defined without scoping in ${specName(actualUnscoped?.spec ?? unscoped[0].spec)}, same syntax`
           });
         }
       }
@@ -165,20 +175,34 @@ export default function studyCSS(specs, { crawlResults = null } = {}) {
     }
     for (const feature of spec.css.values ?? []) {
       if (feature.type === 'type' && feature.name.match(/^<.*\(\)>$/)) {
-        res.push({
+        recordAnomaly(spec, {
           name: 'cssTypeMismatch',
-          message: '`' + feature.name + '` is defined as `type` instead of `function`',
-          spec
+          message: '`' + feature.name + '` is defined as `type` instead of `function`'
         });
       }
       else if (feature.type === 'function' && !feature.name.match(/^.*\(\)$/)) {
-        res.push({
+        recordAnomaly(spec, {
           name: 'cssTypeMismatch',
-          message: '`' + feature.name + '` is defined as `function` instead of `type`',
-          spec
+          message: '`' + feature.name + '` is defined as `function` instead of `type`'
         });
       }
     }
-  } 
+  }
+
+  // Surface warnings reported by the crawler
+  for (const spec of specs) {
+    if (!spec.css?.warnings) {
+      continue;
+    }
+    for (const warning of spec.css.warnings) {
+      recordAnomaly(spec, {
+        name: 'cssWarning',
+        message: (warning.type ? warning.type + ' ' : '') +
+          (warning.href ? '[`' + warning.name + '\`](' + warning.href + ')' : '`' + warning.name + '`') +
+          (warning.for ? ' for `' + warning.for + '`' : '') +
+          ' - ' + warning.msg
+      });
+    }
+  }
   return res;
 }
