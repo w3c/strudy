@@ -244,6 +244,53 @@ interface MyIndexedDB : IDBDatabase {
     assertNbAnomalies(report, 0);
   });
 
+  it('follows the bubbling path to assess event targets even when a parent interface has an early partial definition', () => {
+    const crawlResult = toCrawlResult(baseEventIdl + `
+// The code used to choked on a partial definition if it appeared before
+// the actual interface definition. This text makes sure that won't happen again.
+partial interface ParentWithPartial {};
+
+[Global=Window,Exposed=*]
+interface ParentWithPartial : IDBTransaction {};
+
+[Global=Window,Exposed=*]
+interface IDBDatabase : EventTarget {
+  attribute EventHandler onabort;
+};
+[Global=Window,Exposed=*]
+interface IDBTransaction : EventTarget {
+  attribute EventHandler onabort;
+};
+[Global=Window,Exposed=*]
+interface MyIndexedDB : IDBDatabase {
+};`);
+    crawlResult[0].events = [{
+      type: 'abort',
+      interface: 'Event',
+      targets: ['ParentWithPartial'],
+      bubbles: true
+    }];
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
+  });
+
+  it('does not crash event targets assessments when the bubbling path is invalid', () => {
+    const crawlResult = toCrawlResult(baseEventIdl + `
+[Global=Window,Exposed=*]
+interface NotInBubblingTree {};
+
+[Global=Window,Exposed=*]
+interface MyInterface : NotInBubblingTree {};`);
+    crawlResult[0].events = [{
+      type: 'abort',
+      interface: 'Event',
+      targets: ['NotInBubblingTree'],
+      bubbles: true
+    }];
+    const report = study(crawlResult);
+    assertNbAnomalies(report, 0);
+  });
+
   it('detects incompatible partial exposure issues', () => {
     const report = analyzeIdl(`
 [Global=Somewhere,Exposed=*]
