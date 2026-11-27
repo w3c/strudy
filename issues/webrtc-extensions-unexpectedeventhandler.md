@@ -1,6 +1,6 @@
 ---
 Title: Missing `EventTarget` inheritances in WebRTC Extensions
-Tracked: N/A
+Tracked: 'Another willful violation to extend an interface to add events'
 Repo: 'https://github.com/w3c/webrtc-extensions'
 ---
 
