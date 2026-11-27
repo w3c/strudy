@@ -1,6 +1,6 @@
 ---
 Title: 'Incompatible `[Exposed]` attribute in partial definitions in WebRTC Extensions'
-Tracked: N/A
+Tracked: 'Willful violation pending integration in the main spec'
 Repo: 'https://github.com/w3c/webrtc-extensions'
 ---
 
