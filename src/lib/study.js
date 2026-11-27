@@ -238,6 +238,11 @@ const anomalyGroups = [
         name: 'cssPlaceholderValue',
         title: 'Placeholder value found in CSS syntax',
         description: 'The following constructs were found with a syntax that includes a placeholder value'
+      },
+      {
+        name: 'cssWarning',
+        title: 'Warning',
+        description: 'The following constructs triggered a warning'
       }
     ],
     study: studyCSS

@@ -219,4 +219,81 @@ describe('The CSS analyser', () => {
       spec: { url: specUrl }
     });
   });
+
+  it('reports crawl warnings', async () => {
+    const crawlResults = [
+      {
+        url: specUrl,
+        css: {
+          warnings: [
+            {
+              "msg": "Dangling value",
+              "name": "Do Not Upgrade",
+              "type": "value",
+              "href": "https://w3c.github.io/webappsec-upgrade-insecure-requests/#valdef-insecure-requests-policy-do-not-upgrade"
+            },
+            {
+              "msg": "Dangling value",
+              "name": "avoid-page",
+              "href": "https://drafts.csswg.org/css-break-4/#valdef-break-inside-avoid-page",
+              "type": "value",
+              "for": "page-break-inside"
+            },
+            {
+              "msg": "Missing definition",
+              "name": "<query-in-parens>",
+              "value": "... | anchored( <anchored-query> )"
+            },
+            {
+              "msg": 'Unmergeable definition',
+              "name": "scrollbar-gutter",
+              "newValues": 'auto | [ [ stable | always ] && mirror? && force? ] || match-parent'
+            },
+            {
+              "msg": "Duplicate definition",
+              "name": "<my-type>",
+              "type": "type"
+            },
+            {
+              "msg": "Something looks off",
+              "name": "<my-type>",
+              "type": "type"
+            }
+          ]
+        }
+      }
+    ];
+    const report = await studyCSS(crawlResults);
+    assertNbAnomalies(report, 6);
+    assertAnomaly(report, 0, {
+      name: 'cssWarning',
+      message: 'value [`Do Not Upgrade`](https://w3c.github.io/webappsec-upgrade-insecure-requests/#valdef-insecure-requests-policy-do-not-upgrade) - Dangling value',
+      spec: { url: specUrl }
+    });
+    assertAnomaly(report, 1, {
+      name: 'cssWarning',
+      message: 'value [`avoid-page`](https://drafts.csswg.org/css-break-4/#valdef-break-inside-avoid-page) for `page-break-inside` - Dangling value',
+      spec: { url: specUrl }
+    });
+    assertAnomaly(report, 2, {
+      name: 'cssWarning',
+      message: '`<query-in-parens>` - Missing definition',
+      spec: { url: specUrl }
+    });
+    assertAnomaly(report, 3, {
+      name: 'cssWarning',
+      message: '`scrollbar-gutter` - Unmergeable definition',
+      spec: { url: specUrl }
+    });
+    assertAnomaly(report, 4, {
+      name: 'cssWarning',
+      message: 'type `<my-type>` - Duplicate definition',
+      spec: { url: specUrl }
+    });
+    assertAnomaly(report, 5, {
+      name: 'cssWarning',
+      message: 'type `<my-type>` - Something looks off',
+      spec: { url: specUrl }
+    });
+  });
 });
