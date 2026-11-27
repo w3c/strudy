@@ -236,11 +236,10 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
 
   function getBubblingPath(iface) {
     const interfaces = Object.values(dfns)
-      .map(dfn => dfn.find(d => d.idl.type === 'interface'))
+      .map(dfn => dfn.find(d => d.idl.type === 'interface' && !d.idl.partial))
       .filter(dfn => !!dfn)
       .map(dfn => dfn.idl);
-    const { bubblingPath } = getInterfaceTreeInfo(iface, interfaces);
-    return bubblingPath;
+    return getInterfaceTreeInfo(iface, interfaces)?.bubblingPath;
   }
 
   // TODO: a full check of event handlers would require:
@@ -258,7 +257,7 @@ function studyWebIdl (specs, { crawledResults = [], curatedResults = [] } = {}) 
         target === iface.name));
       if (!event) {
         // No event found with the same type that targets the interface
-        // directly, but one the events may target an interface that
+        // directly, but the event may target an interface that
         // inherits from the interface, or may bubble on the interface.
         event = events.find(e => e.targets?.find(target => {
           const inheritanceFound = dfns[target]?.find(dfn =>
