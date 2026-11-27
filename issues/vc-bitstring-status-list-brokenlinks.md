@@ -1,6 +1,6 @@
 ---
 Title: Broken links in Bitstring Status List v1.0
-Tracked: N/A
+Tracked: 'Fixed in v1.1, v1.0 is the Recommendation, should be recorded as erraum'
 ---
 
 While crawling [Bitstring Status List v1.0](https://www.w3.org/TR/vc-bitstring-status-list/), the following links to other specifications were detected as pointing to non-existing anchors:
